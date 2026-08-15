@@ -483,5 +483,94 @@
       "body": "This console page does not exist.",
       "backToAtelier": "Back to the atelier"
     }
+  },
+  "console": {
+    "nav": {
+      "label": "Console navigation",
+      "console": "Console",
+      "today": "Today",
+      "atelier": "Bridal atelier",
+      "clients": "Clients",
+      "prestations": "Services & prices",
+      "signOut": "Sign out"
+    },
+    "statuses": {
+      "pending": "To confirm",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No show"
+    },
+    "today": {
+      "title": "Today",
+      "dateNav": "Change day",
+      "previous": "Previous day",
+      "next": "Next day",
+      "backToToday": "Today",
+      "notConfigured": "No database is connected: the day will appear here once the Supabase project exists.",
+      "emptyDay": "Nothing in the book that day",
+      "emptyDayHint": "Opening hours have not been recorded and no appointment exists, so there is no timeline to draw.",
+      "derivedAxis": "Opening hours are not recorded. The scale is derived from the day’s own appointments, not from opening times."
+    },
+    "dayLine": {
+      "lines": {
+        "salon": "Salon",
+        "bridal": "Bridal",
+        "makeup": "Makeup"
+      },
+      "laneEmpty": "Nothing on this lane",
+      "requestsHeading": "{count} request(s) to confirm"
+    },
+    "appointment": {
+      "time": "Time",
+      "requestedAt": "Asked for {time}",
+      "status": "Status",
+      "staff": "With",
+      "phone": "Phone",
+      "price": "Amount",
+      "priceUnsettled": "On request",
+      "reference": "Reference",
+      "noService": "Service not specified",
+      "requestNote": "This request holds no slot: the service duration is unknown. Confirm it with the client.",
+      "whatsapp": "Message on WhatsApp"
+    },
+    "kpis": {
+      "revenue": "Expected revenue",
+      "revenueUnknown": "—",
+      "revenueHint": "{count} appointments with no settled amount",
+      "appointments": "Appointments",
+      "appointmentsHint": "{count} still to confirm",
+      "gownsOut": "Gowns out",
+      "unanswered": "Unanswered messages",
+      "unansweredHint": "To handle today"
+    },
+    "clients": {
+      "title": "Clients",
+      "subtitle": "One list across the salon, bridal and makeup.",
+      "searchLabel": "Search for a client",
+      "searchPlaceholder": "Name or phone",
+      "search": "Search",
+      "tableCaption": "Client list",
+      "name": "Name",
+      "phone": "Phone",
+      "visits": "Visits",
+      "spend": "Lifetime spend",
+      "lastVisit": "Last visit",
+      "bride": "Bride",
+      "empty": "No clients yet",
+      "emptyHint": "Clients appear here after their first booking.",
+      "noMatch": "No results",
+      "noMatchHint": "Try another name, or the phone number.",
+      "spendHidden": "Lifetime spend is visible to Nour and Sophie only: payments are owner-restricted.",
+      "notConfigured": "No database is connected: clients will appear here once the Supabase project exists."
+    },
+    "prestations": {
+      "title": "Services & prices",
+      "subtitle": "{services} services across {categories} categories.",
+      "service": "Service",
+      "price": "Price",
+      "duration": "Duration",
+      "missingDurations": "{count} services have no recorded duration. That is why bookings stay requests: without a duration, no slot can be computed."
+    }
   }
 }

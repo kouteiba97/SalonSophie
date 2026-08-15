@@ -483,5 +483,94 @@
       "body": "Cette page de la console n’existe pas.",
       "backToAtelier": "Retour à l’atelier"
     }
+  },
+  "console": {
+    "nav": {
+      "label": "Navigation de la console",
+      "console": "Console",
+      "today": "Aujourd’hui",
+      "atelier": "Atelier mariée",
+      "clients": "Clientes",
+      "prestations": "Prestations & tarifs",
+      "signOut": "Se déconnecter"
+    },
+    "statuses": {
+      "pending": "À confirmer",
+      "confirmed": "Confirmé",
+      "completed": "Terminé",
+      "cancelled": "Annulé",
+      "no_show": "Absente"
+    },
+    "today": {
+      "title": "Aujourd’hui",
+      "dateNav": "Changer de jour",
+      "previous": "Jour précédent",
+      "next": "Jour suivant",
+      "backToToday": "Aujourd’hui",
+      "notConfigured": "Aucune base de données n’est connectée : la journée s’affichera ici dès que le projet Supabase existera.",
+      "emptyDay": "Rien dans l’agenda ce jour-là",
+      "emptyDayHint": "Les horaires d’ouverture ne sont pas encore renseignés, et aucun rendez-vous n’est enregistré : il n’y a donc pas d’échelle horaire à afficher.",
+      "derivedAxis": "Les horaires d’ouverture ne sont pas renseignés. L’échelle est déduite des rendez-vous du jour, pas des heures d’ouverture."
+    },
+    "dayLine": {
+      "lines": {
+        "salon": "Salon",
+        "bridal": "Mariée",
+        "makeup": "Maquillage"
+      },
+      "laneEmpty": "Rien sur cette ligne",
+      "requestsHeading": "{count} demande(s) à confirmer"
+    },
+    "appointment": {
+      "time": "Horaire",
+      "requestedAt": "Demandé pour {time}",
+      "status": "Statut",
+      "staff": "Avec",
+      "phone": "Téléphone",
+      "price": "Montant",
+      "priceUnsettled": "Sur devis",
+      "reference": "Référence",
+      "noService": "Prestation non précisée",
+      "requestNote": "Cette demande ne bloque aucun créneau : la durée de la prestation n’est pas connue. À confirmer avec la cliente.",
+      "whatsapp": "Écrire sur WhatsApp"
+    },
+    "kpis": {
+      "revenue": "Recettes prévues",
+      "revenueUnknown": "—",
+      "revenueHint": "{count} rendez-vous sans montant fixé",
+      "appointments": "Rendez-vous",
+      "appointmentsHint": "dont {count} à confirmer",
+      "gownsOut": "Robes sorties",
+      "unanswered": "Messages sans réponse",
+      "unansweredHint": "À traiter aujourd’hui"
+    },
+    "clients": {
+      "title": "Clientes",
+      "subtitle": "Une seule liste pour le salon, la mariée et le maquillage.",
+      "searchLabel": "Rechercher une cliente",
+      "searchPlaceholder": "Nom ou téléphone",
+      "search": "Rechercher",
+      "tableCaption": "Liste des clientes",
+      "name": "Nom",
+      "phone": "Téléphone",
+      "visits": "Visites",
+      "spend": "Total dépensé",
+      "lastVisit": "Dernière visite",
+      "bride": "Mariée",
+      "empty": "Aucune cliente enregistrée",
+      "emptyHint": "Les clientes apparaissent ici dès la première réservation.",
+      "noMatch": "Aucun résultat",
+      "noMatchHint": "Essayez un autre nom, ou le numéro de téléphone.",
+      "spendHidden": "Le total dépensé n’est visible que par Nour et Sophie : les paiements sont réservés aux propriétaires.",
+      "notConfigured": "Aucune base de données n’est connectée : les clientes apparaîtront ici dès que le projet Supabase existera."
+    },
+    "prestations": {
+      "title": "Prestations & tarifs",
+      "subtitle": "{services} prestations réparties en {categories} catégories.",
+      "service": "Prestation",
+      "price": "Tarif",
+      "duration": "Durée",
+      "missingDurations": "{count} prestations n’ont pas de durée renseignée. C’est pour cela que les réservations restent des demandes : sans durée, aucun créneau ne peut être calculé."
+    }
   }
 }
