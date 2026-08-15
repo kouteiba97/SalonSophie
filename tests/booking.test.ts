@@ -6,7 +6,7 @@ import {
   type BookingState,
 } from '@/components/booking/booking-reducer';
 import { bookingDetailsSchema } from '@/components/booking/booking-schema';
-import { dayState, monthGrid, weekStrip } from '@/lib/availability';
+import { dayState, monthGrid, weekStrip } from '@/lib/availability/calendar';
 import { addDays, startOfDay, toIsoDate } from '@/lib/datetime';
 
 const messages = {

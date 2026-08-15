@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useBooking } from '../BookingProvider';
 import { ChevronLeft, ChevronRight } from '@/components/common/icons';
 import { INTL_TAG, type Locale } from '@/i18n/routing';
-import { PROVISIONAL_SLOTS, monthGrid, monthOf, weekStrip } from '@/lib/availability';
+import { PROVISIONAL_SLOTS, monthGrid, monthOf, weekStrip } from '@/lib/availability/calendar';
 import { formatLongDate, formatMonthYear, fromIsoDate } from '@/lib/datetime';
 import { cn } from '@/lib/utils';
 
@@ -19,7 +19,7 @@ import { cn } from '@/lib/utils';
  * Nothing here claims to know what is free. The design's `hash(iso)%11===0` marked one day in
  * eleven as full and `hash(iso+t)%4===0` struck out a quarter of the slots, deterministically
  * and with no basis — a client could be turned away from an empty Tuesday. All of it is gone;
- * see lib/availability.ts.
+ * see lib/availability/calendar.ts.
  */
 export function DateStep() {
   const t = useTranslations('booking.calendar');

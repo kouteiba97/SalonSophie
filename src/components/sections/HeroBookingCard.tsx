@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useBooking } from '@/components/booking/BookingProvider';
 import { ArrowRight, CalendarIcon, ChevronLeft, ChevronRight } from '@/components/common/icons';
 import { INTL_TAG, type Locale } from '@/i18n/routing';
-import { weekStrip } from '@/lib/availability';
+import { weekStrip } from '@/lib/availability/calendar';
 import { cn } from '@/lib/utils';
 
 /**

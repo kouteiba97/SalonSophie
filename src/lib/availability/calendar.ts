@@ -1,5 +1,5 @@
 import { BOOKING_HORIZON } from '@/data/business';
-import { addDays, startOfDay, toIsoDate, type IsoDate } from './datetime';
+import { addDays, startOfDay, toIsoDate, type IsoDate } from '../datetime';
 
 /**
  * Availability — BUILD_BRIEF §5.3 items 6, 7, 8.
