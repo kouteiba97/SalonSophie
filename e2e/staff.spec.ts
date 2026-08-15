@@ -14,9 +14,13 @@ import { expect, test } from '@playwright/test';
  */
 
 const GUARDED = [
+  '/fr/aujourdhui',
+  '/fr/clients',
+  '/fr/prestations',
   '/fr/atelier',
   '/fr/atelier/reservations',
   '/fr/atelier/robes/anastasia',
+  '/ar/aujourdhui',
   '/ar/atelier',
   '/en/atelier',
 ];

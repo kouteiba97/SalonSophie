@@ -60,7 +60,9 @@ export async function signIn(_previous: SignInState, formData: FormData): Promis
 
   revalidatePath('/', 'layout');
   // Outside the error handling above on purpose: redirect() signals by throwing.
-  redirect(`/${parsed.data.locale}/atelier`);
+  // The day is the console's home — §13 calls the day-line its most important screen, and it is
+  // the one view every role can use.
+  redirect(`/${parsed.data.locale}/aujourdhui`);
 }
 
 export async function signOut(formData: FormData): Promise<void> {
