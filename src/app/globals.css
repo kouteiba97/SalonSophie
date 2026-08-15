@@ -1,26 +1,252 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ------------------------------------------------------------------------------------------
+   Design tokens — BUILD_BRIEF §4. No raw hex in components, ever.
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+   The twenty tokens in the brief are marked "§4". The design file also paints ten further
+   colours the brief's list does not name; those are marked "ext" and were read off the
+   approved design rather than invented. Every rgba() in the design turned out to be an alpha
+   variant of a token already here, so those port to Tailwind opacity modifiers instead
+   (e.g. rgba(201,169,166,.55) -> border-rose-soft/55).
+   ------------------------------------------------------------------------------------------ */
+@theme {
+  /* §4 */
+  --color-rose-deep: #8b6f7d;
+  --color-rose-mid: #a8899a;
+  --color-rose-dark: #7c6070;
+  --color-rose-soft: #c9a9a6;
+  --color-blush: #e8d5d0;
+  --color-blush-2: #ebd8cf;
+  --color-blush-3: #e2d0cb;
+  --color-tint: #f3eae7;
+  --color-champagne: #d4b896;
+  --color-champagne-lt: #f0dcb8;
+  --color-cream: #f7f3f0;
+  --color-cream-warm: #fbf8f7;
+  --color-charcoal: #2e2a28;
+  --color-ink-2: #5c534e;
+  --color-taupe: #a08d82;
+  --color-taupe-2: #7a6e68;
+  --color-line: #e7deda;
+  --color-muted: #c7bab3;
+  --color-muted-2: #dad1cb;
+  --color-white: #ffffff;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* ext — present in the design, absent from the brief's list */
+  --color-blush-4: #f0e4e0;
+  --color-blush-5: #efe2de;
+  --color-blush-6: #f6ece8;
+  --color-champagne-2: #f5e6cb;
+  --color-champagne-3: #fff4e8;
+  --color-ink-3: #4a423e;
+  --color-ink-4: #3d3835;
+  --color-taupe-3: #8f837e;
+  --color-muted-3: #b7aba5;
+  --color-scroll: #d9c9c4;
+
+  /* Typography — faces are loaded in src/lib/fonts.ts */
+  --font-display: var(--font-display), Georgia, serif;
+  --font-body: var(--font-body), system-ui, sans-serif;
+  --font-script: var(--font-script), cursive;
+  --font-arabic: var(--font-arabic), 'Segoe UI', sans-serif;
+
+  /* Keyframes — ported verbatim from the design. Do not retime. */
+  --animate-ns-word: nsWord 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-ns-reveal: nsReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-ns-float: nsFloat 9s linear infinite;
+  --animate-ns-flicker: nsFlicker 2.4s ease-out both;
+  --animate-ns-sway: nsSway 6s ease-in-out infinite;
+  --animate-ns-ken: nsKen 26s ease-in-out infinite;
+
+  @keyframes nsWord {
+    from {
+      opacity: 0;
+      filter: blur(12px);
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: none;
+    }
+  }
+  @keyframes nsReveal {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes nsFloat {
+    0% {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    18% {
+      opacity: 0.9;
+    }
+    100% {
+      transform: translateY(-260px);
+      opacity: 0;
+    }
+  }
+  @keyframes nsFlicker {
+    0% {
+      opacity: 0;
+    }
+    6% {
+      opacity: 0.9;
+    }
+    9% {
+      opacity: 0.2;
+    }
+    13% {
+      opacity: 1;
+    }
+    17% {
+      opacity: 0.5;
+    }
+    22% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes nsSway {
+    0% {
+      transform: rotate(-1.1deg);
+    }
+    50% {
+      transform: rotate(1.1deg);
+    }
+    100% {
+      transform: rotate(-1.1deg);
+    }
+  }
+  @keyframes nsKen {
+    0% {
+      transform: scale(1.02) translate3d(0, 0, 0);
+    }
+    50% {
+      transform: scale(1.08) translate3d(-1.5%, -1%, 0);
+    }
+    100% {
+      transform: scale(1.02) translate3d(0, 0, 0);
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ------------------------------------------------------------------------------------------
+   Base — ported from the design's second <style> block.
+   ------------------------------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-charcoal);
+    font-family: var(--font-body);
+    font-weight: 300;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Arabic is a first-class mode, not a translation layer (§8): different face, looser leading. */
+  html[lang='ar'] body {
+    font-family: var(--font-arabic);
+    line-height: 1.95;
+  }
+
+  a {
+    color: var(--color-rose-deep);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--color-rose-mid);
+  }
+
+  ::selection {
+    background: var(--color-blush);
+    color: var(--color-charcoal);
+  }
+
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  ::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-scroll);
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* WCAG AA: focus must always be visible (§12.8). The design had no focus styling at all. */
+  :focus-visible {
+    outline: 2px solid var(--color-rose-deep);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+@layer utilities {
+  /*
+   * Sections reveal on scroll via IntersectionObserver (once), never on a bare timer (§5.5).
+   *
+   * The default state is *visible*. Hiding is opted into by `[data-js]`, which a tiny inline
+   * script in <head> sets before first paint. Written the other way round — hidden by default,
+   * revealed by script — a dropped bundle on bad 4G leaves a client staring at a blank page
+   * below the hero, and content must never depend on JavaScript merely to be readable.
+   */
+  .ns-reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-js] .ns-reveal {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  [data-js] .ns-reveal[data-revealed='true'] {
+    animation: var(--animate-ns-reveal);
+  }
+
+  .ns-word {
+    display: inline-block;
+    animation: var(--animate-ns-word);
+  }
+}
+
+/* Collapse every animation for users who ask for less motion (§4). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  [data-js] .ns-reveal,
+  .ns-reveal {
+    opacity: 1;
+    transform: none;
+  }
 }
