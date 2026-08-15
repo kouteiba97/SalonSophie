@@ -100,9 +100,15 @@
       "lead": "Louables avec une robe."
     },
     "gowns": {
-      "anastasia": { "silhouette": "Traîne cathédrale, dentelle rebrodée main, dos boutonné." },
-      "abir": { "silhouette": "Ligne A intemporelle, manches illusion, jupe en mikado." },
-      "ryma": { "silhouette": "Bustier corseté, perlage cristal, jupe amovible." }
+      "anastasia": {
+        "silhouette": "Traîne cathédrale, dentelle rebrodée main, dos boutonné."
+      },
+      "abir": {
+        "silhouette": "Ligne A intemporelle, manches illusion, jupe en mikado."
+      },
+      "ryma": {
+        "silhouette": "Bustier corseté, perlage cristal, jupe amovible."
+      }
     }
   },
   "tarifs": {
@@ -127,9 +133,16 @@
     "sophieAlt": "Sophie, soins et visage"
   },
   "team": {
-    "nour": { "role": "Coiffure & mariée" },
-    "sophie": { "role": "Soins & visage" },
-    "noPreference": { "name": "Sans préférence", "role": "La première experte disponible" }
+    "nour": {
+      "role": "Coiffure & mariée"
+    },
+    "sophie": {
+      "role": "Soins & visage"
+    },
+    "noPreference": {
+      "name": "Sans préférence",
+      "role": "La première experte disponible"
+    }
   },
   "transformations": {
     "eyebrow": "Transformations",
@@ -209,8 +222,24 @@
       "nextMonth": "Mois suivant",
       "previousWeek": "Semaine précédente",
       "nextWeek": "Semaine suivante",
-      "weekdays": ["D", "L", "M", "M", "J", "V", "S"],
-      "weekdaysFull": ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
+      "weekdays": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "weekdaysFull": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ],
       "closed": "Fermé",
       "full": "Complet",
       "past": "Date passée",
@@ -298,6 +327,161 @@
     "gownDetail": {
       "title": "Robe de mariée {name} — Location à Constantine | N&S",
       "description": "Louez la robe {name} ({sizes}) chez N&S à Ali Mendjeli, Constantine. Essai privé sur rendez-vous, retouches et repassage inclus."
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Console N&S",
+      "subtitle": "Réservé à l’équipe du salon.",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "submitPending": "Connexion…",
+      "notConfigured": "Aucune base de données n’est encore connectée. La connexion sera possible dès que le projet Supabase existera.",
+      "errors": {
+        "invalid_credentials": "E-mail ou mot de passe incorrect.",
+        "not_configured": "La connexion n’est pas encore configurée.",
+        "unavailable": "Connexion impossible pour le moment. Réessayez dans un instant."
+      }
+    }
+  },
+  "atelier": {
+    "nav": {
+      "label": "Navigation de la console",
+      "atelier": "Atelier",
+      "gowns": "Robes",
+      "reservations": "Réservations",
+      "signOut": "Se déconnecter"
+    },
+    "roles": {
+      "owner": "Propriétaire",
+      "reception": "Réception",
+      "stylist": "Styliste"
+    },
+    "forbidden": {
+      "title": "Cet espace ne vous est pas ouvert",
+      "body": "L’atelier mariée est réservé à la réception et aux propriétaires. Si vous pensez qu’il s’agit d’une erreur, demandez à Nour ou Sophie."
+    },
+    "states": {
+      "available": "Disponible",
+      "rented": "En location",
+      "cleaning": "Nettoyage",
+      "repair": "Réparation"
+    },
+    "reservationStatus": {
+      "held": "Option",
+      "confirmed": "Confirmée",
+      "returned": "Rendue",
+      "cancelled": "Annulée"
+    },
+    "dashboard": {
+      "title": "Atelier mariée",
+      "subtitle": "Les robes de la maison, leur état et leur occupation sur les {days} prochains jours.",
+      "notConfigured": "Aucune base de données n’est connectée : les robes s’affichent depuis le catalogue, sans leurs réservations.",
+      "sizes": "Tailles {range}",
+      "utilisation": "Occupation",
+      "daysReserved": "{days} j sur {window}",
+      "percent": "{percent} %",
+      "outWith": "Chez {name} jusqu’au {until}",
+      "nextOut": "Prochaine sortie : {name}, le {from}",
+      "noReservations": "Aucune réservation sur la période.",
+      "manageState": "Changer l’état",
+      "loading": "Chargement de l’atelier…"
+    },
+    "gown": {
+      "title": "{gown} — Atelier",
+      "unknown": "Robe introuvable",
+      "breadcrumb": "Fil d’ariane",
+      "backToAtelier": "Retour à l’atelier",
+      "sizes": "Tailles {range}",
+      "utilisationHeading": "Occupation",
+      "reserveHeading": "Nouvelle réservation",
+      "upcomingHeading": "À venir",
+      "upcomingEmptyHint": "Cette robe est libre sur toute la période.",
+      "pastHeading": "Historique",
+      "stateLog": "Journal des états",
+      "stateLogEmpty": "Aucun changement d’état enregistré.",
+      "changeState": "État de la robe",
+      "reason": "Motif",
+      "reasonPlaceholder": "Fermeture cassée, tache sur la traîne…",
+      "save": "Enregistrer",
+      "stateSaved": "État enregistré."
+    },
+    "reservations": {
+      "title": "Réservations",
+      "subtitle": "Toutes les réservations des {days} prochains jours.",
+      "filterLabel": "Filtrer par statut",
+      "filters": {
+        "active": "En cours",
+        "held": "Options",
+        "confirmed": "Confirmées",
+        "returned": "Rendues",
+        "cancelled": "Annulées",
+        "all": "Toutes"
+      },
+      "empty": "Aucune réservation.",
+      "emptyHint": "Ouvrez une robe depuis l’atelier pour en créer une.",
+      "emptyFilteredHint": "Aucune réservation avec ce statut sur la période.",
+      "notConfigured": "Aucune base de données n’est connectée : les réservations apparaîtront ici dès que le projet Supabase existera.",
+      "dates": "Du {from} au {to}",
+      "bufferNote": "{days} j de nettoyage, libre le {until}",
+      "deposit": "Acompte",
+      "depositUnknown": "Non défini",
+      "readOnly": "Lecture seule"
+    },
+    "reserve": {
+      "clientName": "Nom de la mariée",
+      "clientPhone": "Téléphone",
+      "phoneHint": "Mobile algérien, par exemple 0553366712.",
+      "firstDay": "Premier jour",
+      "lastDay": "Dernier jour",
+      "buffer": "Jours de nettoyage",
+      "bufferHint": "Ajoutés après le dernier jour et protégés comme la location elle-même. Aucune durée n’a été fixée : 0 signifie qu’aucun délai n’est réservé.",
+      "deposit": "Acompte (DA)",
+      "depositHint": "Aucun montant d’acompte n’a été fixé. Laissez vide tant que la règle n’est pas décidée.",
+      "status": "Statut",
+      "statusHint": "Une option et une confirmation bloquent toutes deux les dates.",
+      "statusHeld": "Option",
+      "statusConfirmed": "Confirmée",
+      "accessories": "Accessoires",
+      "notes": "Notes",
+      "submit": "Réserver la robe",
+      "submitPending": "Enregistrement…",
+      "success": "{gown} réservée. Référence {reference}."
+    },
+    "actions": {
+      "none": "Aucune action",
+      "confirmed": "Confirmer",
+      "returned": "Marquer rendue",
+      "cancelled": "Annuler",
+      "confirmCancel": "Annuler cette réservation ? Les dates seront libérées immédiatement."
+    },
+    "errors": {
+      "forbidden": "Seules Nour et Sophie peuvent modifier l’atelier.",
+      "not_configured": "Aucune base de données n’est connectée.",
+      "double_booked": "Cette robe est déjà réservée sur ces dates.",
+      "invalid": "Certains champs sont incomplets.",
+      "invalid_period": "Le dernier jour doit suivre le premier.",
+      "in_the_past": "Cette période est déjà passée.",
+      "invalid_phone": "Numéro de mobile algérien attendu.",
+      "invalid_name": "Le nom de la mariée est obligatoire.",
+      "unknown_gown": "Robe introuvable.",
+      "unknown_accessory": "Accessoire introuvable.",
+      "accessory_out_of_stock": "Stock d’accessoires insuffisant sur ces dates.",
+      "invalid_transition": "Ce changement de statut n’est pas possible.",
+      "not_found": "Réservation introuvable.",
+      "unavailable": "Action impossible pour le moment. Réessayez dans un instant."
+    },
+    "error": {
+      "title": "Une erreur est survenue",
+      "body": "La console n’a pas pu charger cette page. Réessayez ; si le problème persiste, notez le code ci-dessous.",
+      "retry": "Réessayer",
+      "digest": "Code : {digest}"
+    },
+    "notFound": {
+      "title": "Page introuvable",
+      "body": "Cette page de la console n’existe pas.",
+      "backToAtelier": "Retour à l’atelier"
     }
   }
 }
