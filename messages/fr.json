@@ -1,0 +1,303 @@
+{
+  "brand": {
+    "name": "N&S",
+    "tagline": "The Sisters · Constantine",
+    "description": "Institut de beauté, salon de coiffure et location de robes de mariée."
+  },
+  "nav": {
+    "home": "Accueil",
+    "services": "Services",
+    "bridal": "Mariée",
+    "prices": "Tarifs",
+    "sisters": "Les Sœurs",
+    "contact": "Contact",
+    "book": "Réserver",
+    "skipToContent": "Aller au contenu",
+    "language": "Langue",
+    "mainNavigation": "Navigation principale"
+  },
+  "hero": {
+    "eyebrow": "Là où la beauté rencontre l'art",
+    "titleLine1": "Votre plus belle",
+    "titleLine2": "version,",
+    "titleAccent": "chaque jour.",
+    "subtitle": "Coiffure sur-mesure, soins, ongles et robes de mariée.",
+    "subtitle2": "Deux sœurs, un seul objectif : révéler votre confiance.",
+    "ctaBook": "Réserver mon rendez-vous",
+    "ctaStudio": "Voir le studio",
+    "neon": "Be your own kind of beautiful",
+    "badges": {
+      "products": "Produits premium",
+      "punctuality": "Ponctualité",
+      "care": "Soin personnalisé",
+      "hygiene": "Hygiène irréprochable"
+    },
+    "bookCard": {
+      "title": "Réservez votre créneau",
+      "subtitle": "Parce que vous méritez le meilleur."
+    },
+    "chooseDateTime": "Choisir date & heure",
+    "imageAlt": "Le studio N&S à Constantine"
+  },
+  "services": {
+    "eyebrow": "Nos prestations",
+    "title": "Huit univers, un même",
+    "titleAccent": "soin du détail.",
+    "lead": "Tarifs affichés et produits nommés. Vous savez exactement ce que vous réservez avant d'entrer.",
+    "all": "Tout",
+    "book": "Réserver",
+    "count": "{count, plural, =0 {aucune prestation affichée} one {# prestation affichée} other {# prestations affichées}}",
+    "seeFullTariff": "Voir les {count} prestations et leurs tarifs",
+    "searchLabel": "Rechercher une prestation",
+    "empty": {
+      "title": "Aucune prestation ne correspond.",
+      "body": "Essayez un autre mot, ou parcourez toutes nos prestations.",
+      "action": "Voir tout"
+    },
+    "detail": {
+      "backToServices": "Toutes les prestations",
+      "category": "Catégorie",
+      "price": "Tarif",
+      "duration": "Durée",
+      "bookThis": "Réserver cette prestation",
+      "otherInCategory": "Autres prestations {category}"
+    }
+  },
+  "bridal": {
+    "eyebrow": "Location de robes · Constantine",
+    "title": "Say yes to the",
+    "titleAccent": "dress.",
+    "lead": "Chaque robe est affichée avec ses tailles disponibles. Essai sur rendez-vous privé, retouches et repassage inclus.",
+    "sizes": "Tailles {range}",
+    "fromPrice": "Dès {price}",
+    "checkAvailability": "Vérifier la disponibilité",
+    "tier": "Gamme {tier}",
+    "showroom": {
+      "title": "La collection complète au showroom",
+      "body": "L'inventaire complet est présenté sur place. Essai privé sur rendez-vous uniquement.",
+      "cta": "Réserver un essai privé"
+    },
+    "packages": {
+      "eyebrow": "Forfaits mariée",
+      "title": "Tout le grand jour, un seul",
+      "titleAccent": "prix.",
+      "lead": "Robe, accessoires, coiffure, maquillage et essai.",
+      "mostChosen": "Le plus choisi",
+      "choose": "Choisir {name}",
+      "detailsOnRequest": "Détail du forfait communiqué sur rendez-vous."
+    },
+    "detail": {
+      "backToGowns": "Toutes les robes",
+      "silhouette": "Silhouette",
+      "sizesAvailable": "Tailles disponibles",
+      "rental": "Location",
+      "bookFitting": "Réserver un essai",
+      "shareHint": "Partagez cette robe",
+      "otherGowns": "Les autres robes"
+    },
+    "accessories": {
+      "title": "Accessoires",
+      "lead": "Louables avec une robe."
+    },
+    "gowns": {
+      "anastasia": { "silhouette": "Traîne cathédrale, dentelle rebrodée main, dos boutonné." },
+      "abir": { "silhouette": "Ligne A intemporelle, manches illusion, jupe en mikado." },
+      "ryma": { "silhouette": "Bustier corseté, perlage cristal, jupe amovible." }
+    }
+  },
+  "tarifs": {
+    "eyebrow": "Tarifs",
+    "title": "La carte complète, sans",
+    "titleAccent": "surprise.",
+    "searchPlaceholder": "Rechercher une prestation…",
+    "note": "Prix en dinars algériens. Les forfaits mariée sont personnalisables sur rendez-vous.",
+    "count": "{count, plural, one {# prestation} other {# prestations}}",
+    "empty": {
+      "title": "Rien à ce nom-là.",
+      "body": "Essayez « brushing », « ongles » ou « cils ».",
+      "action": "Effacer la recherche"
+    }
+  },
+  "sisters": {
+    "eyebrow": "Nour & Sophie",
+    "title": "Deux sœurs, une même",
+    "titleAccent": "exigence.",
+    "body": "Nour tient les ciseaux et le chignon. Sophie tient la peau et la lumière. Ce que nous partageons : l'idée qu'une femme doit sortir d'ici plus sûre d'elle qu'en entrant.",
+    "nourAlt": "Nour, coiffure et mariée",
+    "sophieAlt": "Sophie, soins et visage"
+  },
+  "team": {
+    "nour": { "role": "Coiffure & mariée" },
+    "sophie": { "role": "Soins & visage" },
+    "noPreference": { "name": "Sans préférence", "role": "La première experte disponible" }
+  },
+  "transformations": {
+    "eyebrow": "Transformations",
+    "title": "Avant, après, et le",
+    "titleAccent": "regard qui change.",
+    "before": "AVANT",
+    "after": "APRÈS",
+    "hint": "Faites glisser la poignée pour comparer.",
+    "cta": "Mon rendez-vous",
+    "sliderLabel": "Comparateur avant / après",
+    "sliderValue": "{value} % de l'image « après » visible"
+  },
+  "testimonials": {
+    "eyebrow": "Elles en parlent",
+    "title": "Ce que nos clientes",
+    "titleAccent": "racontent.",
+    "empty": {
+      "title": "Les premiers avis arrivent bientôt.",
+      "body": "Vous êtes déjà passée par le studio ? Racontez-nous sur WhatsApp — nous publierons votre avis ici, avec votre accord.",
+      "action": "Écrire sur WhatsApp"
+    }
+  },
+  "instagram": {
+    "eyebrow": "Instagram",
+    "title": "Le studio, tous les jours.",
+    "empty": "Les comptes officiels seront affichés ici.",
+    "imageAlt": "Publication Instagram du studio"
+  },
+  "contact": {
+    "eyebrow": "Nous trouver",
+    "title": "UV5, Nouvelle Ville,",
+    "titleAccent": "Constantine.",
+    "address": "À côté de l'école Cirta, UV5 — Nouvelle Ville Ali Mendjeli, Constantine.",
+    "hoursTitle": "Horaires",
+    "whatsapp": "Écrire sur WhatsApp",
+    "call": "Appeler",
+    "directions": "Ouvrir l'itinéraire",
+    "mapAlt": "Plan d'accès au studio N&S",
+    "whatsappMessage": "Bonjour N&S, je souhaite prendre rendez-vous."
+  },
+  "footer": {
+    "salon": "Le salon",
+    "bridal": "Mariée",
+    "instagram": "Instagram",
+    "rentGowns": "Location de robes",
+    "rights": "© {year} The Sisters N&S — UV5, Ali Mendjeli, Constantine."
+  },
+  "booking": {
+    "title": "Réserver",
+    "step": "Étape {current} sur {total}",
+    "stepAnnounce": "Étape {current} sur {total} : {title}",
+    "steps": {
+      "service": "Le service",
+      "expert": "Votre experte",
+      "date": "Date & heure",
+      "details": "Vos coordonnées",
+      "done": "Confirmation"
+    },
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Continuer",
+    "confirm": "Confirmer la réservation",
+    "submitting": "Un instant…",
+    "errors": {
+      "slot_taken": "Ce créneau vient d'être pris. Choisissez-en un autre — les disponibilités ci-dessus sont à jour.",
+      "rate_limited": "Vous avez fait plusieurs demandes coup sur coup. Patientez quelques minutes, ou écrivez-nous sur WhatsApp et nous vous inscrivons tout de suite.",
+      "invalid": "Une information manque ou n'est pas valide. Vérifiez vos coordonnées et réessayez.",
+      "unavailable": "Nous n'avons pas pu enregistrer la réservation. Réessayez dans un instant — ou écrivez-nous sur WhatsApp, nous la prenons à la main."
+    },
+    "chooseService": "Choisissez une prestation",
+    "chooseExpert": "Choisissez votre experte",
+    "fitting": "Essai robe",
+    "fittingNote": "Choisir une robe réserve un essai, pas la location. La location se fait sur place, sur des dates convenues ensemble.",
+    "calendar": {
+      "label": "Calendrier",
+      "previousMonth": "Mois précédent",
+      "nextMonth": "Mois suivant",
+      "previousWeek": "Semaine précédente",
+      "nextWeek": "Semaine suivante",
+      "weekdays": ["D", "L", "M", "M", "J", "V", "S"],
+      "weekdaysFull": ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"],
+      "closed": "Fermé",
+      "full": "Complet",
+      "past": "Date passée",
+      "tooSoon": "Trop tôt",
+      "tooFar": "Trop loin",
+      "slotsFor": "Créneaux — {date}",
+      "chooseDateFirst": "choisissez une date",
+      "noSlots": "Aucun créneau ce jour-là. Essayez une autre date.",
+      "availabilityPending": "Les disponibilités en temps réel arrivent bientôt. Envoyez-nous votre souhait, nous confirmons sur WhatsApp."
+    },
+    "form": {
+      "name": "Nom complet",
+      "namePlaceholder": "Votre nom",
+      "phone": "Téléphone / WhatsApp",
+      "phonePlaceholder": "0X XX XX XX XX",
+      "notes": "Une précision ? (optionnel)",
+      "notesPlaceholder": "Allergie, souhait particulier…",
+      "summary": "Récapitulatif",
+      "summaryEmpty": "Complétez les étapes précédentes.",
+      "errors": {
+        "nameRequired": "Nous avons besoin de votre nom.",
+        "nameTooShort": "Votre nom semble incomplet.",
+        "phoneRequired": "Nous avons besoin d'un numéro pour confirmer.",
+        "phoneInvalid": "Un mobile algérien commence par 05, 06 ou 07 et compte 10 chiffres."
+      }
+    },
+    "done": {
+      "title": "C'est réservé,",
+      "titleAccent": "à très vite.",
+      "requestTitle": "Demande envoyée,",
+      "requestTitleAccent": "on vous confirme.",
+      "reminder": "Un rappel WhatsApp vous parvient 24 h avant votre rendez-vous.",
+      "requestNote": "Nous confirmons votre horaire sur WhatsApp, en général dans la journée.",
+      "confirmOnWhatsapp": "Confirmer sur WhatsApp",
+      "reference": "Référence {ref}"
+    },
+    "whatsappMessage": "Bonjour N&S, je souhaite confirmer : {summary}"
+  },
+  "sticky": {
+    "book": "Réserver mon rendez-vous",
+    "whatsapp": "WhatsApp"
+  },
+  "common": {
+    "currency": "DA",
+    "onRequest": "Sur devis",
+    "fromPrice": "à partir de {price}",
+    "free": "Offert",
+    "unknown": "—",
+    "withAnyMassage": "Offert avec tout massage",
+    "supplement": "En supplément",
+    "loading": "Un instant…",
+    "and": "et"
+  },
+  "errors": {
+    "notFound": {
+      "title": "Cette page n'existe pas.",
+      "body": "Le lien a peut-être changé. Reprenez depuis l'accueil, ou écrivez-nous — nous retrouverons ce que vous cherchiez.",
+      "home": "Retour à l'accueil",
+      "whatsapp": "Nous écrire"
+    },
+    "generic": {
+      "title": "Quelque chose s'est mal passé.",
+      "body": "Ce n'est pas vous. Réessayez dans un instant — si cela persiste, écrivez-nous sur WhatsApp et nous prendrons votre rendez-vous à la main.",
+      "retry": "Réessayer",
+      "whatsapp": "Écrire sur WhatsApp"
+    }
+  },
+  "meta": {
+    "home": {
+      "title": "N&S Constantine — Salon de coiffure, institut & location de robes de mariée",
+      "description": "Salon de coiffure et institut de beauté à Ali Mendjeli, Constantine. Coiffure, soins, ongles, cils, épilation, massage et location de robes de mariée. Réservation en ligne."
+    },
+    "services": {
+      "title": "Prestations & tarifs — N&S Constantine",
+      "description": "Le tarif complet du salon N&S à Ali Mendjeli, Constantine : coiffure, soins capillaires, soin de visage, nails, pédicure, extension de cils, épilation et massage."
+    },
+    "gowns": {
+      "title": "Location de robes de mariée à Constantine — N&S",
+      "description": "Robes de mariée en location à Ali Mendjeli, Constantine. Tailles affichées sur chaque robe, essai privé sur rendez-vous, retouches et repassage inclus."
+    },
+    "serviceDetail": {
+      "title": "{name} — Tarif à Constantine | N&S",
+      "description": "{name} au salon N&S, UV5 Ali Mendjeli, Constantine. {price}. Réservation en ligne ou sur WhatsApp."
+    },
+    "gownDetail": {
+      "title": "Robe de mariée {name} — Location à Constantine | N&S",
+      "description": "Louez la robe {name} ({sizes}) chez N&S à Ali Mendjeli, Constantine. Essai privé sur rendez-vous, retouches et repassage inclus."
+    }
+  }
+}

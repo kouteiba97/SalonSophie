@@ -1,0 +1,303 @@
+{
+  "brand": {
+    "name": "N&S",
+    "tagline": "The Sisters · Constantine",
+    "description": "Beauty institute, hair salon and wedding gown rental."
+  },
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "bridal": "Bridal",
+    "prices": "Prices",
+    "sisters": "The Sisters",
+    "contact": "Contact",
+    "book": "Book Now",
+    "skipToContent": "Skip to content",
+    "language": "Language",
+    "mainNavigation": "Main navigation"
+  },
+  "hero": {
+    "eyebrow": "Where beauty meets artistry",
+    "titleLine1": "Your best",
+    "titleLine2": "look,",
+    "titleAccent": "every day.",
+    "subtitle": "Tailored hair, skin, nails and bridal gowns.",
+    "subtitle2": "Two sisters, one purpose: bringing out your confidence.",
+    "ctaBook": "Book Your Appointment",
+    "ctaStudio": "Watch Our Studio",
+    "neon": "Be your own kind of beautiful",
+    "badges": {
+      "products": "Premium products",
+      "punctuality": "On-time service",
+      "care": "Personalized care",
+      "hygiene": "Hygienic & safe"
+    },
+    "bookCard": {
+      "title": "Book your slot",
+      "subtitle": "Because you deserve the best."
+    },
+    "chooseDateTime": "Choose date & time",
+    "imageAlt": "The N&S studio in Constantine"
+  },
+  "services": {
+    "eyebrow": "Our services",
+    "title": "Eight worlds, one eye for",
+    "titleAccent": "detail.",
+    "lead": "Prices shown, products named. You know exactly what you are booking before you walk in.",
+    "all": "All",
+    "book": "Book",
+    "count": "{count, plural, =0 {no services shown} one {# service shown} other {# services shown}}",
+    "seeFullTariff": "See all {count} services and their prices",
+    "searchLabel": "Search for a service",
+    "empty": {
+      "title": "Nothing matches that.",
+      "body": "Try another word, or browse everything we offer.",
+      "action": "See all"
+    },
+    "detail": {
+      "backToServices": "All services",
+      "category": "Category",
+      "price": "Price",
+      "duration": "Duration",
+      "bookThis": "Book this service",
+      "otherInCategory": "More in {category}"
+    }
+  },
+  "bridal": {
+    "eyebrow": "Gown rental · Constantine",
+    "title": "Say yes to the",
+    "titleAccent": "dress.",
+    "lead": "Every gown is listed with its available sizes. Private fitting by appointment, alterations and pressing included.",
+    "sizes": "Sizes {range}",
+    "fromPrice": "From {price}",
+    "checkAvailability": "Check availability",
+    "tier": "{tier} tier",
+    "showroom": {
+      "title": "The full collection at the showroom",
+      "body": "The complete inventory is shown in person. Private fitting by appointment only.",
+      "cta": "Book a private fitting"
+    },
+    "packages": {
+      "eyebrow": "Bridal packages",
+      "title": "The whole day, one",
+      "titleAccent": "price.",
+      "lead": "Gown, accessories, hair, make-up and fitting.",
+      "mostChosen": "Most chosen",
+      "choose": "Choose {name}",
+      "detailsOnRequest": "Package details shared at your appointment."
+    },
+    "detail": {
+      "backToGowns": "All gowns",
+      "silhouette": "Silhouette",
+      "sizesAvailable": "Available sizes",
+      "rental": "Rental",
+      "bookFitting": "Book a fitting",
+      "shareHint": "Share this gown",
+      "otherGowns": "The other gowns"
+    },
+    "accessories": {
+      "title": "Accessories",
+      "lead": "Rentable alongside a gown."
+    },
+    "gowns": {
+      "anastasia": { "silhouette": "Cathedral train, hand-embroidered lace, buttoned back." },
+      "abir": { "silhouette": "Timeless A-line, illusion sleeves, mikado skirt." },
+      "ryma": { "silhouette": "Corseted bodice, crystal beading, detachable skirt." }
+    }
+  },
+  "tarifs": {
+    "eyebrow": "Prices",
+    "title": "The full list, no",
+    "titleAccent": "surprises.",
+    "searchPlaceholder": "Search for a service…",
+    "note": "Prices in Algerian dinar. Bridal packages are tailored at your appointment.",
+    "count": "{count, plural, =0 {no services} one {# service} other {# services}}",
+    "empty": {
+      "title": "Nothing by that name.",
+      "body": "Try “blow-dry”, “nails” or “lashes”.",
+      "action": "Clear search"
+    }
+  },
+  "sisters": {
+    "eyebrow": "Nour & Sophie",
+    "title": "Two sisters, one",
+    "titleAccent": "standard.",
+    "body": "Nour holds the scissors and the chignon. Sophie holds the skin and the light. What we share: the belief that a woman should leave here more sure of herself than when she walked in.",
+    "nourAlt": "Nour, hair and bridal",
+    "sophieAlt": "Sophie, skincare and facials"
+  },
+  "team": {
+    "nour": { "role": "Hair & bridal" },
+    "sophie": { "role": "Skincare & facials" },
+    "noPreference": { "name": "No preference", "role": "The first expert available" }
+  },
+  "transformations": {
+    "eyebrow": "Transformations",
+    "title": "Before, after, and the",
+    "titleAccent": "look that changes.",
+    "before": "BEFORE",
+    "after": "AFTER",
+    "hint": "Drag the handle to compare.",
+    "cta": "My appointment",
+    "sliderLabel": "Before / after comparison",
+    "sliderValue": "{value}% of the after image visible"
+  },
+  "testimonials": {
+    "eyebrow": "In their words",
+    "title": "What our clients",
+    "titleAccent": "tell us.",
+    "empty": {
+      "title": "The first reviews are on their way.",
+      "body": "Been to the studio already? Tell us on WhatsApp — we will publish your words here, with your permission.",
+      "action": "Message us on WhatsApp"
+    }
+  },
+  "instagram": {
+    "eyebrow": "Instagram",
+    "title": "The studio, every day.",
+    "empty": "The official accounts will be shown here.",
+    "imageAlt": "Instagram post from the studio"
+  },
+  "contact": {
+    "eyebrow": "Find us",
+    "title": "UV5, Nouvelle Ville,",
+    "titleAccent": "Constantine.",
+    "address": "Next to Cirta School, UV5 — Nouvelle Ville Ali Mendjeli, Constantine.",
+    "hoursTitle": "Opening hours",
+    "whatsapp": "Message on WhatsApp",
+    "call": "Call",
+    "directions": "Open directions",
+    "mapAlt": "Map to the N&S studio",
+    "whatsappMessage": "Hello N&S, I would like to book an appointment."
+  },
+  "footer": {
+    "salon": "The salon",
+    "bridal": "Bridal",
+    "instagram": "Instagram",
+    "rentGowns": "Gown rental",
+    "rights": "© {year} The Sisters N&S — UV5, Ali Mendjeli, Constantine."
+  },
+  "booking": {
+    "title": "Book",
+    "step": "Step {current} of {total}",
+    "stepAnnounce": "Step {current} of {total}: {title}",
+    "steps": {
+      "service": "The service",
+      "expert": "Your expert",
+      "date": "Date & time",
+      "details": "Your details",
+      "done": "Confirmation"
+    },
+    "close": "Close",
+    "back": "Back",
+    "next": "Continue",
+    "confirm": "Confirm booking",
+    "submitting": "One moment…",
+    "errors": {
+      "slot_taken": "That slot has just been taken. Pick another — the times above are up to date.",
+      "rate_limited": "That's several requests in quick succession. Wait a few minutes, or message us on WhatsApp and we'll book you straight away.",
+      "invalid": "Something is missing or not valid. Check your details and try again.",
+      "unavailable": "We couldn't save the booking. Try again in a moment — or message us on WhatsApp and we'll take it by hand."
+    },
+    "chooseService": "Choose a service",
+    "chooseExpert": "Choose your expert",
+    "fitting": "Gown fitting",
+    "fittingNote": "Choosing a gown books a fitting, not the rental. Rentals are arranged in person, over dates agreed together.",
+    "calendar": {
+      "label": "Calendar",
+      "previousMonth": "Previous month",
+      "nextMonth": "Next month",
+      "previousWeek": "Previous week",
+      "nextWeek": "Next week",
+      "weekdays": ["S", "M", "T", "W", "T", "F", "S"],
+      "weekdaysFull": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      "closed": "Closed",
+      "full": "Fully booked",
+      "past": "Past date",
+      "tooSoon": "Too soon",
+      "tooFar": "Too far ahead",
+      "slotsFor": "Slots — {date}",
+      "chooseDateFirst": "choose a date",
+      "noSlots": "No slots that day. Try another date.",
+      "availabilityPending": "Live availability is coming soon. Send us the date you want and we will confirm on WhatsApp."
+    },
+    "form": {
+      "name": "Full name",
+      "namePlaceholder": "Your name",
+      "phone": "Phone / WhatsApp",
+      "phonePlaceholder": "0X XX XX XX XX",
+      "notes": "Anything we should know? (optional)",
+      "notesPlaceholder": "Allergy, particular request…",
+      "summary": "Summary",
+      "summaryEmpty": "Complete the previous steps.",
+      "errors": {
+        "nameRequired": "We need your name.",
+        "nameTooShort": "That name looks incomplete.",
+        "phoneRequired": "We need a number to confirm.",
+        "phoneInvalid": "An Algerian mobile starts with 05, 06 or 07 and has 10 digits."
+      }
+    },
+    "done": {
+      "title": "You're booked,",
+      "titleAccent": "see you soon.",
+      "requestTitle": "Request sent,",
+      "requestTitleAccent": "we'll confirm.",
+      "reminder": "A WhatsApp reminder reaches you 24 h before your appointment.",
+      "requestNote": "We'll confirm your time on WhatsApp, usually the same day.",
+      "confirmOnWhatsapp": "Confirm on WhatsApp",
+      "reference": "Reference {ref}"
+    },
+    "whatsappMessage": "Hello N&S, I would like to confirm: {summary}"
+  },
+  "sticky": {
+    "book": "Book my appointment",
+    "whatsapp": "WhatsApp"
+  },
+  "common": {
+    "currency": "DA",
+    "onRequest": "On request",
+    "fromPrice": "from {price}",
+    "free": "Free",
+    "unknown": "—",
+    "withAnyMassage": "Free with any massage",
+    "supplement": "Add-on",
+    "loading": "One moment…",
+    "and": "and"
+  },
+  "errors": {
+    "notFound": {
+      "title": "This page doesn't exist.",
+      "body": "The link may have changed. Start again from the home page, or write to us — we'll find what you were looking for.",
+      "home": "Back to home",
+      "whatsapp": "Message us"
+    },
+    "generic": {
+      "title": "Something went wrong.",
+      "body": "It isn't you. Try again in a moment — if it keeps happening, message us on WhatsApp and we'll take your booking by hand.",
+      "retry": "Try again",
+      "whatsapp": "Message on WhatsApp"
+    }
+  },
+  "meta": {
+    "home": {
+      "title": "N&S Constantine — Hair salon, beauty institute & wedding gown rental",
+      "description": "Hair salon and beauty institute in Ali Mendjeli, Constantine. Hair, skincare, nails, lashes, waxing, massage and wedding gown rental. Book online."
+    },
+    "services": {
+      "title": "Services & prices — N&S Constantine",
+      "description": "The full price list for N&S in Ali Mendjeli, Constantine: hair, hair treatments, facials, nails, pedicure, lash extensions, waxing and massage."
+    },
+    "gowns": {
+      "title": "Wedding gown rental in Constantine — N&S",
+      "description": "Wedding gowns to rent in Ali Mendjeli, Constantine. Sizes shown on every gown, private fitting by appointment, alterations and pressing included."
+    },
+    "serviceDetail": {
+      "title": "{name} — Price in Constantine | N&S",
+      "description": "{name} at N&S salon, UV5 Ali Mendjeli, Constantine. {price}. Book online or on WhatsApp."
+    },
+    "gownDetail": {
+      "title": "{name} wedding gown — Rental in Constantine | N&S",
+      "description": "Rent the {name} gown ({sizes}) at N&S in Ali Mendjeli, Constantine. Private fitting by appointment, alterations and pressing included."
+    }
+  }
+}
