@@ -281,3 +281,99 @@ describe('busy_spans', () => {
     expect(res.rows[0].count).toBe(0);
   });
 });
+
+/**
+ * What was booked, not just when.
+ *
+ * `appointment_services` existed from the first migration and nothing wrote to it, so an
+ * appointment recorded who, when and with whom but never what — which made §13's day-line
+ * ("client and service" on every block) impossible, and left reception unable to tell a brushing
+ * from a balayage.
+ */
+describe('the service that was booked', () => {
+  it('links the service to the appointment', async () => {
+    const result = await book({
+      service: 'coupe',
+      staff: 'nour',
+      start: '2026-11-02T09:00:00Z',
+      phone: '0551818181',
+    });
+
+    const rows = await db.query<{ slug: string; duration_minutes: number | null }>(
+      `select s.slug, aps.duration_minutes
+         from public.appointment_services aps
+         join public.services s on s.id = aps.service_id
+        where aps.appointment_id = $1`,
+      [result.appointment_id],
+    );
+
+    expect(rows.rows).toHaveLength(1);
+    expect(rows.rows[0].slug).toBe('coupe');
+    // 'coupe' is the one service given a duration in this file's fixture.
+    expect(rows.rows[0].duration_minutes).toBe(60);
+  });
+
+  it('snapshots a fixed price, so a later tariff change cannot rewrite history', async () => {
+    const before = await db.query<{ price_min: number }>(
+      `select price_min from public.services where slug = 'coupe'`,
+    );
+
+    const result = await book({
+      service: 'coupe',
+      staff: 'sophie',
+      start: '2026-11-03T09:00:00Z',
+      phone: '0551919191',
+    });
+
+    const charged = await db.query<{ price_charged: string | null }>(
+      `select price_charged from public.appointment_services where appointment_id = $1`,
+      [result.appointment_id],
+    );
+
+    expect(Number(charged.rows[0].price_charged)).toBe(Number(before.rows[0].price_min));
+  });
+
+  /**
+   * The case worth being careful about. "14 000 – 35 000 DA" depends on her hair; snapshotting
+   * either end would invent the bill before anyone has seen her, and would let the revenue KPI
+   * quietly report the cheapest possible day as fact.
+   */
+  it.each([
+    // "14 000 – 35 000 DA" — which end depends on her hair.
+    { slug: 'soins-capillaires', kind: 'range', start: '2026-11-04T09:00:00Z', phone: '0552020202' },
+    // "à partir de 16 000 DA" — a floor is not a price.
+    { slug: 'balayage', kind: 'from', start: '2026-11-06T09:00:00Z', phone: '0552222222' },
+  ])('leaves the price unsettled for a $kind tariff ($slug)', async ({ slug, kind, start, phone }) => {
+    const published = await db.query<{ kind: string }>(
+      `select kind::text as kind from public.services where slug = $1`,
+      [slug],
+    );
+    // Guards the fixture: if the seed changes shape, this test should say so rather than pass
+    // for the wrong reason.
+    expect(published.rows[0].kind).toBe(kind);
+
+    const result = await book({ service: slug, staff: 'nour', start, phone });
+
+    const charged = await db.query<{ price_charged: string | null }>(
+      `select price_charged from public.appointment_services where appointment_id = $1`,
+      [result.appointment_id],
+    );
+
+    expect(charged.rows[0].price_charged).toBeNull();
+  });
+
+  /** A gown books a fitting, which is not a service on the tariff. Nothing to link. */
+  it('links nothing for a gown fitting', async () => {
+    const result = await book({
+      gown: 'anastasia',
+      start: '2026-11-05T09:00:00Z',
+      phone: '0552121212',
+    });
+
+    const rows = await db.query(
+      `select 1 from public.appointment_services where appointment_id = $1`,
+      [result.appointment_id],
+    );
+    expect(rows.rows).toHaveLength(0);
+  });
+});
