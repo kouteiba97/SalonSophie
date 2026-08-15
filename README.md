@@ -59,18 +59,19 @@ docs/OPEN_QUESTIONS.md            business rules still unanswered — READ BEFOR
 Sisters NS Beauty - Standalone.html   the approved visual design (a self-extracting bundle)
 
 src/app/[locale]/(site)/          the public site: home, services, robes, + detail pages
-src/app/[locale]/(staff)/         the console: login, bridal atelier
+src/app/[locale]/(staff)/         login, and (console)/ — today, atelier, clients, prestations
 src/components/sections/          the ten page sections, in the design's DOM order
 src/components/booking/           the five-step booking flow (reducer + steps)
-src/components/staff/             console components — gown states, reservations, forms
+src/components/staff/             console components — day-line, KPIs, gowns, reservations
 src/data/                         catalogue repository, real §6 tariff, business constants
 src/lib/availability/             the availability engine (pure) + its database repository
 src/lib/atelier/                  date ranges and utilisation (pure) + its database repository
+src/lib/console/                  day-line layout and KPIs (pure) + its database repository
 src/lib/auth.ts                   who is signed in, and what role they hold
 src/lib/notifications/            WhatsApp port, Cloud adapter, manual fallback
 src/lib/todo.ts                   every value nobody has told us yet
 messages/                         fr / ar / en catalogues + TRANSLATION_STATUS.md
-supabase/migrations/              13 migrations — schema, RLS, seed, booking + atelier functions
+supabase/migrations/              14 migrations — schema, RLS, seed, booking + atelier functions
 tests/                            unit tests + tests/db (real Postgres via PGlite)
 e2e/                              Playwright: booking, gowns, sections, tokens, staff boundary
 ```
@@ -85,10 +86,10 @@ e2e/                              Playwright: booking, gowns, sections, tokens, 
 | 2 — Supabase schema, auth, RLS, seed | **Done, not yet applied to any database** |
 | 3 — Availability engine, server-side booking, notifications | **Done** |
 | 4 — Bridal atelier (staff) | **Done, unverifiable against a live database** |
-| 5 — Staff console | Not started |
+| 5 — Staff console | **Done, except the brand-deal kanban** |
 | 6 — CRM, inbox, brand deals | Not started |
 
-Verified at the last commit: lint clean, typecheck clean, **193 unit tests**, **36 Playwright
+Verified at the last commit: lint clean, typecheck clean, **233 unit tests**, **44 Playwright
 tests**, production build green.
 
 ### What Phase 4 shipped
@@ -111,6 +112,33 @@ database logic is proven — 29 tests run the real migrations against real Postg
 including the double-booking constraint and each RLS boundary — but sign-in, cookie refresh and
 PostgREST's own error shapes have never run against the real thing. Expect to fix something on
 the day the project is provisioned.
+
+### What Phase 5 shipped
+
+The console proper: a sidebar over **Today**, the atelier, **Clients** and **Services & prices**.
+A stylist belongs here too — §7 gives them their own day and their own clients, and
+`appointments_read` already limits them to exactly that, so the console gate only requires a
+session. The atelier keeps its own front-desk check.
+
+**Today** is §13's day-line: three lanes on one timeline, click a block for detail and a WhatsApp
+button. Two things about it are worth knowing before reading the code, because both look like
+omissions and are neither:
+
+- **The axis is not 09:00–19:00.** Those hours were invented by the design, and §6 lists opening
+  hours as unknown. The scale comes from `business_hours` when that table is filled in, and
+  otherwise from the appointments actually in the book — a claim about what is in the diary, not
+  about when the salon is open. With neither, the page says there is nothing to draw rather than
+  rendering an empty grid that reads as a closed day.
+- **Requests are not blocks.** Durations are unknown, so most bookings are requests that hold no
+  slot. Drawing them on the grid would give them a width nobody supplied. They sit under the
+  lane, at the time the client asked for.
+
+Phase 5 also fixed a Phase 3 gap: `book_appointment` looked a service up and never stored it, so
+`appointment_services` was empty and an appointment recorded who and when but not *what*. The
+day-line needs "client and service" on every block, and reception needed it more.
+
+**Not built:** the brand-deal kanban from §13. It belongs with the deal pipeline in Phase 6
+rather than as a fifth sidebar item with nothing behind it.
 
 ### The database is written but not provisioned
 

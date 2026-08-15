@@ -42,6 +42,11 @@ requests, not bookings.
 **Where it goes:** `services.duration_minutes`, currently null for every row.
 Optionally `services.buffer_minutes` for turnaround between clients.
 
+This is the highest-leverage unknown on the list. The console's **Prestations** screen shows the
+count of services still missing one, because filling them in is what turns every booking from a
+request the salon has to chase into a slot the client can actually take — and it is also what
+lets the day-line draw a real block instead of a pin.
+
 ### 3. Bridal rental prices
 The design invented 38 000 / 45 000 / 55 000 DA for ABir / Anastasia / RYMA.
 
@@ -154,6 +159,15 @@ before the next bride" is an assumption about how the atelier works, and it is o
 undo, not zero.
 
 - Is that the real workflow, or do some dresses go straight back on the rail?
+
+### 22. The day-line's hours *(new, from building Phase 5)*
+The design's day-line ran 09:00–19:00. Those hours are invented (§6, question 1), so the console
+derives its scale instead: from `business_hours` when it is filled in, otherwise from the
+appointments actually in the book, and with neither it says there is nothing to draw.
+
+The derived scale is honest but not free — it means the timeline's width changes shape from one
+day to the next, which is a slightly odd thing to look at every morning. Answering question 1
+fixes that as a side effect.
 
 ### 21. Accessory stock counts *(new, from building Phase 4)*
 `accessories.stock_total` is 0 for barnous, diadème and voile — the seed never had real counts.

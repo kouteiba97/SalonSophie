@@ -28,10 +28,10 @@ Algerian place names transliterated as locally written (علي منجلي، قس
 sound MSA, but register and warmth are a brand decision, not a linguistic one — and the site's
 voice is the whole point of the design.
 
-### The staff console (Phase 4)
+### The staff console (Phases 4 and 5)
 
-The `auth` and `atelier` namespaces were written for this build; nothing in them comes from the
-design, which had no staff surface at all. They are in all three locales for the same reason as
+The `auth`, `atelier` and `console` namespaces were written for this build; nothing in them comes
+from the design, which had no staff surface at all. They are in all three locales for the same reason as
 the public site — the console is where reception works, and reception may not read French.
 
 They need the same native review, plus one check the public copy does not: the atelier's
