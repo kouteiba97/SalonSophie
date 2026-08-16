@@ -160,6 +160,17 @@ undo, not zero.
 
 - Is that the real workflow, or do some dresses go straight back on the rail?
 
+### 23. Saved replies *(new, from building Phase 6)*
+The inbox offers one-tap saved replies, and `saved_replies` ships **empty**. The answers
+reception types twenty times a week — opening hours, deposit, how far ahead to book — are all
+questions this document has not answered yet, so there is nothing truthful to seed.
+
+- Once questions 1, 9 and 14 are answered, what should the standard replies say?
+
+### 24. Instagram and WhatsApp accounts for the inbox *(new, from building Phase 6)*
+Conversations can be logged by hand today, on any channel. Automatic ingestion needs Meta
+approval and the real account handles, which question 6 still lists as unverified.
+
 ### 22. The day-line's hours *(new, from building Phase 5)*
 The design's day-line ran 09:00–19:00. Those hours are invented (§6, question 1), so the console
 derives its scale instead: from `business_hours` when it is filled in, otherwise from the

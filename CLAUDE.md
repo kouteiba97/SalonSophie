@@ -212,6 +212,7 @@ but have not been applied to a remote database.
 20260815121100_availability_rpc.sql   shift windows, time-off spans
 20260815121200_bridal_atelier.sql     reserve_gown, status transitions, utilisation
 20260815121300_booking_records_service.sql  book_appointment also writes appointment_services
+20260815121400_inbox.sql              log_message, conversation state trigger, set_deal_stage
 ```
 
 **Money is `bigint` centimes.** The `services` table carries a `price_kind` enum plus
@@ -298,6 +299,16 @@ into the deployment.
 **The console gate requires a session, not a role.** A stylist belongs here: §7 gives them their
 own day and their own clients, and `appointments_read` already limits them to exactly that. Only
 the atelier adds a front-desk check, because `gown_reservations_read` excludes stylists outright.
+
+**The inbox records; it does not send.** With no Meta credentials there is nothing to send
+through, so `log_message` writes what was said and the UI puts a `wa.me` link beside it to
+actually deliver it. A conversation's answered state is derived by a trigger from its latest
+message, never set by a caller — that is what keeps the day-line's alert honest.
+
+**Unknown values must survive serialisation.** `TodoValue` is branded with a *string*, not a
+Symbol. Symbol keys are dropped crossing the Server → Client boundary, which silently turned
+every unknown price handed to a Client Component into a blank. If you add a branded type that
+travels to the browser, brand it with something JSON can carry.
 
 **The day-line's axis is derived, never assumed.** The design hardcoded 09:00–19:00; §6 lists
 opening hours as unknown. It comes from `business_hours`, falling back to the day's own

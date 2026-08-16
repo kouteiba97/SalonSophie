@@ -66,12 +66,12 @@ src/components/staff/             console components — day-line, KPIs, gowns, 
 src/data/                         catalogue repository, real §6 tariff, business constants
 src/lib/availability/             the availability engine (pure) + its database repository
 src/lib/atelier/                  date ranges and utilisation (pure) + its database repository
-src/lib/console/                  day-line layout and KPIs (pure) + its database repository
+src/lib/console/                  day-line, KPIs, deals (pure) + inbox/clients/deal repositories
 src/lib/auth.ts                   who is signed in, and what role they hold
 src/lib/notifications/            WhatsApp port, Cloud adapter, manual fallback
 src/lib/todo.ts                   every value nobody has told us yet
 messages/                         fr / ar / en catalogues + TRANSLATION_STATUS.md
-supabase/migrations/              14 migrations — schema, RLS, seed, booking + atelier functions
+supabase/migrations/              15 migrations — schema, RLS, seed, booking, atelier, inbox
 tests/                            unit tests + tests/db (real Postgres via PGlite)
 e2e/                              Playwright: booking, gowns, sections, tokens, staff boundary
 ```
@@ -86,11 +86,11 @@ e2e/                              Playwright: booking, gowns, sections, tokens, 
 | 2 — Supabase schema, auth, RLS, seed | **Done, not yet applied to any database** |
 | 3 — Availability engine, server-side booking, notifications | **Done** |
 | 4 — Bridal atelier (staff) | **Done, unverifiable against a live database** |
-| 5 — Staff console | **Done, except the brand-deal kanban** |
-| 6 — CRM, inbox, brand deals | Not started |
+| 5 — Staff console | **Done** |
+| 6 — CRM, inbox, brand deals | **Done** |
 
-Verified at the last commit: lint clean, typecheck clean, **233 unit tests**, **44 Playwright
-tests**, production build green.
+All six phases are built. Verified at the last commit: lint clean, typecheck clean, **275 unit
+tests**, **50 Playwright tests**, production build green.
 
 ### What Phase 4 shipped
 
@@ -137,8 +137,33 @@ Phase 5 also fixed a Phase 3 gap: `book_appointment` looked a service up and nev
 `appointment_services` was empty and an appointment recorded who and when but not *what*. The
 day-line needs "client and service" on every block, and reception needed it more.
 
-**Not built:** the brand-deal kanban from §13. It belongs with the deal pipeline in Phase 6
-rather than as a fifth sidebar item with nothing behind it.
+### What Phase 6 shipped
+
+**Clients** gained a detail page: appointment history across all three lines, gown reservations,
+and free-text notes attributed to whoever wrote them — the colour formulas and allergies that
+currently live in somebody's memory.
+
+**Messages** is the unified inbox. One list across WhatsApp, Instagram, the phone and the door,
+unanswered first. A conversation's `is_answered` is derived by a database trigger from its latest
+message rather than set by callers, so the alert on the day-line cannot drift out of step with
+the thread — and a reply logged late does not mark a conversation answered when a newer question
+arrived after it.
+
+The inbox **records what was said; it does not send it.** There is no Meta integration (§10), so
+the WhatsApp button is what delivers the message and the log keeps the thread accurate
+afterwards. A console showing a reply the client never received would be the communications
+equivalent of inventing a price, so the UI says which is which instead of hiding it behind a
+"Send" button that only writes to a table.
+
+**Collaborations** is §13's four-column kanban, owner-only — the line non-negotiable #5 names
+outright. Cards move with buttons rather than drag-and-drop, which keeps the board usable by
+keyboard and on the phone Sophie actually carries.
+
+Phase 6 also fixed a Phase 1 bug: `TodoValue` was branded with a `Symbol`, which does not survive
+the Server → Client boundary. Every unknown price handed to a Client Component arrived
+unbranded, so `isTodo` returned false and the booking modal rendered gowns with a **blank** price
+while the card behind it said "Sur devis". The brand is now a string, and a test asserts the
+round-trip.
 
 ### The database is written but not provisioned
 
