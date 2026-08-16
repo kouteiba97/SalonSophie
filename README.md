@@ -204,23 +204,38 @@ so step 2 is not optional, and forgetting it fails closed.
 
 ---
 
-## Known issues
+## Resolved: "the atelier hangs on its loading skeleton"
 
-**The atelier screens hang on their loading skeleton.** `/[locale]/atelier` and
-`/[locale]/atelier/robes/[slug]` render correctly on the server — the content is in the served
-HTML, parked in a `hidden` element — but React never swaps it in, so the skeleton stays up.
+**There was no bug.** The cause was a stale `next start` process, and it is worth reading before
+you debug anything that looks like a hydration failure, because the symptoms are convincing.
 
-Both routes share `atelier/loading.tsx` and are the only console screens with a Suspense
-boundary, which is why nothing else is affected. It survives a clean dev-server restart, so it is
-not a Fast Refresh artifact. `suppressHydrationWarning` on `<html>` (the pre-paint `data-js`
-script is a genuine, by-design mismatch) is correct on its own merits but did **not** fix it.
+A leftover server keeps serving its own build after `.next` has been deleted and rebuilt. The
+HTML it returns references chunk hashes that no longer exist on disk, so every client chunk 404s,
+nothing hydrates, and every Suspense boundary sits on its fallback forever. What you see is a
+page stuck on its loading skeleton with the real content parked in a `hidden` element and **no
+errors in the console** — exactly what a broken boundary would look like.
 
-Next step: check whether it reproduces in a production build — dev-mode React is stricter about
-hydration — and if it does not, the fix may simply be that this was never a shipping bug. If it
-does, the boundary itself is the thing to interrogate.
+`/atelier` was the only screen with a `loading.tsx`, which is why it looked atelier-specific.
+Against a correctly-served build it reveals in about 1.3 seconds, and `e2e/atelier.spec.ts`
+now asserts that, including that nothing is left parked in a hidden placeholder.
 
-Reproduce it with `NEXT_PUBLIC_DEMO_DATA=1` in `.env.local`, which signs you into the console
-without a database (see below).
+Two changes make the trap loud instead of silent:
+
+- `playwright.config.ts` sets `reuseExistingServer: false`, so the suite never tests a build it
+  did not serve. An occupied port is now an immediate error.
+- On Windows, **`pkill -f "next start"` does not match these processes.** Use:
+
+  ```bash
+  powershell -Command "Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { \$_.CommandLine -like '*next*' } | Stop-Process -Force"
+  ```
+
+If a page ever looks unhydrated again, check first that a referenced chunk actually resolves:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" "http://127.0.0.1:3100$(curl -s http://127.0.0.1:3100/fr | grep -oE '/_next/static/chunks/[^"]+\.js' | head -1)"
+```
+
+A 404 there means a stale server, not a React problem.
 
 ## Seeing the console without a database
 
