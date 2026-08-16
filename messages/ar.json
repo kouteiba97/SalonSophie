@@ -489,9 +489,11 @@
       "label": "تنقّل اللوحة",
       "console": "اللوحة",
       "today": "اليوم",
+      "inbox": "الرسائل",
       "atelier": "أتيليه العرائس",
       "clients": "الزبونات",
       "prestations": "الخدمات والأسعار",
+      "deals": "الشراكات",
       "signOut": "تسجيل الخروج"
     },
     "statuses": {
@@ -571,6 +573,107 @@
       "price": "السعر",
       "duration": "المدّة",
       "missingDurations": "{count} خدمة بلا مدّة مسجّلة. لهذا تبقى الحجوزات مجرّد طلبات: بدون مدّة لا يمكن حساب أي موعد."
+    },
+    "errors": {
+      "forbidden": "ليس لديكِ صلاحية لهذا الإجراء.",
+      "not_configured": "لا توجد قاعدة بيانات متصلة.",
+      "invalid": "بعض الحقول غير مكتملة.",
+      "empty": "لا يمكن أن تكون الرسالة فارغة.",
+      "unknown_client": "الزبونة غير موجودة.",
+      "not_found": "غير موجود.",
+      "unavailable": "تعذّر تنفيذ الإجراء حاليًا. أعيدي المحاولة بعد قليل."
+    },
+    "inbox": {
+      "title": "الرسائل",
+      "subtitle": "واتساب وإنستغرام والهاتف والزيارات — قائمة واحدة.",
+      "breadcrumb": "مسار التنقّل",
+      "backToInbox": "العودة إلى الرسائل",
+      "threadTitle": "المحادثة",
+      "filterLabel": "تصفية المحادثات",
+      "filters": {
+        "unanswered": "دون ردّ",
+        "all": "الكل"
+      },
+      "channels": {
+        "whatsapp": "واتساب",
+        "instagram": "إنستغرام",
+        "phone": "الهاتف",
+        "walk_in": "في المحل",
+        "other": "أخرى"
+      },
+      "unanswered": "دون ردّ",
+      "unknownClient": "زبونة غير معروفة",
+      "openClient": "عرض الملف",
+      "empty": "لا توجد محادثات",
+      "emptyHint": "ستظهر المراسلات هنا، بما فيها المسجّلة يدويًا.",
+      "allAnswered": "تمّ الردّ على الجميع",
+      "allAnsweredHint": "لا توجد زبونة تنتظر ردًّا.",
+      "threadEmpty": "لا رسائل في هذه المحادثة.",
+      "replyLabel": "الردّ",
+      "savedReplies": "ردود جاهزة",
+      "sendOnWhatsApp": "الإرسال عبر واتساب",
+      "logReply": "تسجيل الردّ",
+      "logged": "تم تسجيل الردّ.",
+      "logNote": "اللوحة لا ترسل شيئًا: هي تسجّل ما قيل. استخدمي زرّ واتساب للإرسال، ثم سجّلي الردّ لتبقى المحادثة محدّثة.",
+      "notConfigured": "لا توجد قاعدة بيانات متصلة: ستظهر المحادثات هنا بمجرّد إنشاء مشروع Supabase.",
+      "forbiddenTitle": "هذه المساحة غير متاحة لكِ",
+      "forbiddenBody": "الرسائل يديرها الاستقبال والمالكات."
+    },
+    "client": {
+      "breadcrumb": "مسار التنقّل",
+      "backToClients": "العودة إلى الزبونات",
+      "notFound": "الزبونة غير موجودة",
+      "bride": "عروس",
+      "whatsapp": "المراسلة عبر واتساب",
+      "visits": "الزيارات",
+      "spend": "إجمالي الإنفاق",
+      "spendHidden": "مخصّص للمالكات",
+      "reservations": "الفساتين المحجوزة",
+      "notesHeading": "الملاحظات",
+      "notesEmpty": "لا ملاحظات حتى الآن.",
+      "addNote": "إضافة ملاحظة",
+      "notePlaceholder": "تركيبة الصبغة، حساسية، تاريخ الزفاف…",
+      "saveNote": "حفظ",
+      "noteSaved": "تم حفظ الملاحظة.",
+      "unknownAuthor": "كاتبة غير معروفة",
+      "historyHeading": "السجلّ",
+      "historyEmpty": "لا مواعيد مسجّلة.",
+      "request": "طلب",
+      "gownsHeading": "الفساتين",
+      "lines": {
+        "salon": "الصالون",
+        "bridal": "العرائس",
+        "makeup": "المكياج"
+      }
+    },
+    "deals": {
+      "title": "الشراكات",
+      "subtitle": "مسار الشراكات، من العرض إلى التسليم.",
+      "stages": {
+        "pitched": "معروضة",
+        "negotiating": "قيد التفاوض",
+        "contracted": "موقَّعة",
+        "delivered": "مسلَّمة"
+      },
+      "columnEmpty": "لا شيء هنا",
+      "pipeline": "قيمة المسار",
+      "pipelineHint": "{count} شراكة بلا مبلغ محدَّد",
+      "valueUnknown": "المبلغ غير محدَّد",
+      "nextDeliverable": "المطلوب تسليمه",
+      "deliverableProgress": "{delivered} من {total} تسليمات",
+      "newDeal": "شراكة جديدة",
+      "brandName": "العلامة",
+      "value": "المبلغ (دج)",
+      "valueHint": "اتركيه فارغًا إلى أن يُتَّفق على المبلغ.",
+      "contactName": "جهة الاتصال",
+      "contactHandle": "الحساب / البريد",
+      "nextAction": "الخطوة التالية",
+      "nextActionDue": "الموعد",
+      "saveDeal": "إضافة",
+      "dealSaved": "تمت إضافة الشراكة.",
+      "notConfigured": "لا توجد قاعدة بيانات متصلة: ستظهر الشراكات هنا بمجرّد إنشاء مشروع Supabase.",
+      "forbiddenTitle": "هذه المساحة غير متاحة لكِ",
+      "forbiddenBody": "الشراكات ومبالغها مخصّصة لنور وصوفي."
     }
   }
 }

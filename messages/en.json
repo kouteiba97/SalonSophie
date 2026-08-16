@@ -489,9 +489,11 @@
       "label": "Console navigation",
       "console": "Console",
       "today": "Today",
+      "inbox": "Messages",
       "atelier": "Bridal atelier",
       "clients": "Clients",
       "prestations": "Services & prices",
+      "deals": "Collaborations",
       "signOut": "Sign out"
     },
     "statuses": {
@@ -571,6 +573,107 @@
       "price": "Price",
       "duration": "Duration",
       "missingDurations": "{count} services have no recorded duration. That is why bookings stay requests: without a duration, no slot can be computed."
+    },
+    "errors": {
+      "forbidden": "You do not have access to this action.",
+      "not_configured": "No database is connected.",
+      "invalid": "Some fields are incomplete.",
+      "empty": "The message cannot be empty.",
+      "unknown_client": "Client not found.",
+      "not_found": "Not found.",
+      "unavailable": "Cannot do that right now. Try again in a moment."
+    },
+    "inbox": {
+      "title": "Messages",
+      "subtitle": "WhatsApp, Instagram, phone and walk-ins — one list.",
+      "breadcrumb": "Breadcrumb",
+      "backToInbox": "Back to messages",
+      "threadTitle": "Conversation",
+      "filterLabel": "Filter conversations",
+      "filters": {
+        "unanswered": "Unanswered",
+        "all": "All"
+      },
+      "channels": {
+        "whatsapp": "WhatsApp",
+        "instagram": "Instagram",
+        "phone": "Phone",
+        "walk_in": "Walk-in",
+        "other": "Other"
+      },
+      "unanswered": "Unanswered",
+      "unknownClient": "Unknown client",
+      "openClient": "Open profile",
+      "empty": "No conversations",
+      "emptyHint": "Threads appear here, including ones logged by hand.",
+      "allAnswered": "Everything is answered",
+      "allAnsweredHint": "No client is waiting on a reply.",
+      "threadEmpty": "No messages in this conversation.",
+      "replyLabel": "Reply",
+      "savedReplies": "Saved replies",
+      "sendOnWhatsApp": "Send on WhatsApp",
+      "logReply": "Log the reply",
+      "logged": "Reply logged.",
+      "logNote": "The console sends nothing: it records what was said. Use the WhatsApp button to send, then log it so the thread stays accurate.",
+      "notConfigured": "No database is connected: conversations will appear here once the Supabase project exists.",
+      "forbiddenTitle": "This area is not open to you",
+      "forbiddenBody": "Messages are handled by reception and the owners."
+    },
+    "client": {
+      "breadcrumb": "Breadcrumb",
+      "backToClients": "Back to clients",
+      "notFound": "Client not found",
+      "bride": "Bride",
+      "whatsapp": "Message on WhatsApp",
+      "visits": "Visits",
+      "spend": "Lifetime spend",
+      "spendHidden": "Owners only",
+      "reservations": "Gowns reserved",
+      "notesHeading": "Notes",
+      "notesEmpty": "No notes yet.",
+      "addNote": "Add a note",
+      "notePlaceholder": "Colour formula, allergy, wedding date…",
+      "saveNote": "Save",
+      "noteSaved": "Note saved.",
+      "unknownAuthor": "Unknown author",
+      "historyHeading": "History",
+      "historyEmpty": "No appointments recorded.",
+      "request": "Request",
+      "gownsHeading": "Gowns",
+      "lines": {
+        "salon": "Salon",
+        "bridal": "Bridal",
+        "makeup": "Makeup"
+      }
+    },
+    "deals": {
+      "title": "Collaborations",
+      "subtitle": "The partnership pipeline, from pitch to delivery.",
+      "stages": {
+        "pitched": "Pitched",
+        "negotiating": "Negotiating",
+        "contracted": "Contracted",
+        "delivered": "Delivered"
+      },
+      "columnEmpty": "Nothing here",
+      "pipeline": "Pipeline value",
+      "pipelineHint": "{count} collaboration(s) with no agreed fee",
+      "valueUnknown": "Fee not agreed",
+      "nextDeliverable": "To deliver",
+      "deliverableProgress": "{delivered} of {total} deliverables",
+      "newDeal": "New collaboration",
+      "brandName": "Brand",
+      "value": "Fee (DA)",
+      "valueHint": "Leave blank until the fee is agreed.",
+      "contactName": "Contact",
+      "contactHandle": "Handle / email",
+      "nextAction": "Next action",
+      "nextActionDue": "Due",
+      "saveDeal": "Add",
+      "dealSaved": "Collaboration added.",
+      "notConfigured": "No database is connected: collaborations will appear here once the Supabase project exists.",
+      "forbiddenTitle": "This area is not open to you",
+      "forbiddenBody": "Collaborations and their values are for Nour and Sophie."
     }
   }
 }

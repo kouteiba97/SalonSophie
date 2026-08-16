@@ -489,9 +489,11 @@
       "label": "Navigation de la console",
       "console": "Console",
       "today": "Aujourd’hui",
+      "inbox": "Messages",
       "atelier": "Atelier mariée",
       "clients": "Clientes",
       "prestations": "Prestations & tarifs",
+      "deals": "Collaborations",
       "signOut": "Se déconnecter"
     },
     "statuses": {
@@ -571,6 +573,107 @@
       "price": "Tarif",
       "duration": "Durée",
       "missingDurations": "{count} prestations n’ont pas de durée renseignée. C’est pour cela que les réservations restent des demandes : sans durée, aucun créneau ne peut être calculé."
+    },
+    "errors": {
+      "forbidden": "Vous n’avez pas accès à cette action.",
+      "not_configured": "Aucune base de données n’est connectée.",
+      "invalid": "Certains champs sont incomplets.",
+      "empty": "Le message ne peut pas être vide.",
+      "unknown_client": "Cliente introuvable.",
+      "not_found": "Introuvable.",
+      "unavailable": "Action impossible pour le moment. Réessayez dans un instant."
+    },
+    "inbox": {
+      "title": "Messages",
+      "subtitle": "WhatsApp, Instagram, téléphone et visites — une seule liste.",
+      "breadcrumb": "Fil d’ariane",
+      "backToInbox": "Retour aux messages",
+      "threadTitle": "Conversation",
+      "filterLabel": "Filtrer les conversations",
+      "filters": {
+        "unanswered": "Sans réponse",
+        "all": "Toutes"
+      },
+      "channels": {
+        "whatsapp": "WhatsApp",
+        "instagram": "Instagram",
+        "phone": "Téléphone",
+        "walk_in": "Sur place",
+        "other": "Autre"
+      },
+      "unanswered": "Sans réponse",
+      "unknownClient": "Cliente inconnue",
+      "openClient": "Voir la fiche",
+      "empty": "Aucune conversation",
+      "emptyHint": "Les échanges apparaîtront ici, y compris ceux enregistrés à la main.",
+      "allAnswered": "Tout est répondu",
+      "allAnsweredHint": "Aucune cliente n’attend de réponse.",
+      "threadEmpty": "Aucun message dans cette conversation.",
+      "replyLabel": "Réponse",
+      "savedReplies": "Réponses types",
+      "sendOnWhatsApp": "Envoyer sur WhatsApp",
+      "logReply": "Enregistrer la réponse",
+      "logged": "Réponse enregistrée.",
+      "logNote": "La console n’envoie rien : elle enregistre ce qui a été dit. Utilisez le bouton WhatsApp pour envoyer, puis enregistrez pour garder la conversation à jour.",
+      "notConfigured": "Aucune base de données n’est connectée : les conversations apparaîtront ici dès que le projet Supabase existera.",
+      "forbiddenTitle": "Cet espace ne vous est pas ouvert",
+      "forbiddenBody": "La messagerie est gérée par la réception et les propriétaires."
+    },
+    "client": {
+      "breadcrumb": "Fil d’ariane",
+      "backToClients": "Retour aux clientes",
+      "notFound": "Cliente introuvable",
+      "bride": "Mariée",
+      "whatsapp": "Écrire sur WhatsApp",
+      "visits": "Visites",
+      "spend": "Total dépensé",
+      "spendHidden": "Réservé aux propriétaires",
+      "reservations": "Robes réservées",
+      "notesHeading": "Notes",
+      "notesEmpty": "Aucune note pour le moment.",
+      "addNote": "Ajouter une note",
+      "notePlaceholder": "Formule de couleur, allergie, date du mariage…",
+      "saveNote": "Enregistrer",
+      "noteSaved": "Note enregistrée.",
+      "unknownAuthor": "Auteur inconnu",
+      "historyHeading": "Historique",
+      "historyEmpty": "Aucun rendez-vous enregistré.",
+      "request": "Demande",
+      "gownsHeading": "Robes",
+      "lines": {
+        "salon": "Salon",
+        "bridal": "Mariée",
+        "makeup": "Maquillage"
+      }
+    },
+    "deals": {
+      "title": "Collaborations",
+      "subtitle": "Le pipeline des partenariats, de la proposition à la livraison.",
+      "stages": {
+        "pitched": "Proposées",
+        "negotiating": "En négociation",
+        "contracted": "Signées",
+        "delivered": "Livrées"
+      },
+      "columnEmpty": "Rien ici",
+      "pipeline": "Valeur du pipeline",
+      "pipelineHint": "{count} collaboration(s) sans montant fixé",
+      "valueUnknown": "Montant non fixé",
+      "nextDeliverable": "À livrer",
+      "deliverableProgress": "{delivered} livrable(s) sur {total}",
+      "newDeal": "Nouvelle collaboration",
+      "brandName": "Marque",
+      "value": "Montant (DA)",
+      "valueHint": "Laissez vide tant que le montant n’est pas convenu.",
+      "contactName": "Contact",
+      "contactHandle": "Compte / e-mail",
+      "nextAction": "Prochaine action",
+      "nextActionDue": "Échéance",
+      "saveDeal": "Ajouter",
+      "dealSaved": "Collaboration ajoutée.",
+      "notConfigured": "Aucune base de données n’est connectée : les collaborations apparaîtront ici dès que le projet Supabase existera.",
+      "forbiddenTitle": "Cet espace ne vous est pas ouvert",
+      "forbiddenBody": "Les collaborations et leurs montants sont réservés à Nour et Sophie."
     }
   }
 }
