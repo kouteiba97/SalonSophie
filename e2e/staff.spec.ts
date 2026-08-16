@@ -3,10 +3,14 @@ import { expect, test } from '@playwright/test';
 /**
  * The staff console's boundary, end to end.
  *
- * There is no Supabase project yet, so nobody can sign in and the console cannot be driven
- * further than this. What can be proven — and is worth proving on every commit — is that the
- * boundary holds in the direction that matters: signed out, every atelier URL sends you to the
- * login page rather than rendering a page and hoping RLS returns nothing.
+ * The suite builds with **no database credentials** — `scripts/e2e.mjs` blanks them, and the note
+ * in that file explains why in detail. The short version: a build that carries real credentials
+ * turns `booking.spec.ts` into a script that writes appointments into the salon's live database.
+ *
+ * So nobody can sign in here, and the console cannot be driven past the door. What can be proven,
+ * and is worth proving on every commit, is that the boundary holds in the direction that matters:
+ * signed out, every console URL sends you to the login page rather than rendering a page and
+ * hoping RLS returns nothing.
  *
  * These run against `next start`, so they also catch the failure mode the unit tests cannot: a
  * console page accidentally prerendered at build time would serve a cached redirect (or worse, a
@@ -22,9 +26,17 @@ const GUARDED = [
   '/fr/atelier',
   '/fr/atelier/reservations',
   '/fr/atelier/robes/anastasia',
+  /*
+   * Phase 7's two screens. `/finances` is the one that would hurt most if a route group were ever
+   * rearranged wrongly: it puts what the business earns, per line, on a page. Its own layout gates
+   * it to an owner, but that gate is only reached if this outer one holds first.
+   */
+  '/fr/stock',
+  '/fr/finances',
   '/ar/aujourdhui',
   '/ar/messages',
   '/ar/atelier',
+  '/ar/finances',
   '/en/atelier',
 ];
 

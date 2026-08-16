@@ -1,7 +1,7 @@
 # Handoff — resume here
 
-Last worked: **16 August 2026**, after wave 5 and the first live database. Everything is pushed
-to `main`.
+Last worked: **16 August 2026**. Phase 7 is complete, and the schema runs on a live database.
+Everything is pushed to `main`.
 Working tree clean; nothing is half-finished on disk.
 
 This file says **where the work stopped and what comes next**. It does not repeat the README
@@ -50,7 +50,7 @@ Verify the checkout is sound:
 npm run typecheck && npm run lint && npm test
 ```
 
-Expect **352 tests across 19 files**, green. They need no database and no network: the database
+Expect **359 tests across 20 files**, green, plus **56 Playwright tests** from `npm run e2e`. They need no database and no network: the database
 tests run the real migration files against real Postgres compiled to WASM.
 
 ---
@@ -62,7 +62,7 @@ direct instruction to turn the console into something the sisters run the whole 
 add, update and delete anything; track products and stock; follow the money and see which of the
 three businesses earns most.
 
-Phase 7 is being built in waves. Five have landed.
+Phase 7 was built in waves. All six have landed.
 
 | Wave | What | State |
 |---|---|---|
@@ -71,7 +71,7 @@ Phase 7 is being built in waves. Five have landed.
 | 3 | Console booking — reception can finally book | **Done** — `20260816090300` |
 | 4 | Stock screen — products and accessories, in and out | **Done** — no migration needed |
 | 5 | Finances screen — money flow, per-line comparison | **Done** — no migration needed |
-| 6 | **Test pass, translation sweep, full verification** | **Next** |
+| 6 | Test pass, translation sweep, full verification | **Done** |
 
 ### What waves 1–3 actually put in the repo
 
@@ -174,27 +174,48 @@ finances block in `demo.ts`, and a test asserts the panels agree.
 
 ---
 
-## Wave 6 — start here
+### What wave 6 put in the repo
 
-The last wave: **verification, not features**.
+**A static guard against the bug that cost this session.** `tests/server-actions.test.ts` reads
+every file in `src/app/actions/` and fails if a `'use server'` module exports anything but an
+async function. That is the rule Next enforces **at request time**, which is why the original
+`managementIdleState` object passed typecheck, lint, `next build` and 314 tests while making every
+management write answer 500. The guard was checked by reintroducing the bug: it fails, naming the
+file and line. An e2e test would also have caught it, but only on screens someone remembered to
+drive, and only while signed in — this catches the whole class in milliseconds.
 
-1. **e2e for the console.** Nothing covers console booking, `/stock` or `/finances`, because all
-   three need an authenticated session and demo mode breaks the signed-out assertions in
-   `staff.spec.ts`. This is the gap that let the `'use server'` export bug (below) make every
-   management write answer 500 while 314 tests stayed green. Solve it properly — a Playwright
-   project with its own storage state, or a test-only sign-in — rather than adding more unit tests
-   around it.
-2. **Translation sweep.** `messages/TRANSLATION_STATUS.md` still records that the design only ever
-   translated ~17 strings. Everything added in waves 2–5 is real in all three locales; the older
-   bulk of `ar.json` and `en.json` is not.
-3. **Full verification.** Arabic first on every screen, then English. `npm run build` before
-   `npm run e2e`, and delete `.env.local` first.
+**The e2e suite can no longer write to production.** See the trap below; this is the important
+change of the wave.
 
-Provisioning is done — the schema runs on a live project and the public site reads from it. The
-one thing still blocking a full end-to-end pass is that **no staff account exists**, so nothing has
-signed in yet. That is a dashboard step, not a code step; README has it.
+**`/stock` and `/finances` are now in the guarded-routes list** in `staff.spec.ts`, in French and
+Arabic. They were new routes with layout-level gates and nothing asserting the outer gate held.
+`/finances` is the one that would hurt: it puts what the business earns, per line, on a page.
+
+**The translation sweep was already done.** This file used to claim the Arabic and English
+catalogues were "largely untranslated, the design only ever translated ~17 strings". That describes
+the *design file*, not this repo, and following it would have sent someone into a pointless
+re-translation. Measured across all 707 leaf keys: exactly 5 Arabic values contain no Arabic
+script, and all 5 are correct — the brand name `N&S`, the neon sign (English in the design too), a
+phone placeholder, and two em dashes. 47 English values match the French, and they are words like
+*Services*, *Contact*, *Silhouette*, *Instagram*. What `messages/TRANSLATION_STATUS.md` actually
+asks for is a **native Algerian Arabic review** of register and warmth, plus a check that the
+atelier's trade vocabulary matches what Nour and Sophie already say. Both are human judgements, not
+a coding task.
 
 ---
+
+## What is genuinely left
+
+- **No staff account exists**, so nothing has ever signed in. It is two steps and both are in the
+  README: create the user in the Supabase dashboard, then give them a `public.users` row. Until
+  then, sign-in and cookie refresh are the one part of the stack never exercised against the real
+  thing, and the signed-in console screens have never been driven against a real database.
+- **Real images.** Branded placeholders throughout, never stock photos of another salon.
+- **Meta integration.** Nothing in the core blocks on it: the manual adapter reports
+  `delivered: false` rather than pretending.
+- **The §6 unknowns.** Durations and opening hours are the two that pay for themselves — they flip
+  the booking engine from `mode: 'request'` to real computed slots with no code change.
+  `docs/OPEN_QUESTIONS.md` has the list.
 
 ## Traps that have already cost time
 
@@ -209,13 +230,32 @@ Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" | Where-Object Command
 
 `playwright.config.ts` sets `reuseExistingServer: false` so the e2e suite can never inherit one.
 
-**`npm run e2e` needs a production build first.** It runs `next start`. If you have been running
-`npm run dev`, `.next` holds a dev build and Playwright fails with "Could not find a production
-build". Run `npm run build` first.
+**`npm run e2e` builds for you now, without database credentials.** It runs `scripts/e2e.mjs`,
+which blanks `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` and
+`NEXT_PUBLIC_DEMO_DATA` before `next build`, then runs Playwright. Extra arguments pass straight
+through: `npm run e2e -- --project=desktop e2e/staff.spec.ts`.
 
-**Demo mode breaks the e2e suite.** `NEXT_PUBLIC_DEMO_DATA=1` signs you in, so the ~26
-`staff.spec.ts` tests asserting a signed-out redirect fail and look like a regression. Delete
-`.env.local`, rebuild, then run.
+**Why it does that, and why it is not optional.** The first `npm run e2e` after the Supabase
+project was provisioned **booked three real appointments into the live database**, under a client
+named "Amel B" carrying the salon's own phone number — because `booking.spec.ts` drives the
+booking flow to completion and the build had picked up the real credentials from `.env.local`.
+The rows were deleted; the six `audit_log` entries were deliberately left, because an append-only
+audit trail that gets tidied up when it is inconvenient is not an audit trail.
+
+The docs used to say "delete `.env.local` before running e2e". That was a trap when the only cost
+was a confusing failure. Once a real database existed it became a step whose forgetting writes to
+production, so it is enforced in code instead. A step a human has to remember is not a safeguard.
+
+Blanking has to happen before **build**, not before `next start`: `NEXT_PUBLIC_*` values are
+inlined into the bundles at build time. `@next/env` will not overwrite a key already present in
+`process.env`, and an empty string counts as present — which is what makes the trick work.
+
+**Two e2e assertions describe the degraded mode on purpose.** `staff.spec.ts` asserts the console
+says no database is connected, and `booking.spec.ts` asserts no reference is shown. Both are
+correct *because* the suite builds without credentials, and both would fail against a
+database-backed build — where booking creates a real row and shows its reference. That path is
+proven in `tests/db/booking.test.ts` against real Postgres, where it can be asserted precisely and
+rolled back.
 
 **Prettier is not a dependency of this project.** Running `npx prettier --write` installs it and
 reformats to *its* defaults — double quotes — against the house style, touching every line of
@@ -278,20 +318,3 @@ from `mode: 'request'` to `mode: 'computed'` with no code change.
 
 ---
 
-## Still not done, beyond wave 4–6
-
-- **The database is provisioned, but nobody can sign in yet.** All 20 migrations are applied to a
-  live project in `eu-west-3`, and the public site reads its catalogue from it. What is missing is
-  the **first staff account**: it must be created by hand in the Supabase dashboard and then given
-  a row in `public.users`, because there is deliberately no sign-up screen — the console holds
-  every client's phone number. README has the recipe. Until it exists, sign-in and cookie refresh
-  remain the one part of the stack never exercised against the real thing.
-- **No e2e test covers console booking, or the stock screen.** Both need an authenticated session,
-  and demo mode conflicts with the signed-out assertions. Their logic has database and unit tests;
-  the UI was verified by hand. Worth solving properly in wave 6 — and note what it would have
-  caught: the `'use server'` export bug above made every management write answer 500 while every
-  test stayed green, because nothing exercised a form submission end to end.
-- **Arabic and English catalogues are largely untranslated** — the design only ever translated
-  ~17 strings. See `messages/TRANSLATION_STATUS.md`. New copy added since is real in all three,
-  but the older bulk is not.
-- **No real images.** Branded placeholders throughout, never stock photos of another salon.

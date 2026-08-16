@@ -47,7 +47,7 @@ npm start            # serve the build
 npm run lint         # eslint
 npm run typecheck    # tsc --noEmit
 npm test             # vitest — unit + real-Postgres schema tests
-npm run e2e          # playwright (runs `next build` output; run `npm run build` first)
+npm run e2e          # playwright — builds for you, deliberately without database credentials
 ```
 
 `npx playwright install chromium` once, before the first `npm run e2e`.
@@ -78,6 +78,7 @@ messages/                         fr / ar / en catalogues + TRANSLATION_STATUS.m
 supabase/migrations/              15 migrations — schema, RLS, seed, booking, atelier, inbox
 tests/                            unit tests + tests/db (real Postgres via PGlite)
 e2e/                              Playwright: booking, gowns, sections, tokens, staff boundary
+scripts/e2e.mjs                   builds + runs Playwright with no database credentials, on purpose
 ```
 
 ---
@@ -92,10 +93,10 @@ e2e/                              Playwright: booking, gowns, sections, tokens, 
 | 4 — Bridal atelier (staff) | **Done** |
 | 5 — Staff console | **Done** |
 | 6 — CRM, inbox, brand deals | **Done** |
-| 7 — Management console (not in the brief) | **In progress — 5 of 6 waves** |
+| 7 — Management console (not in the brief) | **Done — all 6 waves** |
 
 All six brief phases are built. Verified at the last commit: lint clean, typecheck clean,
-**352 unit tests**, **50 Playwright tests**, production build green.
+**359 unit tests**, **56 Playwright tests**, production build green.
 
 Phase 7 does not come from `BUILD_BRIEF.md`. It comes from a direct instruction to make the
 console the place the sisters run the whole business from — create, update and delete anything;
@@ -306,10 +307,13 @@ This is §14's "seed realistically — an empty app cannot be evaluated", not a 
 records are invented; no business fact is. An appointment whose tariff entry is a range still has
 no settled price, and a pitched deal still has no agreed fee.
 
-**Turn it off before running `npm run e2e`.** `e2e/staff.spec.ts` asserts that the console
-redirects to sign-in when signed out; demo mode signs you in, so those ~26 tests fail and look
-like a regression. Remove `.env.local`, rebuild, then run. The three `atelier.spec.ts` tests are
-the mirror image — they skip without demo mode, because there is no console to assert on.
+**`npm run e2e` turns it off for you**, along with the Supabase credentials — `scripts/e2e.mjs`
+blanks all three before building. That is not tidiness: the first e2e run after the database was
+provisioned booked three real appointments into it, because `booking.spec.ts` drives the booking
+flow to completion and the build had picked up the live credentials. Demo mode would break the
+suite differently, by signing you in so every signed-out assertion fails. Both failure modes are
+now impossible rather than documented. The three `atelier.spec.ts` tests skip without demo mode,
+because there is no console to assert on.
 
 ## Before you write code
 
