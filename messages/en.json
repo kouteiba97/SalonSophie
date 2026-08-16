@@ -534,7 +534,8 @@
       "reference": "Reference",
       "noService": "Service not specified",
       "requestNote": "This request holds no slot: the service duration is unknown. Confirm it with the client.",
-      "whatsapp": "Message on WhatsApp"
+      "whatsapp": "Message on WhatsApp",
+      "close": "Close"
     },
     "kpis": {
       "revenue": "Expected revenue",

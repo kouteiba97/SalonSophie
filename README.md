@@ -249,6 +249,11 @@ This is §14's "seed realistically — an empty app cannot be evaluated", not a 
 records are invented; no business fact is. An appointment whose tariff entry is a range still has
 no settled price, and a pitched deal still has no agreed fee.
 
+**Turn it off before running `npm run e2e`.** `e2e/staff.spec.ts` asserts that the console
+redirects to sign-in when signed out; demo mode signs you in, so those ~26 tests fail and look
+like a regression. Remove `.env.local`, rebuild, then run. The three `atelier.spec.ts` tests are
+the mirror image — they skip without demo mode, because there is no console to assert on.
+
 ## Before you write code
 
 Read **`docs/OPEN_QUESTIONS.md`**. Several business rules are genuinely unknown — opening hours,

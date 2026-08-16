@@ -5,12 +5,13 @@ import type { ReactNode } from 'react';
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { WhatsApp } from '@/components/common/icons';
+import { Close, WhatsApp } from '@/components/common/icons';
 import { formatMinute, isRequest, type ConsoleAppointment } from '@/lib/console/day-line';
 import { usePrice } from '@/lib/use-price';
 
@@ -49,14 +50,34 @@ export function AppointmentDetail({
         </button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-[480px]">
-        <div className="flex flex-col gap-1">
-          <DialogTitle className="font-display text-[24px] font-light text-charcoal">
-            {appointment.clientName}
-          </DialogTitle>
-          <DialogDescription className="text-[13px] text-ink-2">
-            {appointment.serviceName ?? appointment.gownName ?? t('noService')}
-          </DialogDescription>
+      {/*
+        DialogContent carries no padding of its own — the booking modal pads each of its sections
+        so it can put a full-bleed progress bar between them. This panel is a single block, so it
+        supplies its own. Without it the values sat exactly 0px from the right edge and the
+        WhatsApp button flush against the bottom, which read as clipped content.
+      */}
+      <DialogContent className="max-w-[480px] gap-5 p-6 sm:w-[min(480px,calc(100vw-32px))]">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 flex-col gap-1">
+            <DialogTitle className="font-display text-[24px] font-light text-charcoal">
+              {appointment.clientName}
+            </DialogTitle>
+            <DialogDescription className="text-[13px] text-ink-2">
+              {appointment.serviceName ?? appointment.gownName ?? t('noService')}
+            </DialogDescription>
+          </div>
+
+          {/*
+            Escape and an overlay click already close this, but neither is discoverable. A visible
+            control is the difference between a panel someone can dismiss and one they can only
+            guess at — and on a touch screen at the desk there is no Escape key at all.
+          */}
+          <DialogClose
+            aria-label={t('close')}
+            className="grid size-9 shrink-0 cursor-pointer place-items-center rounded-full border border-rose-soft/45 text-ink-2 transition-colors hover:border-rose-deep hover:text-rose-deep"
+          >
+            <Close className="size-4" />
+          </DialogClose>
         </div>
 
         <dl className="flex flex-col gap-2.5 text-[14px]">

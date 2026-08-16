@@ -534,7 +534,8 @@
       "reference": "Référence",
       "noService": "Prestation non précisée",
       "requestNote": "Cette demande ne bloque aucun créneau : la durée de la prestation n’est pas connue. À confirmer avec la cliente.",
-      "whatsapp": "Écrire sur WhatsApp"
+      "whatsapp": "Écrire sur WhatsApp",
+      "close": "Fermer"
     },
     "kpis": {
       "revenue": "Recettes prévues",
