@@ -17,10 +17,13 @@ const GUARDED = [
   '/fr/aujourdhui',
   '/fr/clients',
   '/fr/prestations',
+  '/fr/messages',
+  '/fr/collaborations',
   '/fr/atelier',
   '/fr/atelier/reservations',
   '/fr/atelier/robes/anastasia',
   '/ar/aujourdhui',
+  '/ar/messages',
   '/ar/atelier',
   '/en/atelier',
 ];

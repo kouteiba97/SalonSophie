@@ -23,16 +23,19 @@ import { cn } from '@/lib/utils';
 
 interface Item {
   href: string;
-  labelKey: 'today' | 'atelier' | 'clients' | 'prestations';
+  labelKey: 'today' | 'inbox' | 'atelier' | 'clients' | 'prestations' | 'deals';
   /** Roles that get anything useful from the screen. */
   roles: StaffRole[];
 }
 
 const ITEMS: Item[] = [
   { href: '/aujourdhui', labelKey: 'today', roles: ['owner', 'reception', 'stylist'] },
+  { href: '/messages', labelKey: 'inbox', roles: ['owner', 'reception'] },
   { href: '/atelier', labelKey: 'atelier', roles: ['owner', 'reception'] },
   { href: '/clients', labelKey: 'clients', roles: ['owner', 'reception', 'stylist'] },
   { href: '/prestations', labelKey: 'prestations', roles: ['owner', 'reception', 'stylist'] },
+  // The line non-negotiable #5 names outright: reception can't see brand deals.
+  { href: '/collaborations', labelKey: 'deals', roles: ['owner'] },
 ];
 
 export function ConsoleSidebar({
