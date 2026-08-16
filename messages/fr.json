@@ -679,6 +679,66 @@
     "demo": {
       "label": "Données de démonstration",
       "body": "Clientes, rendez-vous, messages et collaborations fictifs, générés pour évaluer la console. Aucun de ces chiffres n’est réel. Ils disparaissent dès qu’une base de données est connectée."
+    },
+    "manage": {
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré",
+      "cancel": "Annuler",
+      "edit": "Modifier",
+      "archive": "Archiver",
+      "restore": "Réactiver",
+      "archived": "Archivée",
+      "newService": "Nouvelle prestation",
+      "duration": "Durée (min)",
+      "durationUnknown": "Non renseignée",
+      "buffer": "Battement (min)",
+      "priceKind": "Type de tarif",
+      "priceMin": "Prix",
+      "priceMax": "Prix max",
+      "name": "Nom",
+      "category": "Catégorie",
+      "active": "Active",
+      "kinds": {
+        "fixed": "Fixe",
+        "range": "Fourchette",
+        "from": "À partir de",
+        "addon": "Supplément",
+        "free": "Offert"
+      },
+      "hoursTitle": "Horaires d’ouverture",
+      "hoursLead": "Sans horaires, le moteur de disponibilité ne peut proposer aucun créneau : chaque réservation reste une demande à confirmer.",
+      "closed": "Fermé",
+      "opens": "Ouvre",
+      "closes": "Ferme",
+      "weekdays": [
+        "Dimanche",
+        "Lundi",
+        "Mardi",
+        "Mercredi",
+        "Jeudi",
+        "Vendredi",
+        "Samedi"
+      ],
+      "gapsTitle": "Ce qui manque encore",
+      "gapDuration": "{count, plural, one {# prestation sans durée} other {# prestations sans durée}}",
+      "gapHours": "Horaires d’ouverture non renseignés",
+      "gapGownPrice": "{count, plural, one {# robe sans tarif} other {# robes sans tarif}}",
+      "errors": {
+        "forbidden": "Seules Nour et Sophie peuvent modifier cela.",
+        "invalid": "Vérifiez les champs saisis.",
+        "invalid_range": "Une fourchette a besoin d’un maximum supérieur au minimum.",
+        "price_required": "Ce type de tarif demande un prix.",
+        "free_has_price": "Une prestation offerte ne porte pas de prix.",
+        "unknown_category": "Catégorie inconnue.",
+        "unknown_product": "Produit inconnu.",
+        "not_found": "Introuvable.",
+        "hours_incomplete": "Un jour ouvert a besoin d’une heure d’ouverture et de fermeture.",
+        "hours_backwards": "L’heure de fermeture doit suivre l’ouverture.",
+        "invalid_quantity": "La quantité doit être supérieure à zéro.",
+        "not_configured": "Aucune base de données connectée.",
+        "unavailable": "Enregistrement impossible pour le moment."
+      }
     }
   }
 }

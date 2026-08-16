@@ -679,6 +679,66 @@
     "demo": {
       "label": "Demonstration data",
       "body": "Fictional clients, appointments, messages and collaborations, generated so the console can be evaluated. None of these figures is real. They disappear as soon as a database is connected."
+    },
+    "manage": {
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "archive": "Archive",
+      "restore": "Restore",
+      "archived": "Archived",
+      "newService": "New service",
+      "duration": "Duration (min)",
+      "durationUnknown": "Not set",
+      "buffer": "Buffer (min)",
+      "priceKind": "Price type",
+      "priceMin": "Price",
+      "priceMax": "Max price",
+      "name": "Name",
+      "category": "Category",
+      "active": "Active",
+      "kinds": {
+        "fixed": "Fixed",
+        "range": "Range",
+        "from": "From",
+        "addon": "Add-on",
+        "free": "Free"
+      },
+      "hoursTitle": "Opening hours",
+      "hoursLead": "Without hours the availability engine cannot offer a single slot, so every booking stays a request to confirm.",
+      "closed": "Closed",
+      "opens": "Opens",
+      "closes": "Closes",
+      "weekdays": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "gapsTitle": "Still missing",
+      "gapDuration": "{count, plural, one {# service with no duration} other {# services with no duration}}",
+      "gapHours": "Opening hours not set",
+      "gapGownPrice": "{count, plural, one {# gown with no price} other {# gowns with no price}}",
+      "errors": {
+        "forbidden": "Only Nour and Sophie can change this.",
+        "invalid": "Check the fields above.",
+        "invalid_range": "A range needs a maximum above the minimum.",
+        "price_required": "This price type needs an amount.",
+        "free_has_price": "A free service carries no price.",
+        "unknown_category": "Unknown category.",
+        "unknown_product": "Unknown product.",
+        "not_found": "Not found.",
+        "hours_incomplete": "An open day needs an opening and a closing time.",
+        "hours_backwards": "Closing must come after opening.",
+        "invalid_quantity": "Quantity must be above zero.",
+        "not_configured": "No database connected.",
+        "unavailable": "Could not save right now."
+      }
     }
   }
 }
