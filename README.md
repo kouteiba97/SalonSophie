@@ -87,9 +87,9 @@ e2e/                              Playwright: booking, gowns, sections, tokens, 
 | Phase | Status |
 |---|---|
 | 1 — Public site, routing, i18n, booking UI | **Done** |
-| 2 — Supabase schema, auth, RLS, seed | **Done, not yet applied to any database** |
+| 2 — Supabase schema, auth, RLS, seed | **Done, applied to a live project** |
 | 3 — Availability engine, server-side booking, notifications | **Done** |
-| 4 — Bridal atelier (staff) | **Done, unverifiable against a live database** |
+| 4 — Bridal atelier (staff) | **Done** |
 | 5 — Staff console | **Done** |
 | 6 — CRM, inbox, brand deals | **Done** |
 | 7 — Management console (not in the brief) | **In progress — 5 of 6 waves** |
@@ -160,11 +160,11 @@ Reception can read the atelier and cannot write to it. That is not a UI decision
 `security definer` so the policy is what actually refuses the write. A definer function would
 have handed reception the owner's permissions and left the policies in place looking correct.
 
-**The whole surface is untested against a live Supabase project, because none exists.** The
-database logic is proven — 29 tests run the real migrations against real Postgres via PGlite,
-including the double-booking constraint and each RLS boundary — but sign-in, cookie refresh and
-PostgREST's own error shapes have never run against the real thing. Expect to fix something on
-the day the project is provisioned.
+**The schema now runs on a live Supabase project**, and the public site reads its catalogue from
+it. The double-booking constraint was re-proven there, not just in PGlite: overlapping and
+contained ranges rejected, adjacent allowed, a cancelled reservation holding nothing. What is
+still unexercised against the real thing is **sign-in and cookie refresh**, because no staff
+account exists yet — see "Creating the first staff login" below.
 
 ### What Phase 5 shipped
 
@@ -218,10 +218,14 @@ unbranded, so `isTodo` returned false and the booking modal rendered gowns with 
 while the card behind it said "Sur devis". The brand is now a string, and a test asserts the
 round-trip.
 
-### The database is written but not provisioned
+### The database is provisioned
 
-No Supabase project exists yet. The migrations are complete and tested — against real Postgres,
-not a mock — but have never been applied to a remote database. To provision:
+All 20 migrations have been applied to a live Supabase project in `eu-west-3` (Paris — the closest
+region to Constantine). 39 tables, RLS forced on every one of them, 65 policies, the real §6 tariff
+seeded, and `business_hours` deliberately empty because the hours are still unknown.
+
+Migrations remain the source of truth. To provision a **second** environment (staging, or a
+replacement project):
 
 1. Create a Supabase project.
 2. Apply `supabase/migrations/*.sql` in filename order (Supabase CLI, or paste into the SQL

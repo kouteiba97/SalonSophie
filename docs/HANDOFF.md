@@ -1,6 +1,7 @@
 # Handoff — resume here
 
-Last worked: **16 August 2026**, after wave 4. Everything is pushed to `main`.
+Last worked: **16 August 2026**, after wave 5 and the first live database. Everything is pushed
+to `main`.
 Working tree clean; nothing is half-finished on disk.
 
 This file says **where the work stopped and what comes next**. It does not repeat the README
@@ -18,18 +19,30 @@ npm install
 npm run dev
 ```
 
-That is genuinely all. There is **no `.env` to recreate** and no database to connect — the app
-reads its catalogue from a committed seed when Supabase is absent, so a fresh clone shows a
-client the real tariff on first run. Node 20+.
+That is genuinely all. `.env.local` is gitignored, so a fresh clone has no credentials — and the
+app reads its catalogue from a committed seed when Supabase is absent, so it still shows a client
+the real tariff on first run. Node 20+.
 
-To look at the staff console, create `.env.local` with one line:
+**A live Supabase project now exists** (`ns-beauty`, `eu-west-3`). To point a machine at it, put
+its URL and **anon** key in `.env.local`:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon key>
+```
+
+Both are in the Supabase dashboard under Settings → API. The service-role key is never needed by
+this app and must never appear in a `NEXT_PUBLIC_` variable.
+
+To look at the staff console **without** a database, use one line instead:
 
 ```
 NEXT_PUBLIC_DEMO_DATA=1
 ```
 
-Sign-in is bypassed and the console fills with example records. **Delete it before
-`npm run e2e`** — see the trap list below.
+Sign-in is bypassed and the console fills with example records. It is inert once the Supabase URL
+is set — real data wins unconditionally. **Delete the file before `npm run e2e`** — see the trap
+list below.
 
 Verify the checkout is sound:
 
@@ -49,7 +62,7 @@ direct instruction to turn the console into something the sisters run the whole 
 add, update and delete anything; track products and stock; follow the money and see which of the
 three businesses earns most.
 
-Phase 7 is being built in waves. Four have landed.
+Phase 7 is being built in waves. Five have landed.
 
 | Wave | What | State |
 |---|---|---|
@@ -177,8 +190,9 @@ The last wave: **verification, not features**.
 3. **Full verification.** Arabic first on every screen, then English. `npm run build` before
    `npm run e2e`, and delete `.env.local` first.
 
-Then the remaining non-wave work is provisioning: no Supabase project exists, so every migration
-is written and tested but has never run against a remote database. README has the steps.
+Provisioning is done — the schema runs on a live project and the public site reads from it. The
+one thing still blocking a full end-to-end pass is that **no staff account exists**, so nothing has
+signed in yet. That is a dashboard step, not a code step; README has it.
 
 ---
 
@@ -266,8 +280,12 @@ from `mode: 'request'` to `mode: 'computed'` with no code change.
 
 ## Still not done, beyond wave 4–6
 
-- **No Supabase project exists.** Every migration is written and tested but has never been
-  applied to a remote database. README has the provisioning steps and the first-login recipe.
+- **The database is provisioned, but nobody can sign in yet.** All 20 migrations are applied to a
+  live project in `eu-west-3`, and the public site reads its catalogue from it. What is missing is
+  the **first staff account**: it must be created by hand in the Supabase dashboard and then given
+  a row in `public.users`, because there is deliberately no sign-up screen — the console holds
+  every client's phone number. README has the recipe. Until it exists, sign-in and cookie refresh
+  remain the one part of the stack never exercised against the real thing.
 - **No e2e test covers console booking, or the stock screen.** Both need an authenticated session,
   and demo mode conflicts with the signed-out assertions. Their logic has database and unit tests;
   the UI was verified by hand. Worth solving properly in wave 6 — and note what it would have
