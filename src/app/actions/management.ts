@@ -43,8 +43,6 @@ export type ManagementState =
   | { status: 'success'; message?: string }
   | { status: 'error'; error: ManagementError; field?: string };
 
-const IDLE: ManagementState = { status: 'idle' };
-
 function classify(message: string): ManagementState {
   const named: [string, ManagementError][] = [
     ['service_invalid_range', 'invalid_range'],
@@ -86,11 +84,22 @@ function revalidateConsole() {
   }
 }
 
-/** Owner-only guard shared by every action below. */
+/**
+ * Owner-only guard shared by every action below.
+ *
+ * Returns *which* thing was missing, rather than a bare null. Collapsing both cases told an owner
+ * "only Nour and Sophie can change this" when the real answer was that no database is connected —
+ * an error that sends someone hunting for a permissions problem they do not have. An error should
+ * say what to do next, and those two say opposite things.
+ */
 async function requireOwner() {
   const session = await getStaffSession();
-  if (!session || !isOwner(session)) return null;
-  return getSupabaseSessionClient();
+  if (!session || !isOwner(session)) return { supabase: null, error: 'forbidden' as const };
+
+  const supabase = await getSupabaseSessionClient();
+  if (!supabase) return { supabase: null, error: 'not_configured' as const };
+
+  return { supabase, error: null };
 }
 
 /* ── the tariff ───────────────────────────────────────────────────────────────────────────── */
@@ -123,8 +132,9 @@ export async function saveService(
     return { status: 'error', error: mapped ?? 'invalid', field: issue?.path.join('.') };
   }
 
-  const supabase = await requireOwner();
-  if (!supabase) return { status: 'error', error: 'forbidden' };
+  const owner = await requireOwner();
+  if (!owner.supabase) return { status: 'error', error: owner.error };
+  const supabase = owner.supabase;
 
   const d = parsed.data;
   const { error } = await callRpc<string>(supabase, 'upsert_service', {
@@ -151,8 +161,9 @@ export async function archiveService(
   const slug = String(formData.get('slug') ?? '');
   if (!slug) return { status: 'error', error: 'invalid', field: 'slug' };
 
-  const supabase = await requireOwner();
-  if (!supabase) return { status: 'error', error: 'forbidden' };
+  const owner = await requireOwner();
+  if (!owner.supabase) return { status: 'error', error: owner.error };
+  const supabase = owner.supabase;
 
   const { error } = await callRpc<null>(supabase, 'archive_service', {
     p_slug: slug,
@@ -178,8 +189,9 @@ export async function saveCategory(
     return { status: 'error', error: 'invalid', field: parsed.error.issues[0]?.path.join('.') };
   }
 
-  const supabase = await requireOwner();
-  if (!supabase) return { status: 'error', error: 'forbidden' };
+  const owner = await requireOwner();
+  if (!owner.supabase) return { status: 'error', error: owner.error };
+  const supabase = owner.supabase;
 
   const { error } = await callRpc<string>(supabase, 'upsert_category', {
     p_slug: parsed.data.slug,
@@ -213,8 +225,9 @@ export async function saveOpeningHours(
     return { status: 'error', error: 'hours_incomplete', field: issue?.path.join('.') };
   }
 
-  const supabase = await requireOwner();
-  if (!supabase) return { status: 'error', error: 'forbidden' };
+  const owner = await requireOwner();
+  if (!owner.supabase) return { status: 'error', error: owner.error };
+  const supabase = owner.supabase;
 
   const { error } = await callRpc<number>(supabase, 'set_business_hours', {
     p_days: parsed.data.map((d) => ({
@@ -251,8 +264,9 @@ export async function saveProduct(
     return { status: 'error', error: 'invalid', field: parsed.error.issues[0]?.path.join('.') };
   }
 
-  const supabase = await requireOwner();
-  if (!supabase) return { status: 'error', error: 'forbidden' };
+  const owner = await requireOwner();
+  if (!owner.supabase) return { status: 'error', error: owner.error };
+  const supabase = owner.supabase;
 
   const d = parsed.data;
   const { error } = await callRpc<string>(supabase, 'upsert_product', {
@@ -332,8 +346,9 @@ export async function recordExpense(
     return { status: 'error', error: 'invalid', field: parsed.error.issues[0]?.path.join('.') };
   }
 
-  const supabase = await requireOwner();
-  if (!supabase) return { status: 'error', error: 'forbidden' };
+  const owner = await requireOwner();
+  if (!owner.supabase) return { status: 'error', error: owner.error };
+  const supabase = owner.supabase;
 
   const d = parsed.data;
   const { error } = await callRpc<string>(supabase, 'record_expense', {
@@ -350,4 +365,12 @@ export async function recordExpense(
   return { status: 'success' };
 }
 
-export { IDLE as managementIdleState };
+/*
+ * Nothing else is exported from this file, and nothing else may be.
+ *
+ * A `'use server'` module may only export async functions: Next builds a client-callable entry
+ * from *every* export, and a plain object among them throws "A 'use server' file can only export
+ * async functions" — at request time, not at build time. An unused `managementIdleState` constant
+ * sat here and made every write on this file answer 500, which looked like a broken screen rather
+ * than a broken export. Shared constants belong in `src/lib/management/`.
+ */
