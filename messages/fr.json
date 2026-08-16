@@ -739,6 +739,58 @@
         "not_configured": "Aucune base de données connectée.",
         "unavailable": "Enregistrement impossible pour le moment."
       }
+    },
+    "newAppointment": {
+      "open": "Nouveau rendez-vous",
+      "title": "Nouveau rendez-vous",
+      "step": "Étape {current} sur 4",
+      "stepAnnounce": "Étape {current} sur 4 : {title}",
+      "steps": {
+        "line": "Le pôle",
+        "service": "La prestation",
+        "staff": "L’experte",
+        "details": "Créneau & cliente"
+      },
+      "lines": {
+        "salon": "Salon",
+        "bridal": "Mariée",
+        "makeup": "Maquillage"
+      },
+      "anyStaff": "Sans préférence",
+      "back": "Retour",
+      "next": "Continuer",
+      "confirm": "Enregistrer le rendez-vous",
+      "submitting": "Enregistrement…",
+      "close": "Fermer",
+      "date": "Date",
+      "time": "Heure",
+      "notes": "Note (optionnel)",
+      "clientSearch": "Chercher une cliente",
+      "clientSearchHint": "Nom ou numéro — deux caractères suffisent.",
+      "newClient": "Nouvelle cliente",
+      "clientName": "Nom complet",
+      "clientPhone": "Téléphone",
+      "visits": "{count, plural, =0 {jamais venue} one {# visite} other {# visites}}",
+      "chosen": "Cliente choisie",
+      "change": "Changer",
+      "bookedTitle": "Rendez-vous enregistré",
+      "requestTitle": "Demande enregistrée",
+      "requestNote": "La prestation n’a pas de durée renseignée : aucun créneau n’est bloqué. À confirmer avec la cliente.",
+      "reference": "Référence {ref}",
+      "another": "En enregistrer un autre",
+      "noDuration": "Sans durée renseignée — sera enregistré comme demande.",
+      "errors": {
+        "forbidden": "Vous n’avez pas le droit d’enregistrer un rendez-vous.",
+        "not_configured": "Aucune base de données connectée.",
+        "invalid": "Vérifiez les champs saisis.",
+        "invalid_phone": "Un mobile algérien commence par 05, 06 ou 07 et compte 10 chiffres.",
+        "invalid_name": "Le nom de la cliente est nécessaire.",
+        "slot_taken": "Ce créneau vient d’être pris. Choisissez-en un autre.",
+        "unknown_service": "Prestation inconnue.",
+        "unknown_staff": "Experte inconnue.",
+        "unavailable": "Enregistrement impossible pour le moment."
+      },
+      "noDurationAll": "Aucune durée n’est renseignée pour le moment (§6) : ces rendez-vous seront enregistrés comme demandes, sans bloquer de créneau."
     }
   }
 }

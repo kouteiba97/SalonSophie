@@ -739,6 +739,58 @@
         "not_configured": "No database connected.",
         "unavailable": "Could not save right now."
       }
+    },
+    "newAppointment": {
+      "open": "New appointment",
+      "title": "New appointment",
+      "step": "Step {current} of 4",
+      "stepAnnounce": "Step {current} of 4: {title}",
+      "steps": {
+        "line": "Business line",
+        "service": "Service",
+        "staff": "Expert",
+        "details": "Slot & client"
+      },
+      "lines": {
+        "salon": "Salon",
+        "bridal": "Bridal",
+        "makeup": "Make-up"
+      },
+      "anyStaff": "No preference",
+      "back": "Back",
+      "next": "Continue",
+      "confirm": "Save appointment",
+      "submitting": "Saving…",
+      "close": "Close",
+      "date": "Date",
+      "time": "Time",
+      "notes": "Note (optional)",
+      "clientSearch": "Find a client",
+      "clientSearchHint": "Name or number — two characters is enough.",
+      "newClient": "New client",
+      "clientName": "Full name",
+      "clientPhone": "Phone",
+      "visits": "{count, plural, =0 {never visited} one {# visit} other {# visits}}",
+      "chosen": "Client chosen",
+      "change": "Change",
+      "bookedTitle": "Appointment saved",
+      "requestTitle": "Request saved",
+      "requestNote": "The service has no duration set, so no slot is held. Confirm with the client.",
+      "reference": "Reference {ref}",
+      "another": "Save another",
+      "noDuration": "No duration set — this will be saved as a request.",
+      "errors": {
+        "forbidden": "You are not allowed to save an appointment.",
+        "not_configured": "No database connected.",
+        "invalid": "Check the fields above.",
+        "invalid_phone": "An Algerian mobile starts with 05, 06 or 07 and has 10 digits.",
+        "invalid_name": "The client name is required.",
+        "slot_taken": "That slot has just been taken. Pick another.",
+        "unknown_service": "Unknown service.",
+        "unknown_staff": "Unknown expert.",
+        "unavailable": "Could not save right now."
+      },
+      "noDurationAll": "No durations are set yet (§6): these will be saved as requests and will not hold a slot."
     }
   }
 }

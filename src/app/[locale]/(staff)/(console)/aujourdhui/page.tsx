@@ -3,8 +3,11 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { DayLine } from '@/components/staff/DayLine';
 import { KpiCards } from '@/components/staff/KpiCards';
+import { NewAppointmentModal } from '@/components/staff/NewAppointmentModal';
+import { getCatalogue } from '@/data/catalogue';
 import { Link } from '@/i18n/navigation';
 import { INTL_TAG, type Locale } from '@/i18n/routing';
+import { getStaffSession, isFrontDesk } from '@/lib/auth';
 import { dayWindow } from '@/lib/console/day-line';
 import { dayKpis } from '@/lib/console/kpis';
 import {
@@ -51,12 +54,15 @@ export default async function TodayPage({
   const today = new Intl.DateTimeFormat('en-CA', { timeZone: SALON_TIME_ZONE }).format(new Date());
   const day = jour && ISO_DATE.test(jour) ? jour : today;
 
-  const [appointments, openings, gownsOut, unansweredMessages] = await Promise.all([
-    getDayAppointments(day),
-    getOpeningWindows(day),
-    getGownsOut(day),
-    getUnansweredMessages(),
-  ]);
+  const [appointments, openings, gownsOut, unansweredMessages, catalogue, session] =
+    await Promise.all([
+      getDayAppointments(day),
+      getOpeningWindows(day),
+      getGownsOut(day),
+      getUnansweredMessages(),
+      getCatalogue(),
+      getStaffSession(),
+    ]);
 
   const window = dayWindow(openings, appointments);
   const kpis = dayKpis({ appointments, gownsOut, unansweredMessages });
@@ -84,12 +90,23 @@ export default async function TodayPage({
           <p className="text-[14px] text-ink-2 first-letter:uppercase">{heading}</p>
         </div>
 
-        {/* Real links, so a particular day can be sent to somebody. */}
-        <nav aria-label={t('dateNav')} className="flex items-center gap-2">
-          <DayLink href={`/aujourdhui?jour=${shift(-1)}`} label={t('previous')} />
-          {day !== today ? <DayLink href="/aujourdhui" label={t('backToToday')} /> : null}
-          <DayLink href={`/aujourdhui?jour=${shift(1)}`} label={t('next')} />
-        </nav>
+        <div className="flex items-center gap-3">
+          {/* Real links, so a particular day can be sent to somebody. */}
+          <nav aria-label={t('dateNav')} className="flex items-center gap-2">
+            <DayLink href={`/aujourdhui?jour=${shift(-1)}`} label={t('previous')} />
+            {day !== today ? <DayLink href="/aujourdhui" label={t('backToToday')} /> : null}
+            <DayLink href={`/aujourdhui?jour=${shift(1)}`} label={t('next')} />
+          </nav>
+
+          {/*
+           * Hidden from a stylist because §7 gives them their own day, not the front desk's.
+           * That is a courtesy, not the boundary: `book_appointment_as_staff` is SECURITY
+           * INVOKER, so `appointments_front_desk_write` refuses them even if they reach it.
+           */}
+          {isFrontDesk(session) ? (
+            <NewAppointmentModal services={catalogue.services} today={day} />
+          ) : null}
+        </div>
       </header>
 
       <KpiCards kpis={kpis} />
