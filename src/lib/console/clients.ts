@@ -2,6 +2,7 @@ import 'server-only';
 import { cache } from 'react';
 import type { Centimes } from '@/lib/money';
 import { getSupabaseSessionClient } from '@/lib/supabase/session';
+import { demoClient, demoClients, isDemoMode } from './demo';
 
 /**
  * The clients list — §13: "unified list across all three business lines, with a bride flag,
@@ -102,6 +103,8 @@ interface ClientDetailRow {
  * reservations. Failing one must not blank the page.
  */
 export const getClient = cache(async (id: string): Promise<ClientDetail | null> => {
+  if (isDemoMode()) return demoClient(id);
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return null;
 
@@ -191,6 +194,19 @@ export const getClient = cache(async (id: string): Promise<ClientDetail | null> 
 
 export const getClients = cache(
   async (search: string | null): Promise<{ clients: ConsoleClient[]; spendVisible: boolean }> => {
+    if (isDemoMode()) {
+      const all = demoClients();
+      const needle = search?.toLowerCase() ?? null;
+      return {
+        clients: needle
+          ? all.filter(
+              (c) => c.fullName.toLowerCase().includes(needle) || c.phone.includes(needle),
+            )
+          : all,
+        spendVisible: true,
+      };
+    }
+
     const supabase = await getSupabaseSessionClient();
     if (!supabase) return { clients: [], spendVisible: false };
 

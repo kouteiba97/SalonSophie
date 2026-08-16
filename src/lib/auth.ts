@@ -1,5 +1,6 @@
 import 'server-only';
 import { cache } from 'react';
+import { isDemoMode } from '@/lib/console/demo';
 import { getSupabaseSessionClient, isAuthConfigured } from '@/lib/supabase/session';
 
 /**
@@ -45,6 +46,18 @@ interface StaffRow {
  * "who is this?" cost one round trip rather than five.
  */
 export const getStaffSession = cache(async (): Promise<StaffSession | null> => {
+  /*
+   * Demo mode signs you in as an owner without an auth server.
+   *
+   * Safe because `isDemoMode()` requires the *absence* of a configured database: there is no
+   * real client data for this session to reach, because there is no data. The moment Supabase
+   * credentials exist the flag stops having any effect, and this branch is unreachable.
+   */
+  if (isDemoMode()) {
+    const { DEMO_SESSION } = await import('@/lib/console/demo');
+    return DEMO_SESSION;
+  }
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return null;
 

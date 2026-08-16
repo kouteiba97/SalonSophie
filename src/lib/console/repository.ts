@@ -5,6 +5,13 @@ import type { BusinessHoursRow } from '@/lib/supabase/types';
 import type { IsoDate } from '@/lib/datetime';
 import { SALON_TIME_ZONE } from '@/lib/datetime';
 import type { AppointmentStatus, BusinessLine, ConsoleAppointment, OpeningWindow } from './day-line';
+import {
+  DEMO_GOWNS_OUT,
+  demoAppointments,
+  demoOpeningWindows,
+  demoUnansweredCount,
+  isDemoMode,
+} from './demo';
 
 /**
  * Feeds the console from the database, as the signed-in staff member.
@@ -110,6 +117,8 @@ function mapAppointment(row: AppointmentRow, day: IsoDate): ConsoleAppointment |
  * happen against instants because that is what the column stores.
  */
 export const getDayAppointments = cache(async (day: IsoDate): Promise<ConsoleAppointment[]> => {
+  if (isDemoMode()) return demoAppointments(day);
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return [];
 
@@ -148,6 +157,8 @@ export const getDayAppointments = cache(async (day: IsoDate): Promise<ConsoleApp
 
 /** Opening hours for a weekday, plus any exception that overrides them for this exact date. */
 export const getOpeningWindows = cache(async (day: IsoDate): Promise<OpeningWindow[]> => {
+  if (isDemoMode()) return demoOpeningWindows();
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return [];
 
@@ -192,6 +203,8 @@ export const getOpeningWindows = cache(async (day: IsoDate): Promise<OpeningWind
 
 /** Gowns physically out on a given day — one of the four KPI cards. */
 export const getGownsOut = cache(async (day: IsoDate): Promise<number> => {
+  if (isDemoMode()) return DEMO_GOWNS_OUT;
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return 0;
 
@@ -226,6 +239,8 @@ export const getGownsOut = cache(async (day: IsoDate): Promise<number> => {
  * the day the inbox does.
  */
 export const getUnansweredMessages = cache(async (): Promise<number> => {
+  if (isDemoMode()) return demoUnansweredCount();
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return 0;
 

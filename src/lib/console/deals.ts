@@ -2,6 +2,7 @@ import 'server-only';
 import { cache } from 'react';
 import { getSupabaseSessionClient } from '@/lib/supabase/session';
 import type { Deal, DealStage } from './deal-types';
+import { demoDeals, isDemoMode } from './demo';
 
 /**
  * Sophie's creator business — §13's four-column kanban, read from the database.
@@ -28,6 +29,8 @@ interface DealRow {
 }
 
 export const getDeals = cache(async (): Promise<Deal[]> => {
+  if (isDemoMode()) return demoDeals();
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return [];
 

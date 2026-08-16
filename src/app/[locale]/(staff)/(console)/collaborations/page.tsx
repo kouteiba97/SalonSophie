@@ -8,7 +8,7 @@ import type { Locale } from '@/i18n/routing';
 import { getStaffSession, isOwner } from '@/lib/auth';
 import { byStage, DEAL_STAGES, pipelineValue, type Deal } from '@/lib/console/deal-types';
 import { getDeals } from '@/lib/console/deals';
-import { isAuthConfigured } from '@/lib/supabase/session';
+import { hasConsoleData } from '@/lib/console/demo';
 import { usePrice } from '@/lib/use-price';
 
 /**
@@ -65,7 +65,7 @@ export default async function CollaborationsPage({
 
       <PipelineTotal deals={deals} />
 
-      {!isAuthConfigured ? (
+      {!hasConsoleData() ? (
         <p
           role="status"
           className="rounded-[18px] border border-champagne/60 bg-champagne-3/60 px-5 py-4 text-[13px] leading-[1.7] text-ink-2"

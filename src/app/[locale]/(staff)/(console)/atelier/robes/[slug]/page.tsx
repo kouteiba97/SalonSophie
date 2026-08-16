@@ -15,7 +15,7 @@ import { getGownId, getGownStateLog, getReservationsForGown, getUtilisation } fr
 import { shiftDate, type DateRange } from '@/lib/atelier/ranges';
 import { utilisationOf } from '@/lib/atelier/utilisation';
 import { getStaffSession, isOwner } from '@/lib/auth';
-import { isAuthConfigured } from '@/lib/supabase/session';
+import { hasConsoleData } from '@/lib/console/demo';
 import { usePrice } from '@/lib/use-price';
 
 /**
@@ -132,7 +132,7 @@ export default async function AtelierGownPage({
         </h2>
         <ReservationList
           reservations={upcoming}
-          configured={isAuthConfigured}
+          configured={hasConsoleData()}
           canWrite={canWrite}
           emptyHint={t('upcomingEmptyHint')}
         />

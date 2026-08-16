@@ -3,8 +3,10 @@ import { setRequestLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
 
 import { ConsoleSidebar } from '@/components/staff/ConsoleSidebar';
+import { DemoBanner } from '@/components/staff/DemoBanner';
 import type { Locale } from '@/i18n/routing';
 import { getStaffSession } from '@/lib/auth';
+import { isDemoMode } from '@/lib/console/demo';
 
 /**
  * Everything below here is signed in — but not necessarily front desk.
@@ -31,9 +33,13 @@ export default async function ConsoleLayout({
   if (!session) redirect(`/${typedLocale}/connexion`);
 
   return (
-    <div className="lg:flex lg:items-start">
-      <ConsoleSidebar fullName={session.fullName} role={session.role} locale={typedLocale} />
-      <div className="mx-auto w-full max-w-[1180px] px-6 py-8 lg:flex-1">{children}</div>
-    </div>
+    <>
+      {/* Above the sidebar and every screen: nothing in demo mode goes unlabelled. */}
+      {isDemoMode() ? <DemoBanner /> : null}
+      <div className="lg:flex lg:items-start">
+        <ConsoleSidebar fullName={session.fullName} role={session.role} locale={typedLocale} />
+        <div className="mx-auto w-full max-w-[1180px] px-6 py-8 lg:flex-1">{children}</div>
+      </div>
+    </>
   );
 }

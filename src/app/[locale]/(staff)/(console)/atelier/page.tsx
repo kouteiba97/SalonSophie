@@ -13,7 +13,7 @@ import { shiftDate, type DateRange } from '@/lib/atelier/ranges';
 import { nextReservation, reservationOn } from '@/lib/atelier/utilisation';
 import { fromIsoDate } from '@/lib/datetime';
 import { gownSizeLabel } from '@/data/bridal';
-import { isAuthConfigured } from '@/lib/supabase/session';
+import { hasConsoleData } from '@/lib/console/demo';
 
 /**
  * The atelier at a glance — §13's bridal surface.
@@ -68,7 +68,7 @@ export default async function AtelierPage({ params }: { params: Promise<{ locale
         <p className="text-[14px] leading-[1.7] text-ink-2">
           {t('subtitle', { days: WINDOW_DAYS })}
         </p>
-        {!isAuthConfigured ? (
+        {!hasConsoleData() ? (
           <p
             role="status"
             className="mt-2 rounded-[18px] border border-champagne/60 bg-champagne-3/60 px-5 py-4 text-[13px] leading-[1.7] text-ink-2"

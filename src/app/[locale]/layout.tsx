@@ -73,13 +73,28 @@ export default async function LocaleLayout({
 
   return (
     // dir and lang belong on <html>, never on a nested div (§5.6 item 24).
-    <html lang={typedLocale} dir={LOCALE_DIR[typedLocale]} className={fontVariables}>
+    <html
+      lang={typedLocale}
+      dir={LOCALE_DIR[typedLocale]}
+      className={fontVariables}
+      /*
+       * The script below adds `data-js` to this element before React hydrates, so the server
+       * markup and the client tree genuinely differ here — by design.
+       *
+       * Without this suppression React treats it as a hydration mismatch, and where a Suspense
+       * boundary exists it responds by abandoning that boundary: the atelier, which is the one
+       * console screen with a `loading.tsx`, was left showing its skeleton forever with the real
+       * content sitting in the DOM `hidden`, waiting for a swap that never came. Pages without a
+       * boundary tolerated the same mismatch invisibly, which is why it went unnoticed.
+       */
+      suppressHydrationWarning
+    >
       <body className="min-h-screen antialiased">
         {/*
           Runs before first paint, so scroll reveals can start hidden without a flash — while
           the stylesheet keeps them visible for anyone whose JavaScript never arrives.
           Deliberately an attribute rather than a class: React renders className on <html>, and
-          mutating it here would be a hydration mismatch.
+          mutating it here would be a hydration mismatch it cannot be told to expect.
 
           It lives here rather than in a <head> element: the App Router owns the document head,
           and hand-rendering <head> in a layout drops Next's own stylesheet link.

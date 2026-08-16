@@ -8,7 +8,7 @@ import { getReservations } from '@/lib/atelier/repository';
 import { shiftDate, type DateRange } from '@/lib/atelier/ranges';
 import { occupies, type ReservationStatus } from '@/lib/atelier/types';
 import { getStaffSession, isOwner } from '@/lib/auth';
-import { isAuthConfigured } from '@/lib/supabase/session';
+import { hasConsoleData } from '@/lib/console/demo';
 import { cn } from '@/lib/utils';
 
 /**
@@ -95,7 +95,7 @@ export default async function ReservationsPage({
 
       <ReservationList
         reservations={reservations}
-        configured={isAuthConfigured}
+        configured={hasConsoleData()}
         canWrite={canWrite}
         emptyHint={filter === 'active' ? undefined : t('emptyFilteredHint')}
       />

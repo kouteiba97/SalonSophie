@@ -5,7 +5,7 @@ import { Link } from '@/i18n/navigation';
 import { INTL_TAG, type Locale } from '@/i18n/routing';
 import { getConversations } from '@/lib/console/inbox';
 import { getStaffSession, isFrontDesk } from '@/lib/auth';
-import { isAuthConfigured } from '@/lib/supabase/session';
+import { hasConsoleData } from '@/lib/console/demo';
 import { cn } from '@/lib/utils';
 
 /**
@@ -75,7 +75,7 @@ export default async function InboxPage({
         />
       </nav>
 
-      {!isAuthConfigured ? (
+      {!hasConsoleData() ? (
         <p
           role="status"
           className="rounded-[18px] border border-champagne/60 bg-champagne-3/60 px-5 py-4 text-[13px] leading-[1.7] text-ink-2"

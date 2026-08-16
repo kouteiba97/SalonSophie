@@ -3,6 +3,7 @@ import { cache } from 'react';
 import { getSupabaseSessionClient } from '@/lib/supabase/session';
 import { callRpc } from '@/lib/supabase/server';
 import type { GownState } from '@/lib/supabase/types';
+import { demoReservations, demoUtilisation, isDemoMode } from '@/lib/console/demo';
 import { parseDateRange, type DateRange } from './ranges';
 import type { GownStateChange, Reservation, ReservationStatus } from './types';
 
@@ -96,6 +97,10 @@ function mapReservation(row: ReservationRow): Reservation | null {
 
 /** Every reservation touching the window, across all gowns. */
 export const getReservations = cache(async (window: DateRange): Promise<Reservation[]> => {
+  if (isDemoMode()) {
+    return demoReservations().filter((r) => r.range.start < window.end && window.start < r.range.end);
+  }
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return [];
 
@@ -117,6 +122,8 @@ export const getReservations = cache(async (window: DateRange): Promise<Reservat
 
 /** One gown's whole history, newest last — the detail page's timeline. */
 export const getReservationsForGown = cache(async (gownSlug: string): Promise<Reservation[]> => {
+  if (isDemoMode()) return demoReservations().filter((r) => r.gownSlug === gownSlug);
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return [];
 
@@ -142,6 +149,8 @@ export const getReservationsForGown = cache(async (gownSlug: string): Promise<Re
  * console shows three numbers and should not need every bride's booking to produce them.
  */
 export const getUtilisation = cache(async (window: DateRange): Promise<GownUtilisation[]> => {
+  if (isDemoMode()) return demoUtilisation();
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return [];
 
@@ -195,6 +204,8 @@ export const getGownStateLog = cache(async (gownId: string): Promise<GownStateCh
 
 /** Resolves a gown slug to its id — the state actions address a gown by id, not by name. */
 export const getGownId = cache(async (slug: string): Promise<string | null> => {
+  if (isDemoMode()) return demoUtilisation().find((g) => g.slug === slug)?.gownId ?? null;
+
   const supabase = await getSupabaseSessionClient();
   if (!supabase) return null;
 

@@ -14,7 +14,7 @@ import {
   getUnansweredMessages,
 } from '@/lib/console/repository';
 import { fromIsoDate, SALON_TIME_ZONE, toIsoDate } from '@/lib/datetime';
-import { isAuthConfigured } from '@/lib/supabase/session';
+import { hasConsoleData } from '@/lib/console/demo';
 
 /**
  * "Today" — the console's home, and §13's most important screen.
@@ -94,7 +94,7 @@ export default async function TodayPage({
 
       <KpiCards kpis={kpis} />
 
-      {!isAuthConfigured ? (
+      {!hasConsoleData() ? (
         <p
           role="status"
           className="rounded-[18px] border border-champagne/60 bg-champagne-3/60 px-5 py-4 text-[13px] leading-[1.7] text-ink-2"

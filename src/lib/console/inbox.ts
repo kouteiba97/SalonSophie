@@ -1,6 +1,7 @@
 import 'server-only';
 import { cache } from 'react';
 import { getSupabaseSessionClient } from '@/lib/supabase/session';
+import { demoConversation, demoConversations, isDemoMode } from './demo';
 
 /**
  * The unified inbox (§13, Phase 6).
@@ -69,6 +70,11 @@ function mapConversation(row: ConversationRow): InboxConversation {
 
 export const getConversations = cache(
   async (filter: 'unanswered' | 'all'): Promise<InboxConversation[]> => {
+    if (isDemoMode()) {
+      const all = demoConversations();
+      return filter === 'unanswered' ? all.filter((c) => !c.isAnswered) : all;
+    }
+
     const supabase = await getSupabaseSessionClient();
     if (!supabase) return [];
 
@@ -95,6 +101,8 @@ export const getConversation = cache(
   async (
     id: string,
   ): Promise<{ conversation: InboxConversation; messages: InboxMessage[] } | null> => {
+    if (isDemoMode()) return demoConversation(id);
+
     const supabase = await getSupabaseSessionClient();
     if (!supabase) return null;
 

@@ -674,6 +674,10 @@
       "notConfigured": "Aucune base de données n’est connectée : les collaborations apparaîtront ici dès que le projet Supabase existera.",
       "forbiddenTitle": "Cet espace ne vous est pas ouvert",
       "forbiddenBody": "Les collaborations et leurs montants sont réservés à Nour et Sophie."
+    },
+    "demo": {
+      "label": "Données de démonstration",
+      "body": "Clientes, rendez-vous, messages et collaborations fictifs, générés pour évaluer la console. Aucun de ces chiffres n’est réel. Ils disparaissent dès qu’une base de données est connectée."
     }
   }
 }
