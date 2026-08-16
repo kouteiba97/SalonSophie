@@ -204,6 +204,36 @@ so step 2 is not optional, and forgetting it fails closed.
 
 ---
 
+## Known issues
+
+**The atelier screens hang on their loading skeleton.** `/[locale]/atelier` and
+`/[locale]/atelier/robes/[slug]` render correctly on the server — the content is in the served
+HTML, parked in a `hidden` element — but React never swaps it in, so the skeleton stays up.
+
+Both routes share `atelier/loading.tsx` and are the only console screens with a Suspense
+boundary, which is why nothing else is affected. It survives a clean dev-server restart, so it is
+not a Fast Refresh artifact. `suppressHydrationWarning` on `<html>` (the pre-paint `data-js`
+script is a genuine, by-design mismatch) is correct on its own merits but did **not** fix it.
+
+Next step: check whether it reproduces in a production build — dev-mode React is stricter about
+hydration — and if it does not, the fix may simply be that this was never a shipping bug. If it
+does, the boundary itself is the thing to interrogate.
+
+Reproduce it with `NEXT_PUBLIC_DEMO_DATA=1` in `.env.local`, which signs you into the console
+without a database (see below).
+
+## Seeing the console without a database
+
+`NEXT_PUBLIC_DEMO_DATA=1` fills the console with example clients, appointments, messages and
+collaborations so it can be looked at. It signs you in as an owner, because there is nothing to
+protect: the flag has **no effect** once `NEXT_PUBLIC_SUPABASE_URL` is set, so demo data and real
+data can never coexist. Every screen carries a banner saying the data is fictional, and the
+public site never shows any of it.
+
+This is §14's "seed realistically — an empty app cannot be evaluated", not a hole in §6. The
+records are invented; no business fact is. An appointment whose tariff entry is a range still has
+no settled price, and a pitched deal still has no agreed fee.
+
 ## Before you write code
 
 Read **`docs/OPEN_QUESTIONS.md`**. Several business rules are genuinely unknown — opening hours,
