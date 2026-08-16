@@ -3,6 +3,8 @@ import type { ConsoleAppointment, OpeningWindow } from './day-line';
 import type { Deal } from './deal-types';
 import type { InboxConversation, InboxMessage } from './inbox';
 import type { ClientDetail, ConsoleClient } from './clients';
+// Type-only, so this stays a plain module: `stock.ts` is `server-only` and imports back from here.
+import type { AccessoryStock, ProductStock } from './stock';
 import type { StaffSession } from '@/lib/auth';
 
 /**
@@ -416,6 +418,117 @@ export function demoReservations(): {
       client: { id: 'demo-c1', fullName: 'Amel B.', phone: '0551000001' },
       createdAt: '2026-07-20T10:00:00Z',
     },
+  ];
+}
+
+/* ── the shelf ────────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Products a salon actually consumes, with a stock level worth reading.
+ *
+ * These are example records in the §14 sense, and the distinction from §6 holds exactly as it
+ * does for the demo diary: nobody outside the console ever sees them, and no client is quoted a
+ * price from this list. What they are *not* allowed to do is invent the shape of the problem —
+ * so one product sits below its threshold, one has no threshold at all, and one has no unit cost,
+ * because those are the three states the screen has to render honestly.
+ */
+export function demoProductStock(): ProductStock[] {
+  return [
+    {
+      productId: 'demo-p1',
+      slug: 'coloration-7-3',
+      name: 'Coloration 7.3',
+      brand: 'Majirel',
+      line: 'salon',
+      unit: 'piece',
+      unitCost: 95_000,
+      reorderLevel: 6,
+      onHand: 3,
+      needsReorder: true,
+      lastMovementOn: '2026-08-14',
+    },
+    {
+      productId: 'demo-p2',
+      slug: 'oxydant-20-vol',
+      name: 'Oxydant 20 vol',
+      brand: null,
+      line: 'salon',
+      unit: 'l',
+      unitCost: 42_000,
+      reorderLevel: 2,
+      onHand: 5.5,
+      needsReorder: false,
+      lastMovementOn: '2026-08-12',
+    },
+    {
+      productId: 'demo-p3',
+      slug: 'shampoing-post-couleur',
+      name: 'Shampoing post-couleur',
+      brand: 'Kérastase',
+      line: 'salon',
+      unit: 'ml',
+      unitCost: 210_000,
+      reorderLevel: 1000,
+      onHand: 800,
+      needsReorder: true,
+      lastMovementOn: '2026-08-09',
+    },
+    {
+      // No threshold set: the screen must say so rather than call it "fine".
+      productId: 'demo-p4',
+      slug: 'cire-epilation',
+      name: 'Cire à épiler',
+      brand: null,
+      line: 'salon',
+      unit: 'kg',
+      unitCost: 68_000,
+      reorderLevel: null,
+      onHand: 4,
+      needsReorder: false,
+      lastMovementOn: '2026-07-30',
+    },
+    {
+      // No unit cost: an em dash, never a zero, which would report 100% margin.
+      productId: 'demo-p5',
+      slug: 'colle-cils',
+      name: 'Colle à cils',
+      brand: null,
+      line: 'makeup',
+      unit: 'piece',
+      unitCost: null,
+      reorderLevel: 3,
+      onHand: 2,
+      needsReorder: true,
+      lastMovementOn: '2026-08-05',
+    },
+    {
+      productId: 'demo-p6',
+      slug: 'housse-robe',
+      name: 'Housse de robe',
+      brand: null,
+      line: 'bridal',
+      unit: 'piece',
+      unitCost: 30_000,
+      reorderLevel: 5,
+      onHand: 12,
+      needsReorder: false,
+      lastMovementOn: '2026-08-01',
+    },
+  ];
+}
+
+/**
+ * The three real accessories (§6), two of them never counted.
+ *
+ * `stockTotal: 0` is the seeded default and means "nobody has counted these", which is why the
+ * panel renders it as unknown rather than as an empty shelf. Only the veil carries a real count
+ * here, so both renderings can be judged side by side.
+ */
+export function demoAccessoryStock(): AccessoryStock[] {
+  return [
+    { id: 'demo-acc1', slug: 'barnous', name: 'Barnous', stockTotal: 0, rentalPrice: null, outOnLoan: 1 },
+    { id: 'demo-acc2', slug: 'diademe', name: 'Diadème', stockTotal: 0, rentalPrice: null, outOnLoan: 0 },
+    { id: 'demo-acc3', slug: 'voile', name: 'Voile', stockTotal: 4, rentalPrice: null, outOnLoan: 2 },
   ];
 }
 

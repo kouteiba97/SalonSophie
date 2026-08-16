@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { routing } from '@/i18n/routing';
 import { getStaffSession, isOwner } from '@/lib/auth';
 import {
+  accessoryStockInput,
   categoryInput,
   expenseInput,
   openingHoursInput,
@@ -323,6 +324,47 @@ export async function recordStockMovement(
   });
 
   if (error) return classify(error.message);
+  revalidateConsole();
+  return { status: 'success' };
+}
+
+/**
+ * Counting the accessory rail.
+ *
+ * A direct table write rather than an RPC, unlike everything else on this file. There is no
+ * `upsert_accessory` because the three accessories are seeded and fixed (§6) — this only records
+ * how many of each exist, which is one column. `accessories_owner_write` is the boundary, exactly
+ * as `client_notes` and `brand_deals` are written elsewhere in the console.
+ *
+ * `.eq('slug', ...)` alone is safe: the policy adds `same_tenant`, so a slug from another salon
+ * matches no row rather than updating theirs.
+ */
+export async function saveAccessoryStock(
+  _previous: ManagementState,
+  formData: FormData,
+): Promise<ManagementState> {
+  const parsed = accessoryStockInput.safeParse({
+    slug: formData.get('slug'),
+    stockTotal: formData.get('stockTotal') ?? '',
+  });
+  if (!parsed.success) {
+    return { status: 'error', error: 'invalid', field: parsed.error.issues[0]?.path.join('.') };
+  }
+
+  const owner = await requireOwner();
+  if (!owner.supabase) return { status: 'error', error: owner.error };
+  const supabase = owner.supabase;
+
+  const { data, error } = await supabase
+    .from('accessories')
+    .update({ stock_total: parsed.data.stockTotal })
+    .eq('slug', parsed.data.slug)
+    .select('id');
+
+  if (error) return classify(error.message);
+  // RLS returns an empty set rather than an error when the policy refuses the row.
+  if (!data || data.length === 0) return { status: 'error', error: 'not_found' };
+
   revalidateConsole();
   return { status: 'success' };
 }

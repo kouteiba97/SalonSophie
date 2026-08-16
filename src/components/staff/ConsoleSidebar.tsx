@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 
 interface Item {
   href: string;
-  labelKey: 'today' | 'inbox' | 'atelier' | 'clients' | 'prestations' | 'deals';
+  labelKey: 'today' | 'inbox' | 'atelier' | 'clients' | 'prestations' | 'stock' | 'deals';
   /** Roles that get anything useful from the screen. */
   roles: StaffRole[];
 }
@@ -34,6 +34,8 @@ const ITEMS: Item[] = [
   { href: '/atelier', labelKey: 'atelier', roles: ['owner', 'reception'] },
   { href: '/clients', labelKey: 'clients', roles: ['owner', 'reception', 'stylist'] },
   { href: '/prestations', labelKey: 'prestations', roles: ['owner', 'reception', 'stylist'] },
+  // Reception records what was used; `products_front_desk_read` gives a stylist nothing here.
+  { href: '/stock', labelKey: 'stock', roles: ['owner', 'reception'] },
   // The line non-negotiable #5 names outright: reception can't see brand deals.
   { href: '/collaborations', labelKey: 'deals', roles: ['owner'] },
 ];

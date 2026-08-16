@@ -168,6 +168,23 @@ export const stockMovementInput = z
       value.reason === 'usage' || value.reason === 'loss' ? -value.quantity : value.quantity,
   }));
 
+/**
+ * Counting the accessory rail.
+ *
+ * `accessories.stock_total` ships at 0 for every seeded row, and zero there means *nobody has
+ * counted these* rather than "we own none" — `check_accessory_stock` skips its limit entirely on
+ * zero for that reason. So blank maps back to 0 and reads as uncounted; it is the one field in
+ * this file where an empty value and a zero are deliberately the same thing.
+ */
+export const accessoryStockInput = z.object({
+  slug: z.string().trim().min(1),
+  stockTotal: z
+    .string()
+    .trim()
+    .transform((v) => (v === '' ? 0 : Number(v)))
+    .refine((v) => Number.isInteger(v) && v >= 0, 'invalid_number'),
+});
+
 /* ── Spending ───────────────────────────────────────────────────────────────────────────── */
 
 export const EXPENSE_CATEGORIES = [
