@@ -37,7 +37,7 @@ Verify the checkout is sound:
 npm run typecheck && npm run lint && npm test
 ```
 
-Expect **329 tests across 18 files**, green. They need no database and no network: the database
+Expect **352 tests across 19 files**, green. They need no database and no network: the database
 tests run the real migration files against real Postgres compiled to WASM.
 
 ---
@@ -57,8 +57,8 @@ Phase 7 is being built in waves. Four have landed.
 | 2 | Editable tariff + opening hours (`/prestations`) | **Done** — `20260816090200` |
 | 3 | Console booking — reception can finally book | **Done** — `20260816090300` |
 | 4 | Stock screen — products and accessories, in and out | **Done** — no migration needed |
-| 5 | **Finances screen** — money flow, per-line comparison | **Next** |
-| 6 | Test pass, translation sweep, full verification | Pending |
+| 5 | Finances screen — money flow, per-line comparison | **Done** — no migration needed |
+| 6 | **Test pass, translation sweep, full verification** | **Next** |
 
 ### What waves 1–3 actually put in the repo
 
@@ -121,30 +121,64 @@ raise an alarm about all three on the day the salon first opens the screen, whic
 a real warning gets ignored. It renders as "jamais comptés", counted separately. The same rule
 applies to a product with no reorder level: "seuil non défini", never "fine".
 
+### What wave 5 put in the repo
+
+**No migration.** Wave 1's reporting functions were enough, as predicted.
+
+**Screen** — `/finances`, owner-gated (`finances/layout.tsx`). Stricter than `/stock`'s front-desk
+gate on purpose: reception calling a reporting function gets an empty result under RLS, so the
+screen would render a row of zeros — an answer that looks like a bad month rather than a closed
+door.
+
+**The period lives in the URL** — `?period=month|last-month|year`, or `?from=&to=`. A report you
+cannot send to your sister or come back to next month is not a report. The presets are links and
+the custom range is a plain GET form, so both work without JavaScript.
+
+**Reads** — `src/lib/console/finances.ts` wraps the five reporting functions. The arithmetic above
+them is pure and tested: `period.ts` (month boundaries) and `money-flow.ts` (totals, ranking).
+
+**Tests** — `tests/finances.test.ts` (23).
+
+#### The judgements worth not re-litigating
+
+**No margin, anywhere on the screen.** Most products have no unit cost (§6), rent may not have
+been entered, and nobody is paid through this app. A profit percentage computed against partial
+costs is not an estimate, it is a flattering fiction with a decimal point on it. The screen shows
+a *balance of recorded movements*, says so in the copy, and lists what is missing instead.
+
+**Every business line shows, including the ones that earned nothing.** `revenue_by_line` returns
+rows only where money moved, so a quiet bridal month vanishes from the result — and "which earns
+most" cannot be answered from a list missing a competitor. `revenueRanking` fills the zeros in.
+
+**A negative balance renders as one.** Rent lands on the 1st; a short period can genuinely be
+under water, and clamping it at zero would be the finances equivalent of inventing a price.
+
+**Demo panels have to reconcile.** The first pass hand-wrote each one and the screen showed
+84 320 DA earned by line above 24 680 DA of cash flow — three correct-looking panels contradicting
+each other, which is worse than no demo data at all, because nobody can judge a layout while doing
+arithmetic to check whether it is lying. Everything now derives from two tables at the top of the
+finances block in `demo.ts`, and a test asserts the panels agree.
+
 ---
 
-## Wave 5 — start here
+## Wave 6 — start here
 
-Build the **Finances screen**, reading the reporting functions wave 1 already shipped and tested:
-`revenue_by_line`, `cash_flow`, `service_performance`, `expense_summary`, `data_gaps`. No new
-migration should be needed — `recordExpense` already exists in `management.ts`, and the only write
-the screen adds is a form in front of it.
+The last wave: **verification, not features**.
 
-Deliberately **not** a third overview route: `/aujourdhui` answers "what is happening today",
-Finances answers "what did a period earn". Extend those two; do not add a third dashboard that
-overlaps both.
+1. **e2e for the console.** Nothing covers console booking, `/stock` or `/finances`, because all
+   three need an authenticated session and demo mode breaks the signed-out assertions in
+   `staff.spec.ts`. This is the gap that let the `'use server'` export bug (below) make every
+   management write answer 500 while 314 tests stayed green. Solve it properly — a Playwright
+   project with its own storage state, or a test-only sign-in — rather than adding more unit tests
+   around it.
+2. **Translation sweep.** `messages/TRANSLATION_STATUS.md` still records that the design only ever
+   translated ~17 strings. Everything added in waves 2–5 is real in all three locales; the older
+   bulk of `ar.json` and `en.json` is not.
+3. **Full verification.** Arabic first on every screen, then English. `npm run build` before
+   `npm run e2e`, and delete `.env.local` first.
 
-Seed demo finances in `src/lib/console/demo.ts` **in the same wave**, as waves 3 and 4 did. The
-original plan put all demo data in wave 6; that was wrong, because it meant building screens with
-nothing on them to judge them by.
-
-Two things to carry over from wave 4:
-
-- Copy goes under `console.finances` in all three of `messages/{fr,ar,en}.json`. The i18n test
-  fails on a missing key, so a forgotten translation cannot ship.
-- `revenue_by_line` returns nothing to reception — payments and expenses are owner-only under RLS,
-  and every reporting function is `security invoker` so it stays that way. Gate the route like
-  `/stock` and `/atelier` do, and gate it on **owner**, not front desk.
+Then the remaining non-wave work is provisioning: no Supabase project exists, so every migration
+is written and tested but has never run against a remote database. README has the steps.
 
 ---
 

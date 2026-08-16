@@ -3,8 +3,15 @@ import type { ConsoleAppointment, OpeningWindow } from './day-line';
 import type { Deal } from './deal-types';
 import type { InboxConversation, InboxMessage } from './inbox';
 import type { ClientDetail, ConsoleClient } from './clients';
-// Type-only, so this stays a plain module: `stock.ts` is `server-only` and imports back from here.
+// Type-only, so this stays a plain module: both are `server-only` and import back from here.
 import type { AccessoryStock, ProductStock } from './stock';
+import type {
+  CashFlowDay,
+  DataGap,
+  ExpenseGroup,
+  LineRevenue,
+  ServiceRevenue,
+} from './finances';
 import type { StaffSession } from '@/lib/auth';
 
 /**
@@ -529,6 +536,179 @@ export function demoAccessoryStock(): AccessoryStock[] {
     { id: 'demo-acc1', slug: 'barnous', name: 'Barnous', stockTotal: 0, rentalPrice: null, outOnLoan: 1 },
     { id: 'demo-acc2', slug: 'diademe', name: 'Diadème', stockTotal: 0, rentalPrice: null, outOnLoan: 0 },
     { id: 'demo-acc3', slug: 'voile', name: 'Voile', stockTotal: 4, rentalPrice: null, outOnLoan: 2 },
+  ];
+}
+
+/* ── the money ────────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * A period's takings, invented in the §14 sense and in no other.
+ *
+ * Everything below is derived from the two tables that follow, rather than written out panel by
+ * panel — because the panels have to **agree**. A first pass hand-wrote each one, and the screen
+ * showed 84 320 DA earned by line above 24 680 DA of cash flow: three correct-looking panels
+ * contradicting each other, which is worse than no demo data at all. Nobody can judge a layout
+ * while doing arithmetic to work out whether it is lying.
+ *
+ * The shape is the point, not the amounts: three businesses earning through different tables, one
+ * of them quiet, and spending that is lumpy rather than smooth. Nobody outside the console sees
+ * any of it and no client is ever quoted from it.
+ */
+
+/** Takings by weekday, Sunday first. Friday is quiet in the demo week — real hours are §6. */
+const DEMO_TAKINGS = [920_000, 610_000, 740_000, 550_000, 1_180_000, 0, 1_430_000];
+
+/** Spending is lumpy: rent lands on the 1st, a delivery on the 3rd. */
+const DEMO_SPENDING = [
+  // Rent belongs to the address, not to hair — which is what a null line means.
+  { dayOfMonth: 1, category: 'rent', line: 'shared', amount: 3_500_000 },
+  { dayOfMonth: 3, category: 'stock', line: 'salon', amount: 940_000 },
+  { dayOfMonth: 8, category: 'utilities', line: 'shared', amount: 310_000 },
+  { dayOfMonth: 12, category: 'marketing', line: 'creator', amount: 180_000 },
+] as const;
+
+/** How the takings split. Makeup earns nothing, so the ranking has to supply the zero. */
+const DEMO_LINE_SHARES = [
+  { line: 'salon', share: 0.62, averageTicket: 150_000 },
+  { line: 'bridal', share: 0.26, averageTicket: 2_500_000 },
+  { line: 'creator', share: 0.12, averageTicket: 7_500_000 },
+] as const;
+
+/** Shares of the salon's own takings. Booked most and earning most are deliberately different. */
+const DEMO_SERVICE_SHARES = [
+  {
+    slug: 'coupe-brushing-longs',
+    name: 'Coupe + brushing longs',
+    category: 'Coiffure',
+    share: 0.44,
+    perBooking: 150_000,
+  },
+  {
+    slug: 'coupe',
+    name: 'Coupe',
+    category: 'Coiffure',
+    share: 0.23,
+    perBooking: 70_000,
+  },
+  {
+    slug: 'soins-capillaires',
+    name: 'Soins capillaires',
+    category: 'Coiffure',
+    share: 0.19,
+    perBooking: 200_000,
+  },
+  {
+    // The reporting migration's own example: most booked, least profitable.
+    slug: 'epilation-levre',
+    name: 'Épilation lèvre',
+    category: 'Épilation',
+    share: 0.14,
+    perBooking: 20_000,
+  },
+] as const;
+
+interface DemoPeriod {
+  from: string;
+  to: string;
+}
+
+/** Every day in the period, so a preset and a custom range both draw a full chart. */
+function eachDay(period: DemoPeriod): Date[] {
+  const days: Date[] = [];
+  const end = new Date(`${period.to}T12:00:00Z`);
+
+  // Bounded, so a mistyped range in the URL cannot spin here.
+  for (
+    let day = new Date(`${period.from}T12:00:00Z`), n = 0;
+    day <= end && n < 400;
+    day.setUTCDate(day.getUTCDate() + 1), n++
+  ) {
+    days.push(new Date(day));
+  }
+
+  return days;
+}
+
+export function demoCashFlow(period: DemoPeriod): CashFlowDay[] {
+  return eachDay(period).map((day) => ({
+    onDate: day.toISOString().slice(0, 10),
+    revenue: DEMO_TAKINGS[day.getUTCDay()] ?? 0,
+    spend: DEMO_SPENDING.filter((item) => item.dayOfMonth === day.getUTCDate()).reduce(
+      (total, item) => total + item.amount,
+      0,
+    ),
+  }));
+}
+
+/** The period's total takings — the figure every revenue panel is a slice of. */
+function demoRevenue(period: DemoPeriod): number {
+  return demoCashFlow(period).reduce((total, day) => total + day.revenue, 0);
+}
+
+export function demoRevenueByLine(period: DemoPeriod): LineRevenue[] {
+  const total = demoRevenue(period);
+
+  return DEMO_LINE_SHARES.map(({ line, share, averageTicket }) => {
+    const revenue = Math.round(total * share);
+    return {
+      line,
+      revenue,
+      // At least one transaction whenever any money came in — a line cannot earn from nothing.
+      transactions: revenue > 0 ? Math.max(1, Math.round(revenue / averageTicket)) : 0,
+    };
+  });
+}
+
+export function demoServicePerformance(period: DemoPeriod): ServiceRevenue[] {
+  const salon = DEMO_LINE_SHARES.find((line) => line.line === 'salon');
+  const salonRevenue = Math.round(demoRevenue(period) * (salon?.share ?? 0));
+
+  return DEMO_SERVICE_SHARES.map(({ slug, name, category, share, perBooking }) => {
+    const revenue = Math.round(salonRevenue * share);
+    return {
+      serviceSlug: slug,
+      serviceName: name,
+      categoryName: category,
+      bookings: revenue > 0 ? Math.max(1, Math.round(revenue / perBooking)) : 0,
+      revenue,
+    };
+  }).sort((a, b) => b.revenue - a.revenue);
+}
+
+/** The same spending the cash-flow chart shows, grouped the way `expense_summary` groups it. */
+export function demoExpenseSummary(period: DemoPeriod): ExpenseGroup[] {
+  const occurrences = new Map<string, ExpenseGroup>();
+
+  for (const day of eachDay(period)) {
+    for (const item of DEMO_SPENDING) {
+      if (item.dayOfMonth !== day.getUTCDate()) continue;
+
+      const key = `${item.category}-${item.line}`;
+      const existing = occurrences.get(key);
+      if (existing) {
+        existing.total += item.amount;
+        existing.entries += 1;
+      } else {
+        occurrences.set(key, {
+          category: item.category,
+          line: item.line,
+          total: item.amount,
+          entries: 1,
+        });
+      }
+    }
+  }
+
+  return [...occurrences.values()].sort((a, b) => b.total - a.total);
+}
+
+/** The unknowns, as a number that goes down when Nour and Sophie answer §6. */
+export function demoDataGaps(): DataGap[] {
+  return [
+    { gap: 'service_duration', missing: 41 },
+    { gap: 'opening_hours', missing: 1 },
+    { gap: 'gown_rental_price', missing: 3 },
+    { gap: 'product_cost', missing: 1 },
   ];
 }
 

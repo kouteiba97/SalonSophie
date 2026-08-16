@@ -63,14 +63,14 @@ docs/OPEN_QUESTIONS.md            business rules still unanswered — READ BEFOR
 Sisters NS Beauty - Standalone.html   the approved visual design (a self-extracting bundle)
 
 src/app/[locale]/(site)/          the public site: home, services, robes, + detail pages
-src/app/[locale]/(staff)/         login, and (console)/ — today, atelier, clients, prestations, stock
+src/app/[locale]/(staff)/         login, and (console)/ — today, atelier, clients, prestations, stock, finances
 src/components/sections/          the ten page sections, in the design's DOM order
 src/components/booking/           the five-step booking flow (reducer + steps)
 src/components/staff/             console components — day-line, KPIs, gowns, reservations
 src/data/                         catalogue repository, real §6 tariff, business constants
 src/lib/availability/             the availability engine (pure) + its database repository
 src/lib/atelier/                  date ranges and utilisation (pure) + its database repository
-src/lib/console/                  day-line, KPIs, deals (pure) + inbox/clients/deal repositories
+src/lib/console/                  day-line, KPIs, deals, stock, finances (pure) + their repositories
 src/lib/auth.ts                   who is signed in, and what role they hold
 src/lib/notifications/            WhatsApp port, Cloud adapter, manual fallback
 src/lib/todo.ts                   every value nobody has told us yet
@@ -92,10 +92,10 @@ e2e/                              Playwright: booking, gowns, sections, tokens, 
 | 4 — Bridal atelier (staff) | **Done, unverifiable against a live database** |
 | 5 — Staff console | **Done** |
 | 6 — CRM, inbox, brand deals | **Done** |
-| 7 — Management console (not in the brief) | **In progress — 3 of 6 waves** |
+| 7 — Management console (not in the brief) | **In progress — 5 of 6 waves** |
 
 All six brief phases are built. Verified at the last commit: lint clean, typecheck clean,
-**314 unit tests**, **50 Playwright tests**, production build green.
+**352 unit tests**, **50 Playwright tests**, production build green.
 
 Phase 7 does not come from `BUILD_BRIEF.md`. It comes from a direct instruction to make the
 console the place the sisters run the whole business from — create, update and delete anything;
@@ -133,6 +133,17 @@ défini", not "stock is fine" — a defaulted zero would silently claim every pr
 was fine. An accessory with `stock_total = 0` reads "jamais comptés", not "none": zero is the
 seeded default and means nobody has counted them, which is also why `check_accessory_stock` skips
 its limit there rather than blocking every loan the salon actually makes.
+
+**The money has a screen.** `/finances` answers what a period earned and which of the three
+businesses earned it — the §1 question, which needs a union because they earn through different
+tables. The period lives in the URL, so a report survives a link and the back button. Owner only:
+payments and expenses are owner-only under RLS and every reporting function is `security invoker`,
+so reception would read a row of zeros, which looks like a bad month rather than a closed door.
+
+It shows no margin, deliberately. Most products have no unit cost, rent may not have been entered,
+and nobody is paid through this app — so a profit percentage would be computed against partial
+costs, which is not an estimate but a flattering fiction with a decimal point on it. The screen
+shows a balance of *recorded* movements, and lists what is missing underneath.
 
 ### What Phase 4 shipped
 

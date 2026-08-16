@@ -23,7 +23,15 @@ import { cn } from '@/lib/utils';
 
 interface Item {
   href: string;
-  labelKey: 'today' | 'inbox' | 'atelier' | 'clients' | 'prestations' | 'stock' | 'deals';
+  labelKey:
+    | 'today'
+    | 'inbox'
+    | 'atelier'
+    | 'clients'
+    | 'prestations'
+    | 'stock'
+    | 'finances'
+    | 'deals';
   /** Roles that get anything useful from the screen. */
   roles: StaffRole[];
 }
@@ -36,6 +44,8 @@ const ITEMS: Item[] = [
   { href: '/prestations', labelKey: 'prestations', roles: ['owner', 'reception', 'stylist'] },
   // Reception records what was used; `products_front_desk_read` gives a stylist nothing here.
   { href: '/stock', labelKey: 'stock', roles: ['owner', 'reception'] },
+  // Owner only: payments and expenses are owner-only under RLS, so anyone else reads zeros.
+  { href: '/finances', labelKey: 'finances', roles: ['owner'] },
   // The line non-negotiable #5 names outright: reception can't see brand deals.
   { href: '/collaborations', labelKey: 'deals', roles: ['owner'] },
 ];
