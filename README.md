@@ -63,7 +63,7 @@ docs/OPEN_QUESTIONS.md            business rules still unanswered — READ BEFOR
 Sisters NS Beauty - Standalone.html   the approved visual design (a self-extracting bundle)
 
 src/app/[locale]/(site)/          the public site: home, services, robes, + detail pages
-src/app/[locale]/(staff)/         login, and (console)/ — today, atelier, clients, prestations
+src/app/[locale]/(staff)/         login, and (console)/ — today, atelier, clients, prestations, stock
 src/components/sections/          the ten page sections, in the design's DOM order
 src/components/booking/           the five-step booking flow (reducer + steps)
 src/components/staff/             console components — day-line, KPIs, gowns, reservations
@@ -119,6 +119,20 @@ service, expert, then slot and client, with a debounced client search so booking
 not mint a second record for her. It goes through `book_appointment_as_staff`, which is
 `security invoker` precisely so RLS stays the boundary; a stylist is refused by the same policy
 that governs every other write they make.
+
+**The shelf has a screen.** `/stock` puts products and bridal accessories side by side — separate
+tables, because a product is consumed and an accessory is rented and comes back, but one screen,
+because "what am I short of" is one question and answering it in two places is how a salon runs
+out of something it owns. Reception records what was used or delivered; only an owner adds a
+product or sets what it costs. A delivery with a cost writes the matching expense in the same
+transaction, so restocking cannot appear in the stock history without appearing in the money
+going out.
+
+Two things there stay deliberately unknown. A product with no reorder level reads "seuil non
+défini", not "stock is fine" — a defaulted zero would silently claim every product in the salon
+was fine. An accessory with `stock_total = 0` reads "jamais comptés", not "none": zero is the
+seeded default and means nobody has counted them, which is also why `check_accessory_stock` skips
+its limit there rather than blocking every loan the salon actually makes.
 
 ### What Phase 4 shipped
 
