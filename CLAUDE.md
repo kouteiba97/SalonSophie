@@ -208,6 +208,11 @@ but have not been applied to a remote database.
 20260815120700_rls.sql                helper functions + policies for every table
 20260815120800_seed_catalogue.sql     the real §6 tariff, three gowns, accessories
 20260815120900_grants.sql             anon/authenticated grants
+20260815121000_booking_rpc.sql        book_appointment, busy_spans
+20260815121100_availability_rpc.sql   shift windows, time-off spans
+20260815121200_bridal_atelier.sql     reserve_gown, status transitions, utilisation
+20260815121300_booking_records_service.sql  book_appointment also writes appointment_services
+20260815121400_inbox.sql              log_message, conversation state trigger, set_deal_stage
 ```
 
 **Money is `bigint` centimes.** The `services` table carries a `price_kind` enum plus
@@ -276,6 +281,50 @@ never fails a booking: the appointment is already committed, and a client who is
 missed a message is recoverable; the reverse is not.
 
 ---
+
+## The staff console
+
+Two surfaces share one document shell, split by route group under `src/app/[locale]/`:
+`(site)` carries the public chrome — header, footer, sticky CTA, WhatsApp bubble, booking modal —
+and `(staff)` carries none of it. Route groups do not appear in the URL, so the public paths are
+unchanged.
+
+`/[locale]/connexion` signs in. Everything else lives under a nested `(console)` group —
+`/aujourdhui` (the day-line), `/atelier`, `/clients`, `/prestations`. All of it is
+`force-dynamic` on the `(staff)` layout, and that is **load-bearing**: with no Supabase
+credentials present, as during a build, the session lookup short-circuits without reading a
+cookie, the pages look perfectly static, and Next will happily prerender the signed-out redirect
+into the deployment.
+
+**The console gate requires a session, not a role.** A stylist belongs here: §7 gives them their
+own day and their own clients, and `appointments_read` already limits them to exactly that. Only
+the atelier adds a front-desk check, because `gown_reservations_read` excludes stylists outright.
+
+**The inbox records; it does not send.** With no Meta credentials there is nothing to send
+through, so `log_message` writes what was said and the UI puts a `wa.me` link beside it to
+actually deliver it. A conversation's answered state is derived by a trigger from its latest
+message, never set by a caller — that is what keeps the day-line's alert honest.
+
+**Unknown values must survive serialisation.** `TodoValue` is branded with a *string*, not a
+Symbol. Symbol keys are dropped crossing the Server → Client boundary, which silently turned
+every unknown price handed to a Client Component into a blank. If you add a branded type that
+travels to the browser, brand it with something JSON can carry.
+
+**The day-line's axis is derived, never assumed.** The design hardcoded 09:00–19:00; §6 lists
+opening hours as unknown. It comes from `business_hours`, falling back to the day's own
+appointments — which claims only "these hours have something in them" — and failing both, the
+page says there is nothing to draw. Requests are drawn under the lane rather than on it: they
+hold no slot, and a block would give them a duration nobody supplied.
+
+**Authorisation is RLS, not the console.** The layout's role check produces a better message; it
+is not the boundary. Atelier writes go through Postgres functions that are deliberately **not**
+`security definer` — unlike `book_appointment`, whose caller is `anon` and has no policy to run
+under. A definer function here would hand reception the owner's permissions and leave the
+policies in place looking correct.
+
+The console reads through a **cookie-bound** client (`src/lib/supabase/session.ts`), distinct
+from the session-less anon client the public site uses. Both use the anon key. There is no
+service-role key anywhere in this application.
 
 ## Conventions
 

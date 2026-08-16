@@ -28,6 +28,18 @@ Algerian place names transliterated as locally written (علي منجلي، قس
 sound MSA, but register and warmth are a brand decision, not a linguistic one — and the site's
 voice is the whole point of the design.
 
+### The staff console (Phases 4 to 6)
+
+The `auth`, `atelier` and `console` namespaces were written for this build; nothing in them comes
+from the design, which had no staff surface at all. They are in all three locales for the same reason as
+the public site — the console is where reception works, and reception may not read French.
+
+They need the same native review, plus one check the public copy does not: the atelier's
+vocabulary is **trade language**, not marketing. `Option` for a hold, `Réparation` for a dress off
+the rail, `Acompte` for a deposit — these should match what Nour and Sophie already say to each
+other, and if they do not, the console is teaching the salon new words for things it already has
+names for.
+
 ## What was deliberately NOT translated
 
 Copy that asserted business facts nobody has confirmed was dropped rather than carried into

@@ -100,9 +100,15 @@
       "lead": "Rentable alongside a gown."
     },
     "gowns": {
-      "anastasia": { "silhouette": "Cathedral train, hand-embroidered lace, buttoned back." },
-      "abir": { "silhouette": "Timeless A-line, illusion sleeves, mikado skirt." },
-      "ryma": { "silhouette": "Corseted bodice, crystal beading, detachable skirt." }
+      "anastasia": {
+        "silhouette": "Cathedral train, hand-embroidered lace, buttoned back."
+      },
+      "abir": {
+        "silhouette": "Timeless A-line, illusion sleeves, mikado skirt."
+      },
+      "ryma": {
+        "silhouette": "Corseted bodice, crystal beading, detachable skirt."
+      }
     }
   },
   "tarifs": {
@@ -127,9 +133,16 @@
     "sophieAlt": "Sophie, skincare and facials"
   },
   "team": {
-    "nour": { "role": "Hair & bridal" },
-    "sophie": { "role": "Skincare & facials" },
-    "noPreference": { "name": "No preference", "role": "The first expert available" }
+    "nour": {
+      "role": "Hair & bridal"
+    },
+    "sophie": {
+      "role": "Skincare & facials"
+    },
+    "noPreference": {
+      "name": "No preference",
+      "role": "The first expert available"
+    }
   },
   "transformations": {
     "eyebrow": "Transformations",
@@ -209,8 +222,24 @@
       "nextMonth": "Next month",
       "previousWeek": "Previous week",
       "nextWeek": "Next week",
-      "weekdays": ["S", "M", "T", "W", "T", "F", "S"],
-      "weekdaysFull": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      "weekdays": [
+        "S",
+        "M",
+        "T",
+        "W",
+        "T",
+        "F",
+        "S"
+      ],
+      "weekdaysFull": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
       "closed": "Closed",
       "full": "Fully booked",
       "past": "Past date",
@@ -298,6 +327,353 @@
     "gownDetail": {
       "title": "{name} wedding gown — Rental in Constantine | N&S",
       "description": "Rent the {name} gown ({sizes}) at N&S in Ali Mendjeli, Constantine. Private fitting by appointment, alterations and pressing included."
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "N&S console",
+      "subtitle": "For salon staff only.",
+      "email": "Email address",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitPending": "Signing in…",
+      "notConfigured": "No database is connected yet. Sign-in will work as soon as the Supabase project exists.",
+      "errors": {
+        "invalid_credentials": "Incorrect email or password.",
+        "not_configured": "Sign-in is not configured yet.",
+        "unavailable": "Cannot sign in right now. Try again in a moment."
+      }
+    }
+  },
+  "atelier": {
+    "nav": {
+      "label": "Console navigation",
+      "atelier": "Atelier",
+      "gowns": "Gowns",
+      "reservations": "Reservations",
+      "signOut": "Sign out"
+    },
+    "roles": {
+      "owner": "Owner",
+      "reception": "Reception",
+      "stylist": "Stylist"
+    },
+    "forbidden": {
+      "title": "This area is not open to you",
+      "body": "The bridal atelier is for reception and the owners. If you think that is a mistake, ask Nour or Sophie."
+    },
+    "states": {
+      "available": "Available",
+      "rented": "Out on rental",
+      "cleaning": "Cleaning",
+      "repair": "Repair"
+    },
+    "reservationStatus": {
+      "held": "Held",
+      "confirmed": "Confirmed",
+      "returned": "Returned",
+      "cancelled": "Cancelled"
+    },
+    "dashboard": {
+      "title": "Bridal atelier",
+      "subtitle": "Every gown in the house, its state, and how booked it is over the next {days} days.",
+      "notConfigured": "No database is connected: gowns are listed from the catalogue, without their reservations.",
+      "sizes": "Sizes {range}",
+      "utilisation": "Utilisation",
+      "daysReserved": "{days} of {window} days",
+      "percent": "{percent}%",
+      "outWith": "With {name} until {until}",
+      "nextOut": "Next out: {name}, {from}",
+      "noReservations": "No reservations in this window.",
+      "manageState": "Change state",
+      "loading": "Loading the atelier…"
+    },
+    "gown": {
+      "title": "{gown} — Atelier",
+      "unknown": "Gown not found",
+      "breadcrumb": "Breadcrumb",
+      "backToAtelier": "Back to the atelier",
+      "sizes": "Sizes {range}",
+      "utilisationHeading": "Utilisation",
+      "reserveHeading": "New reservation",
+      "upcomingHeading": "Upcoming",
+      "upcomingEmptyHint": "This gown is free for the whole window.",
+      "pastHeading": "History",
+      "stateLog": "State log",
+      "stateLogEmpty": "No state changes recorded.",
+      "changeState": "Gown state",
+      "reason": "Reason",
+      "reasonPlaceholder": "Broken zip, mark on the train…",
+      "save": "Save",
+      "stateSaved": "State saved."
+    },
+    "reservations": {
+      "title": "Reservations",
+      "subtitle": "Every reservation over the next {days} days.",
+      "filterLabel": "Filter by status",
+      "filters": {
+        "active": "Active",
+        "held": "Held",
+        "confirmed": "Confirmed",
+        "returned": "Returned",
+        "cancelled": "Cancelled",
+        "all": "All"
+      },
+      "empty": "No reservations.",
+      "emptyHint": "Open a gown from the atelier to create one.",
+      "emptyFilteredHint": "No reservations with this status in the window.",
+      "notConfigured": "No database is connected: reservations will appear here once the Supabase project exists.",
+      "dates": "{from} to {to}",
+      "bufferNote": "{days} cleaning days, free on {until}",
+      "deposit": "Deposit",
+      "depositUnknown": "Not set",
+      "readOnly": "Read only"
+    },
+    "reserve": {
+      "clientName": "Bride’s name",
+      "clientPhone": "Phone",
+      "phoneHint": "Algerian mobile, for example 0553366712.",
+      "firstDay": "First day",
+      "lastDay": "Last day",
+      "buffer": "Cleaning days",
+      "bufferHint": "Added after the last day and protected exactly like the rental itself. No turnaround has been set: 0 means none is reserved.",
+      "deposit": "Deposit (DA)",
+      "depositHint": "No deposit amount has been set. Leave it blank until the rule is decided.",
+      "status": "Status",
+      "statusHint": "A hold and a confirmation both block the dates.",
+      "statusHeld": "Held",
+      "statusConfirmed": "Confirmed",
+      "accessories": "Accessories",
+      "notes": "Notes",
+      "submit": "Reserve the gown",
+      "submitPending": "Saving…",
+      "success": "{gown} reserved. Reference {reference}."
+    },
+    "actions": {
+      "none": "No actions",
+      "confirmed": "Confirm",
+      "returned": "Mark returned",
+      "cancelled": "Cancel",
+      "confirmCancel": "Cancel this reservation? The dates are released immediately."
+    },
+    "errors": {
+      "forbidden": "Only Nour and Sophie can change the atelier.",
+      "not_configured": "No database is connected.",
+      "double_booked": "This gown is already reserved for these dates.",
+      "invalid": "Some fields are incomplete.",
+      "invalid_period": "The last day must follow the first.",
+      "in_the_past": "That period has already passed.",
+      "invalid_phone": "An Algerian mobile number is required.",
+      "invalid_name": "The bride’s name is required.",
+      "unknown_gown": "Gown not found.",
+      "unknown_accessory": "Accessory not found.",
+      "accessory_out_of_stock": "Not enough accessory stock for these dates.",
+      "invalid_transition": "That status change is not possible.",
+      "not_found": "Reservation not found.",
+      "unavailable": "Cannot do that right now. Try again in a moment."
+    },
+    "error": {
+      "title": "Something went wrong",
+      "body": "The console could not load this page. Try again; if it keeps happening, note the code below.",
+      "retry": "Try again",
+      "digest": "Code: {digest}"
+    },
+    "notFound": {
+      "title": "Page not found",
+      "body": "This console page does not exist.",
+      "backToAtelier": "Back to the atelier"
+    }
+  },
+  "console": {
+    "nav": {
+      "label": "Console navigation",
+      "console": "Console",
+      "today": "Today",
+      "inbox": "Messages",
+      "atelier": "Bridal atelier",
+      "clients": "Clients",
+      "prestations": "Services & prices",
+      "deals": "Collaborations",
+      "signOut": "Sign out"
+    },
+    "statuses": {
+      "pending": "To confirm",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No show"
+    },
+    "today": {
+      "title": "Today",
+      "dateNav": "Change day",
+      "previous": "Previous day",
+      "next": "Next day",
+      "backToToday": "Today",
+      "notConfigured": "No database is connected: the day will appear here once the Supabase project exists.",
+      "emptyDay": "Nothing in the book that day",
+      "emptyDayHint": "Opening hours have not been recorded and no appointment exists, so there is no timeline to draw.",
+      "derivedAxis": "Opening hours are not recorded. The scale is derived from the day’s own appointments, not from opening times."
+    },
+    "dayLine": {
+      "lines": {
+        "salon": "Salon",
+        "bridal": "Bridal",
+        "makeup": "Makeup"
+      },
+      "laneEmpty": "Nothing on this lane",
+      "requestsHeading": "{count} request(s) to confirm"
+    },
+    "appointment": {
+      "time": "Time",
+      "requestedAt": "Asked for {time}",
+      "status": "Status",
+      "staff": "With",
+      "phone": "Phone",
+      "price": "Amount",
+      "priceUnsettled": "On request",
+      "reference": "Reference",
+      "noService": "Service not specified",
+      "requestNote": "This request holds no slot: the service duration is unknown. Confirm it with the client.",
+      "whatsapp": "Message on WhatsApp"
+    },
+    "kpis": {
+      "revenue": "Expected revenue",
+      "revenueUnknown": "—",
+      "revenueHint": "{count} appointments with no settled amount",
+      "appointments": "Appointments",
+      "appointmentsHint": "{count} still to confirm",
+      "gownsOut": "Gowns out",
+      "unanswered": "Unanswered messages",
+      "unansweredHint": "To handle today"
+    },
+    "clients": {
+      "title": "Clients",
+      "subtitle": "One list across the salon, bridal and makeup.",
+      "searchLabel": "Search for a client",
+      "searchPlaceholder": "Name or phone",
+      "search": "Search",
+      "tableCaption": "Client list",
+      "name": "Name",
+      "phone": "Phone",
+      "visits": "Visits",
+      "spend": "Lifetime spend",
+      "lastVisit": "Last visit",
+      "bride": "Bride",
+      "empty": "No clients yet",
+      "emptyHint": "Clients appear here after their first booking.",
+      "noMatch": "No results",
+      "noMatchHint": "Try another name, or the phone number.",
+      "spendHidden": "Lifetime spend is visible to Nour and Sophie only: payments are owner-restricted.",
+      "notConfigured": "No database is connected: clients will appear here once the Supabase project exists."
+    },
+    "prestations": {
+      "title": "Services & prices",
+      "subtitle": "{services} services across {categories} categories.",
+      "service": "Service",
+      "price": "Price",
+      "duration": "Duration",
+      "missingDurations": "{count} services have no recorded duration. That is why bookings stay requests: without a duration, no slot can be computed."
+    },
+    "errors": {
+      "forbidden": "You do not have access to this action.",
+      "not_configured": "No database is connected.",
+      "invalid": "Some fields are incomplete.",
+      "empty": "The message cannot be empty.",
+      "unknown_client": "Client not found.",
+      "not_found": "Not found.",
+      "unavailable": "Cannot do that right now. Try again in a moment."
+    },
+    "inbox": {
+      "title": "Messages",
+      "subtitle": "WhatsApp, Instagram, phone and walk-ins — one list.",
+      "breadcrumb": "Breadcrumb",
+      "backToInbox": "Back to messages",
+      "threadTitle": "Conversation",
+      "filterLabel": "Filter conversations",
+      "filters": {
+        "unanswered": "Unanswered",
+        "all": "All"
+      },
+      "channels": {
+        "whatsapp": "WhatsApp",
+        "instagram": "Instagram",
+        "phone": "Phone",
+        "walk_in": "Walk-in",
+        "other": "Other"
+      },
+      "unanswered": "Unanswered",
+      "unknownClient": "Unknown client",
+      "openClient": "Open profile",
+      "empty": "No conversations",
+      "emptyHint": "Threads appear here, including ones logged by hand.",
+      "allAnswered": "Everything is answered",
+      "allAnsweredHint": "No client is waiting on a reply.",
+      "threadEmpty": "No messages in this conversation.",
+      "replyLabel": "Reply",
+      "savedReplies": "Saved replies",
+      "sendOnWhatsApp": "Send on WhatsApp",
+      "logReply": "Log the reply",
+      "logged": "Reply logged.",
+      "logNote": "The console sends nothing: it records what was said. Use the WhatsApp button to send, then log it so the thread stays accurate.",
+      "notConfigured": "No database is connected: conversations will appear here once the Supabase project exists.",
+      "forbiddenTitle": "This area is not open to you",
+      "forbiddenBody": "Messages are handled by reception and the owners."
+    },
+    "client": {
+      "breadcrumb": "Breadcrumb",
+      "backToClients": "Back to clients",
+      "notFound": "Client not found",
+      "bride": "Bride",
+      "whatsapp": "Message on WhatsApp",
+      "visits": "Visits",
+      "spend": "Lifetime spend",
+      "spendHidden": "Owners only",
+      "reservations": "Gowns reserved",
+      "notesHeading": "Notes",
+      "notesEmpty": "No notes yet.",
+      "addNote": "Add a note",
+      "notePlaceholder": "Colour formula, allergy, wedding date…",
+      "saveNote": "Save",
+      "noteSaved": "Note saved.",
+      "unknownAuthor": "Unknown author",
+      "historyHeading": "History",
+      "historyEmpty": "No appointments recorded.",
+      "request": "Request",
+      "gownsHeading": "Gowns",
+      "lines": {
+        "salon": "Salon",
+        "bridal": "Bridal",
+        "makeup": "Makeup"
+      }
+    },
+    "deals": {
+      "title": "Collaborations",
+      "subtitle": "The partnership pipeline, from pitch to delivery.",
+      "stages": {
+        "pitched": "Pitched",
+        "negotiating": "Negotiating",
+        "contracted": "Contracted",
+        "delivered": "Delivered"
+      },
+      "columnEmpty": "Nothing here",
+      "pipeline": "Pipeline value",
+      "pipelineHint": "{count} collaboration(s) with no agreed fee",
+      "valueUnknown": "Fee not agreed",
+      "nextDeliverable": "To deliver",
+      "deliverableProgress": "{delivered} of {total} deliverables",
+      "newDeal": "New collaboration",
+      "brandName": "Brand",
+      "value": "Fee (DA)",
+      "valueHint": "Leave blank until the fee is agreed.",
+      "contactName": "Contact",
+      "contactHandle": "Handle / email",
+      "nextAction": "Next action",
+      "nextActionDue": "Due",
+      "saveDeal": "Add",
+      "dealSaved": "Collaboration added.",
+      "notConfigured": "No database is connected: collaborations will appear here once the Supabase project exists.",
+      "forbiddenTitle": "This area is not open to you",
+      "forbiddenBody": "Collaborations and their values are for Nour and Sophie."
     }
   }
 }

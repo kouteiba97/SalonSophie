@@ -13,10 +13,22 @@
  * gap stays visible instead of quietly shipping.
  */
 
-const TODO_BRAND = Symbol('ns.todo');
+/*
+ * A string, not a Symbol.
+ *
+ * This was `Symbol('ns.todo')`, which is the usual way to brand a type — and it silently broke
+ * the one guarantee this module exists for. Symbol-keyed properties do not survive serialisation
+ * across the Server/Client boundary, so a TodoValue handed to a Client Component arrived as a
+ * plain `{ field, source }`, `isTodo` returned false, and `formatPrice` fell through its switch
+ * and rendered *nothing* where "Sur devis" belonged. The booking modal showed brides a gown with
+ * a blank price while the card behind it, rendered on the server, said "Sur devis" correctly.
+ *
+ * A string key crosses the wire intact. The `__` prefix keeps it out of the way of real data.
+ */
+const TODO_BRAND = '__nsTodo';
 
 export interface TodoValue {
-  readonly [TODO_BRAND]: true;
+  readonly __nsTodo: true;
   /** Which piece of business data is missing, for the build warning. */
   readonly field: string;
   /** Who needs to supply it, so the warning is actionable. */
@@ -36,8 +48,19 @@ export function todo(field: string, source = 'Nour / Sophie'): TodoValue {
   return value;
 }
 
+/**
+ * True for a value we were never given.
+ *
+ * Tests the brand's *value*, not merely its presence: a serialised TodoValue keeps both, so this
+ * holds on the client as well as the server. That equivalence is what `todo.test.ts` pins down —
+ * it is the property whose absence rendered blank prices to brides.
+ */
 export function isTodo(value: unknown): value is TodoValue {
-  return typeof value === 'object' && value !== null && TODO_BRAND in value;
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    (value as Record<string, unknown>)[TODO_BRAND] === true
+  );
 }
 
 /** Narrow an `Unless<T>` to `T`, or fall back. */

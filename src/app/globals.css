@@ -231,6 +231,40 @@
     display: inline-block;
     animation: var(--animate-ns-word);
   }
+
+  /*
+   * The staff console's utilisation bar.
+   *
+   * A real <meter> so the value and its bounds are announced without an ARIA patch, painted in
+   * the brand's tokens because the browser default is a green gradient that belongs to no
+   * design. Each engine exposes a different pseudo-element and neither can be grouped with the
+   * other — an unrecognised selector invalidates the whole rule — so they are written twice.
+   */
+  .ns-meter {
+    appearance: none;
+    border: none;
+    border-radius: 99px;
+    background: var(--color-tint);
+    overflow: hidden;
+  }
+
+  .ns-meter::-webkit-meter-bar {
+    background: var(--color-tint);
+    border: none;
+    border-radius: 99px;
+  }
+
+  .ns-meter::-webkit-meter-optimum-value,
+  .ns-meter::-webkit-meter-suboptimum-value,
+  .ns-meter::-webkit-meter-even-less-good-value {
+    background: var(--color-rose-deep);
+    border-radius: 99px;
+  }
+
+  .ns-meter::-moz-meter-bar {
+    background: var(--color-rose-deep);
+    border-radius: 99px;
+  }
 }
 
 /* Collapse every animation for users who ask for less motion (§4). */

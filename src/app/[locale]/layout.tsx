@@ -4,19 +4,20 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { ReactNode } from 'react';
 
-import { BookingProvider } from '@/components/booking/BookingProvider';
-import { BookingModal } from '@/components/booking/BookingModal';
-import { SkipLink } from '@/components/common/SkipLink';
-import { StickyCta } from '@/components/common/StickyCta';
-import { WhatsAppFab } from '@/components/common/WhatsAppFab';
-import { SiteFooter } from '@/components/sections/SiteFooter';
-import { SiteHeader } from '@/components/sections/SiteHeader';
-import { getCatalogue } from '@/data/catalogue';
 import { LOCALE_DIR, routing, type Locale } from '@/i18n/routing';
 import { fontVariables } from '@/lib/fonts';
 import { warnUnknownData } from '@/lib/todo';
 
 import '../globals.css';
+
+/**
+ * The document shell, shared by both surfaces.
+ *
+ * Everything below this splits into two route groups: `(site)` is the public site with its
+ * header, footer and booking flow, and `(staff)` is the console, which shares the fonts, the
+ * tokens and the locale but none of the chrome. Route groups do not appear in the URL, so the
+ * public paths are unchanged.
+ */
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -70,10 +71,6 @@ export default async function LocaleLayout({
 
   const typedLocale = locale as Locale;
 
-  // Read once here and hand to the booking flow, so the modal's service list and the tariff on
-  // the page behind it can never disagree.
-  const { categories, services, gowns } = await getCatalogue();
-
   return (
     // dir and lang belong on <html>, never on a nested div (§5.6 item 24).
     <html lang={typedLocale} dir={LOCALE_DIR[typedLocale]} className={fontVariables}>
@@ -92,17 +89,7 @@ export default async function LocaleLayout({
             __html: "document.documentElement.setAttribute('data-js','');",
           }}
         />
-        <NextIntlClientProvider>
-          <BookingProvider catalogue={{ categories, services, gowns }}>
-            <SkipLink />
-            <SiteHeader />
-            <main id="main">{children}</main>
-            <SiteFooter />
-            <StickyCta />
-            <WhatsAppFab />
-            <BookingModal />
-          </BookingProvider>
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
   );
