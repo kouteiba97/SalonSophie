@@ -10,6 +10,10 @@ Two surfaces: a **public site** (clients browse gowns and services, see prices, 
 The primary client is a woman arriving from an Instagram reel, on a mid-range Android phone, on
 Algerian 4G. Every decision is measured against that.
 
+> **Picking the work back up on another machine? Read [docs/HANDOFF.md](docs/HANDOFF.md) first.**
+> It says where the last session stopped, what the next task is, and which traps have already
+> cost a day. This file explains how the repository works; that one explains where it is.
+
 ---
 
 ## Getting started on a new machine
@@ -88,9 +92,33 @@ e2e/                              Playwright: booking, gowns, sections, tokens, 
 | 4 — Bridal atelier (staff) | **Done, unverifiable against a live database** |
 | 5 — Staff console | **Done** |
 | 6 — CRM, inbox, brand deals | **Done** |
+| 7 — Management console (not in the brief) | **In progress — 3 of 6 waves** |
 
-All six phases are built. Verified at the last commit: lint clean, typecheck clean, **275 unit
-tests**, **50 Playwright tests**, production build green.
+All six brief phases are built. Verified at the last commit: lint clean, typecheck clean,
+**314 unit tests**, **50 Playwright tests**, production build green.
+
+Phase 7 does not come from `BUILD_BRIEF.md`. It comes from a direct instruction to make the
+console the place the sisters run the whole business from — create, update and delete anything;
+track the products they use and their stock; follow the money and see which of the three
+businesses earns most. Its wave plan and next task live in [docs/HANDOFF.md](docs/HANDOFF.md).
+
+### What Phase 7 has shipped so far
+
+**Inventory and money, in the database first.** `products`, `suppliers`, `stock_movements`,
+`expenses`, and reporting functions that answer the actual question asked — `revenue_by_line`
+compares salon, bridal and brand across the three different ways each of them earns. Stock is
+**derived from signed movements**, never a stored counter, and a check constraint ties the sign
+to the reason so a delivery cannot decrease stock.
+
+**The tariff became editable.** `/prestations` was a read-only price list; prices, categories and
+opening hours are now editable from the console, owner-only. Hours reaching `business_hours` is
+what will eventually flip the booking engine from `mode: 'request'` to real computed slots.
+
+**Reception can book.** `/aujourdhui` has a four-step new-appointment modal — business line,
+service, expert, then slot and client, with a debounced client search so booking a regular does
+not mint a second record for her. It goes through `book_appointment_as_staff`, which is
+`security invoker` precisely so RLS stays the boundary; a stylist is refused by the same policy
+that governs every other write they make.
 
 ### What Phase 4 shipped
 
@@ -256,11 +284,18 @@ the mirror image — they skip without demo mode, because there is no console to
 
 ## Before you write code
 
-Read **`docs/OPEN_QUESTIONS.md`**. Several business rules are genuinely unknown — opening hours,
-service durations, bridal prices, deposit and cancellation policy — and the codebase is built to
-render them as `—` or "Sur devis" rather than guess. Filling one in with a plausible value is the
-one failure mode this project is most careful about: a missing price is recoverable, a wrong one
+Read **[docs/HANDOFF.md](docs/HANDOFF.md)** for where the work stopped, and
+**`docs/OPEN_QUESTIONS.md`** for what is still unanswered.
+
+Several of those questions are business rules that are genuinely unknown — opening hours, service
+durations, bridal prices, deposit and cancellation policy — and the codebase is built to render
+them as `—` or "Sur devis" rather than guess. Filling one in with a plausible value is the one
+failure mode this project is most careful about: a missing price is recoverable, a wrong one
 shown to a client is not.
+
+**Formatting is ESLint's job — Prettier is not a dependency here.** `npx prettier --write` will
+install it, reformat to its own defaults (double quotes) against the house style, and touch every
+line of whatever you point it at.
 
 `CLAUDE.md` has the ten non-negotiables. The two that shape the most code:
 
