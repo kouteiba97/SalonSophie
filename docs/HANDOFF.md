@@ -1,6 +1,7 @@
 # Handoff — resume here
 
-Last worked: **16 August 2026**. Phase 7 is complete, and the schema runs on a live database.
+Last worked: **17 August 2026**. Phase 7 is complete, the schema runs on a live database, and
+the function surface on that database is now actually closed (it was not, twice — see below).
 Everything is pushed to `main`.
 Working tree clean; nothing is half-finished on disk.
 
@@ -50,7 +51,7 @@ Verify the checkout is sound:
 npm run typecheck && npm run lint && npm test
 ```
 
-Expect **359 tests across 20 files**, green, plus **56 Playwright tests** from `npm run e2e`. They need no database and no network: the database
+Expect **394 tests across 21 files**, green, plus **56 Playwright tests** from `npm run e2e`. They need no database and no network: the database
 tests run the real migration files against real Postgres compiled to WASM.
 
 ---
@@ -72,6 +73,13 @@ Phase 7 was built in waves. All six have landed.
 | 4 | Stock screen — products and accessories, in and out | **Done** — no migration needed |
 | 5 | Finances screen — money flow, per-line comparison | **Done** — no migration needed |
 | 6 | Test pass, translation sweep, full verification | **Done** |
+
+**17 August, and not a wave:** the function surface on the live database was closed properly —
+twice, because the first attempt was also wrong (`20260817090000`, then `20260817100000`). Both
+are applied. If you are about to touch grants, read
+[Correction: the function surface was never actually closed](#correction-the-function-surface-was-never-actually-closed)
+first; it is the most expensive thing anyone has learned on this project, and the second half of
+it explains why a green PGlite run is not evidence about Supabase.
 
 ### What waves 1–3 actually put in the repo
 

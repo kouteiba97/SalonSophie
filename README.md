@@ -75,7 +75,7 @@ src/lib/auth.ts                   who is signed in, and what role they hold
 src/lib/notifications/            WhatsApp port, Cloud adapter, manual fallback
 src/lib/todo.ts                   every value nobody has told us yet
 messages/                         fr / ar / en catalogues + TRANSLATION_STATUS.md
-supabase/migrations/              15 migrations — schema, RLS, seed, booking, atelier, inbox
+supabase/migrations/              22 migrations — schema, RLS, seed, booking, atelier, inbox, grants
 tests/                            unit tests + tests/db (real Postgres via PGlite)
 e2e/                              Playwright: booking, gowns, sections, tokens, staff boundary
 scripts/e2e.mjs                   builds + runs Playwright with no database credentials, on purpose
@@ -96,7 +96,7 @@ scripts/e2e.mjs                   builds + runs Playwright with no database cred
 | 7 — Management console (not in the brief) | **Done — all 6 waves** |
 
 All six brief phases are built. Verified at the last commit: lint clean, typecheck clean,
-**359 unit tests**, **56 Playwright tests**, production build green.
+**394 unit tests**, **56 Playwright tests**, production build green.
 
 Phase 7 does not come from `BUILD_BRIEF.md`. It comes from a direct instruction to make the
 console the place the sisters run the whole business from — create, update and delete anything;
@@ -221,7 +221,7 @@ round-trip.
 
 ### The database is provisioned
 
-All 20 migrations have been applied to a live Supabase project in `eu-west-3` (Paris — the closest
+All 22 migrations have been applied to a live Supabase project in `eu-west-3` (Paris — the closest
 region to Constantine). 39 tables, RLS forced on every one of them, 65 policies, the real §6 tariff
 seeded, and `business_hours` deliberately empty because the hours are still unknown.
 
