@@ -206,6 +206,12 @@ a coding task.
 
 ## What is genuinely left
 
+- **One migration is committed but NOT applied to the live database.**
+  `20260817090000_revoke_public_execute.sql`. Until it is applied, every function in the schema
+  stays callable by `anon` over `/rest/v1/rpc/` on the live project — see the correction below
+  for why the previous migration did not achieve this. Apply it, then re-run the Supabase
+  database linter and expect the `anon_security_definer_function_executable` warnings to
+  disappear while the `authenticated` half correctly remains.
 - **No staff account exists**, so nothing has ever signed in. It is two steps and both are in the
   README: create the user in the Supabase dashboard, then give them a `public.users` row. Until
   then, sign-in and cookie refresh are the one part of the stack never exercised against the real
@@ -216,6 +222,35 @@ a coding task.
 - **The §6 unknowns.** Durations and opening hours are the two that pay for themselves — they flip
   the booking engine from `mode: 'request'` to real computed slots with no code change.
   `docs/OPEN_QUESTIONS.md` has the list.
+
+### Correction: the function surface was never actually closed
+
+`20260816120000_harden_function_exposure.sql` says it revoked the RLS helpers and trigger
+functions from `anon`. It did not, and its own comment explains why without noticing: **`grant
+execute` on functions defaults to PUBLIC**, and the statement it wrote was `revoke execute ...
+from anon`.
+
+Revoking a privilege from a role that holds it through PUBLIC does nothing. `anon` was never
+granted EXECUTE individually, so there was nothing to take away, and the grant it was actually
+using stayed put. `is_owner`'s ACL on the live project read `=X/postgres, postgres=X/postgres,
+authenticated=X/postgres, service_role=X/postgres` — the leading `=X` with an empty grantee **is**
+PUBLIC — and `has_function_privilege('anon', 'public.is_owner()', 'EXECUTE')` still answered true.
+
+Worth being precise about the size of it: **RLS never stopped being the boundary.** Every one of
+those functions is SECURITY INVOKER apart from the helpers, so an anonymous caller reaching
+`upsert_service` still could not write a price. The helpers answer questions about the caller, and
+for an anonymous caller the answers are null and false. It was defence in depth that had not been
+built, not a door standing open.
+
+Two lessons worth keeping:
+
+1. **A revoke that targets the wrong grantee looks exactly like a revoke that worked.** Nothing in
+   the suite could tell the difference, because no test asserted the privilege — only the live
+   linter noticed, after deployment.
+2. `tests/db/function-exposure.test.ts` now asserts the privilege itself rather than that a call
+   fails. A call failing proves nothing here: RLS refusing an anonymous caller is indistinguishable
+   from the grant being absent, and would keep passing after someone re-granted EXECUTE to the
+   world.
 
 ## Traps that have already cost time
 
