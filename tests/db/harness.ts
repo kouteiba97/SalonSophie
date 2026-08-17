@@ -50,6 +50,26 @@ const AUTH_STUB = `
 
   grant usage on schema auth to anon, authenticated, service_role;
   grant select on auth.users to authenticated, service_role;
+
+  -- Supabase's default privileges, which a bare Postgres does not have.
+  --
+  -- A real Supabase project ships pg_default_acl entries granting the API roles rights on every
+  -- object the postgres role creates afterwards — including EXECUTE on functions, to anon
+  -- *explicitly*, not merely through PUBLIC.
+  --
+  -- Leaving this out made the harness quietly more secure than production. A migration that
+  -- revoked EXECUTE from PUBLIC produced a clean result here and left 25 functions reachable by
+  -- anon on the live project, because only the live one had the explicit grant to remove. The
+  -- privilege test passed for a reason unrelated to what it claimed to check — the same shape as
+  -- the bug it was written to catch.
+  alter default privileges for role postgres in schema public
+    grant execute on functions to anon, authenticated, service_role;
+
+  alter default privileges for role postgres in schema public
+    grant all on tables to anon, authenticated, service_role;
+
+  alter default privileges for role postgres in schema public
+    grant all on sequences to anon, authenticated, service_role;
 `;
 
 export type TestDb = PGlite;

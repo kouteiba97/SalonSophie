@@ -206,12 +206,14 @@ a coding task.
 
 ## What is genuinely left
 
-- **One migration is committed but NOT applied to the live database.**
-  `20260817090000_revoke_public_execute.sql`. Until it is applied, every function in the schema
-  stays callable by `anon` over `/rest/v1/rpc/` on the live project — see the correction below
-  for why the previous migration did not achieve this. Apply it, then re-run the Supabase
-  database linter and expect the `anon_security_definer_function_executable` warnings to
-  disappear while the `authenticated` half correctly remains.
+- **`btree_gist` is installed in the `public` schema**, and the linter says to move it. Left
+  alone on purpose. The gown exclusion constraint is non-negotiable #1 and is built on this
+  extension's operator classes, and the exposure is close to theoretical: almost every `gbt_*`
+  function takes `internal` arguments, which Postgres refuses to let anyone supply from SQL. The
+  handful that are callable — `int4_dist`, `cash_dist` — are arithmetic. Moving it would be a
+  schema change under the one constraint the whole project exists to guarantee, in exchange for
+  silencing a warning. If it is ever done, do it with the exclusion-constraint tests in front of
+  you.
 - **No staff account exists**, so nothing has ever signed in. It is two steps and both are in the
   README: create the user in the Supabase dashboard, then give them a `public.users` row. Until
   then, sign-in and cookie refresh are the one part of the stack never exercised against the real
@@ -251,6 +253,34 @@ Two lessons worth keeping:
    fails. A call failing proves nothing here: RLS refusing an anonymous caller is indistinguishable
    from the grant being absent, and would keep passing after someone re-granted EXECUTE to the
    world.
+
+#### And then the fix for it was also incomplete, for a better reason
+
+Revoking from PUBLIC passed 35 tests against PGlite and, applied to the live project, **left 25
+functions still reachable by `anon`** — `upsert_service`, `record_expense`, `set_business_hours`,
+`search_clients` among them.
+
+The difference is not Postgres, it is Supabase. A real project ships `pg_default_acl` entries
+granting the API roles rights on everything `postgres` creates afterwards, including EXECUTE on
+functions **to `anon` explicitly**, not merely through PUBLIC:
+
+```
+defaclrole | objtype | default_acl
+postgres   | f       | postgres=X/postgres | anon=X/postgres | authenticated=X/postgres | …
+```
+
+So the helpers were fixed — the earlier migration had already stripped their explicit `anon`
+entry, leaving only PUBLIC to remove — and nothing else was.
+
+**The harness was quietly more secure than production**, so the privilege test passed for a reason
+unrelated to what it claimed to check. That is the same shape as the original bug, one layer down,
+and it is the more useful lesson: a test environment that differs from production in the direction
+of *safety* will confirm security fixes that do not work.
+
+`tests/db/harness.ts` now installs Supabase's default privileges before running the migrations, so
+PGlite reproduces the hole. `20260817100000_revoke_anon_execute.sql` closes it, revoking from both
+`public` and `anon` so a fresh deploy and the live project land in the same state. Both are applied
+to the live project; the linter now reports only the four intended public functions.
 
 ## Traps that have already cost time
 
