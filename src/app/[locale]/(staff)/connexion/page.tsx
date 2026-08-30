@@ -22,7 +22,7 @@ export default async function SignInPage({ params }: { params: Promise<{ locale:
 
   // Already signed in: the login form would be a dead end.
   const session = await getStaffSession();
-  if (session) redirect(`/${locale}/aujourdhui`);
+  if (session) redirect(`/${locale}/ma-journee`);
 
   const t = await getTranslations({ locale, namespace: 'auth.signIn' });
 

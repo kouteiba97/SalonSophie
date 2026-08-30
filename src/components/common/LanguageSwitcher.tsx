@@ -49,7 +49,12 @@ export function LanguageSwitcher({ className }: { className?: string }) {
             disabled={isPending}
             onClick={() => switchTo(locale)}
             className={cn(
-              'cursor-pointer rounded-full px-[11px] py-[5px] text-[11px] tracking-[.1em] transition-colors duration-200',
+              /*
+                 Three tiny pills side by side is the worst shape for a thumb: miss FR and you get
+                 Arabic. Sized to 40px on touch and left at the design's proportions on a pointer,
+                 where the original 28px is deliberate and fine.
+              */
+              'inline-flex min-h-10 cursor-pointer items-center rounded-full px-[13px] text-[11px] tracking-[.1em] transition-colors duration-200 lg:min-h-0 lg:px-[11px] lg:py-[5px]',
               isActive ? 'bg-rose-deep text-white' : 'text-taupe hover:text-rose-deep',
               isPending && 'opacity-60',
             )}

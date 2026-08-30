@@ -51,6 +51,18 @@ export const occupiesTime = (appointment: ConsoleAppointment): boolean =>
   appointment.status === 'pending' || appointment.status === 'confirmed' ||
   appointment.status === 'completed';
 
+/**
+ * Still needs somebody to do something about it.
+ *
+ * Deliberately *not* `occupiesTime`. A completed appointment still fills its slot on the day-line —
+ * the chair was genuinely busy — so the timeline counts it. A worker's list is a different
+ * question: it asks what is left, and something already finished belongs under "done" rather than
+ * "coming up". Reusing the timeline's predicate here left completed clients sitting in the
+ * upcoming list, correctly badged and in the wrong section.
+ */
+export const awaitsAction = (appointment: ConsoleAppointment): boolean =>
+  appointment.status === 'pending' || appointment.status === 'confirmed';
+
 export interface TimeWindow {
   /** Minutes since midnight. */
   from: number;

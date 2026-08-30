@@ -24,6 +24,7 @@ import { cn } from '@/lib/utils';
 interface Item {
   href: string;
   labelKey:
+    | 'myDay'
     | 'today'
     | 'inbox'
     | 'atelier'
@@ -38,7 +39,10 @@ interface Item {
 }
 
 const ITEMS: Item[] = [
-  { href: '/aujourdhui', labelKey: 'today', roles: ['owner', 'reception', 'stylist'] },
+  // The worker's screen comes first: it is the one opened standing up, several times an hour.
+  { href: '/ma-journee', labelKey: 'myDay', roles: ['owner', 'reception', 'stylist'] },
+  // The day-line is a desk instrument — a stylist gets their own list above instead.
+  { href: '/aujourdhui', labelKey: 'today', roles: ['owner', 'reception'] },
   { href: '/messages', labelKey: 'inbox', roles: ['owner', 'reception'] },
   { href: '/atelier', labelKey: 'atelier', roles: ['owner', 'reception'] },
   { href: '/clients', labelKey: 'clients', roles: ['owner', 'reception', 'stylist'] },
@@ -93,7 +97,13 @@ export function ConsoleSidebar({
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'block rounded-full px-4 py-2 text-[13px] transition-colors lg:rounded-[14px]',
+                    /*
+                       min-h-11 (44px) rather than padding alone. On a phone this row *is* the
+                       navigation, and 37px targets between a thumb and the wrong screen is how a
+                       stylist ends up in Finances mid-client. The desk keeps the tighter rhythm
+                       because a mouse does not miss.
+                    */
+                    'flex min-h-11 items-center rounded-full px-4 text-[13px] transition-colors lg:min-h-0 lg:rounded-[14px] lg:py-2',
                     active
                       ? 'bg-tint text-rose-deep'
                       : 'text-ink-2 hover:bg-cream hover:text-rose-deep',
@@ -121,7 +131,7 @@ export function ConsoleSidebar({
           <input type="hidden" name="locale" value={locale} />
           <button
             type="submit"
-            className="cursor-pointer rounded-full border border-rose-soft/55 px-4 py-2 text-[12px] text-ink-2 transition-colors hover:border-rose-deep hover:text-rose-deep"
+            className="min-h-11 cursor-pointer rounded-full border border-rose-soft/55 px-4 text-[12px] text-ink-2 transition-colors hover:border-rose-deep hover:text-rose-deep lg:min-h-0 lg:py-2"
           >
             {t('signOut')}
           </button>
