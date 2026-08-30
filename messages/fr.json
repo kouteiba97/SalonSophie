@@ -359,7 +359,8 @@
         "mismatch": "Les deux mots de passe ne correspondent pas.",
         "not_configured": "Aucune base de données connectée.",
         "unavailable": "Impossible d’enregistrer pour le moment."
-      }
+      },
+      "signOutInstead": "Se déconnecter ({name})"
     }
   },
   "atelier": {
@@ -512,6 +513,7 @@
       "prestations": "Prestations & tarifs",
       "stock": "Stock",
       "finances": "Finances",
+      "team": "Équipe",
       "deals": "Collaborations",
       "signOut": "Se déconnecter"
     },
@@ -726,6 +728,71 @@
         "maintenance": "Entretien",
         "other": "Autre"
       }
+    },
+    "team": {
+      "title": "Équipe",
+      "subtitle": "Qui peut se connecter, et ce que chacune peut faire. Les comptes sont créés ici : il n’y a pas d’inscription libre, parce que la console contient le numéro de téléphone de chaque cliente.",
+      "notConfigured": "Aucune base de données connectée.",
+      "pendingPasswords": "Comptes encore sur leur mot de passe provisoire : {count}. Un mot de passe dit à voix haute reste valable tant qu’il n’a pas été remplacé.",
+      "add": "Ajouter une personne",
+      "create": "Créer le compte",
+      "creating": "Création…",
+      "cancel": "Annuler",
+      "done": "Terminé",
+      "fullName": "Nom complet",
+      "email": "Identifiant (e-mail)",
+      "emailHint": "Sert d’identifiant. Une adresse au nom du salon suffit.",
+      "role": "Rôle",
+      "linkStaff": "Lier à une experte",
+      "linkNone": "Aucune",
+      "linkHint": "À lier si cette personne prend des rendez-vous.",
+      "linkedTo": "liée à {name}",
+      "tempPassword": "Mot de passe provisoire",
+      "regenerate": "Regénérer",
+      "tempPasswordHint": "À dire à voix haute. La personne le remplacera à sa première connexion.",
+      "createdTitle": "Compte créé",
+      "createdLead": "Notez ces identifiants maintenant : le mot de passe n’est plus consultable ensuite.",
+      "createdWarning": "La personne devra choisir son propre mot de passe à la première connexion.",
+      "password": "Mot de passe",
+      "resetPassword": "Réinitialiser le mot de passe",
+      "confirmReset": "Réinitialiser",
+      "saving": "…",
+      "resetDone": "Nouveau mot de passe provisoire :",
+      "deactivate": "Désactiver",
+      "reactivate": "Réactiver",
+      "you": "Vous",
+      "inactive": "Désactivé",
+      "awaitingPassword": "Mot de passe provisoire non remplacé",
+      "empty": "Aucun compte pour le moment.",
+      "roles": {
+        "owner": "Administratrice",
+        "reception": "Réception",
+        "stylist": "Experte"
+      },
+      "roleHints": {
+        "owner": "Accès complet : finances, stock, tarifs, équipe.",
+        "reception": "La journée, les clientes, les messages, le stock. Pas les finances.",
+        "stylist": "Ses propres rendez-vous et ses propres clientes."
+      },
+      "errors": {
+        "forbidden": "Seules Nour et Sophie peuvent gérer les comptes.",
+        "not_configured": "Aucune base de données connectée.",
+        "invalid": "Vérifiez les champs saisis.",
+        "invalid_email": "Adresse e-mail invalide.",
+        "invalid_name": "Le nom est obligatoire.",
+        "weak_password": "Le mot de passe doit faire au moins 10 caractères.",
+        "email_taken": "Cet identifiant est déjà utilisé.",
+        "unknown_staff": "Experte inconnue.",
+        "cannot_disable_self": "Vous ne pouvez pas désactiver votre propre compte.",
+        "not_found": "Compte introuvable.",
+        "unavailable": "Action impossible pour le moment."
+      },
+      "forbidden": {
+        "title": "Cet espace ne vous est pas ouvert",
+        "body": "La gestion des comptes appartient à Nour et Sophie : elle donne accès à toutes les données du salon."
+      },
+      "bookable": "Cette personne prend des rendez-vous",
+      "bookableHint": "Crée aussi la fiche que les clientes choisissent au moment de réserver. Sans cela, personne ne peut la réserver."
     },
     "errors": {
       "forbidden": "Vous n’avez pas accès à cette action.",

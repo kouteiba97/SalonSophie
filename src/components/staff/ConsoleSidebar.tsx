@@ -31,6 +31,7 @@ interface Item {
     | 'prestations'
     | 'stock'
     | 'finances'
+    | 'team'
     | 'deals';
   /** Roles that get anything useful from the screen. */
   roles: StaffRole[];
@@ -46,6 +47,8 @@ const ITEMS: Item[] = [
   { href: '/stock', labelKey: 'stock', roles: ['owner', 'reception'] },
   // Owner only: payments and expenses are owner-only under RLS, so anyone else reads zeros.
   { href: '/finances', labelKey: 'finances', roles: ['owner'] },
+  // Minting logins is the owner's alone — see the note in equipe/layout.tsx.
+  { href: '/equipe', labelKey: 'team', roles: ['owner'] },
   // The line non-negotiable #5 names outright: reception can't see brand deals.
   { href: '/collaborations', labelKey: 'deals', roles: ['owner'] },
 ];

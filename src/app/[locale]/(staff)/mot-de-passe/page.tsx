@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import { signOut } from '@/app/actions/auth';
 import { PasswordForm } from '@/components/staff/PasswordForm';
 import type { Locale } from '@/i18n/routing';
 import { getStaffSession } from '@/lib/auth';
@@ -48,6 +49,23 @@ export default async function PasswordPage({ params }: { params: Promise<{ local
       </div>
 
       <PasswordForm locale={locale} />
+
+      {/*
+        A way out.
+        
+        The gate has no navigation on purpose, but signing in as the wrong person and then being
+        unable to leave is a trap rather than a boundary — and on a shared salon computer that is
+        not a rare mistake. A form, not a link: signing out is a state change.
+      */}
+      <form action={signOut} className="flex justify-center">
+        <input type="hidden" name="locale" value={locale} />
+        <button
+          type="submit"
+          className="cursor-pointer text-[13px] text-taupe-2 underline-offset-2 transition-colors hover:text-rose-deep hover:underline"
+        >
+          {t('signOutInstead', { name: session.fullName })}
+        </button>
+      </form>
     </div>
   );
 }

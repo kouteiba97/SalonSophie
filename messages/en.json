@@ -359,7 +359,8 @@
         "mismatch": "The two passwords do not match.",
         "not_configured": "No database connected.",
         "unavailable": "Could not save right now."
-      }
+      },
+      "signOutInstead": "Sign out ({name})"
     }
   },
   "atelier": {
@@ -512,6 +513,7 @@
       "prestations": "Services & prices",
       "stock": "Stock",
       "finances": "Finances",
+      "team": "Team",
       "deals": "Collaborations",
       "signOut": "Sign out"
     },
@@ -726,6 +728,71 @@
         "maintenance": "Maintenance",
         "other": "Other"
       }
+    },
+    "team": {
+      "title": "Team",
+      "subtitle": "Who can sign in, and what each person can do. Accounts are created here: there is no open registration, because the console holds every client’s phone number.",
+      "notConfigured": "No database connected.",
+      "pendingPasswords": "Accounts still on their temporary password: {count}. A password said out loud stays valid until it is replaced.",
+      "add": "Add a person",
+      "create": "Create the account",
+      "creating": "Creating…",
+      "cancel": "Cancel",
+      "done": "Done",
+      "fullName": "Full name",
+      "email": "Login (email)",
+      "emailHint": "Used as the login. An address at the salon’s name is enough.",
+      "role": "Role",
+      "linkStaff": "Link to an expert",
+      "linkNone": "None",
+      "linkHint": "Link it if this person takes appointments.",
+      "linkedTo": "linked to {name}",
+      "tempPassword": "Temporary password",
+      "regenerate": "Regenerate",
+      "tempPasswordHint": "Say it out loud. They will replace it at first sign-in.",
+      "createdTitle": "Account created",
+      "createdLead": "Write these down now — the password cannot be seen again.",
+      "createdWarning": "They will choose their own password at first sign-in.",
+      "password": "Password",
+      "resetPassword": "Reset password",
+      "confirmReset": "Reset",
+      "saving": "…",
+      "resetDone": "New temporary password:",
+      "deactivate": "Deactivate",
+      "reactivate": "Reactivate",
+      "you": "You",
+      "inactive": "Deactivated",
+      "awaitingPassword": "Temporary password not yet replaced",
+      "empty": "No accounts yet.",
+      "roles": {
+        "owner": "Admin",
+        "reception": "Reception",
+        "stylist": "Expert"
+      },
+      "roleHints": {
+        "owner": "Full access: finances, stock, prices, team.",
+        "reception": "The day, clients, messages, stock. Not finances.",
+        "stylist": "Their own appointments and their own clients."
+      },
+      "errors": {
+        "forbidden": "Only Nour and Sophie can manage accounts.",
+        "not_configured": "No database connected.",
+        "invalid": "Check the fields.",
+        "invalid_email": "Invalid email address.",
+        "invalid_name": "The name is required.",
+        "weak_password": "The password must be at least 10 characters.",
+        "email_taken": "That login is already in use.",
+        "unknown_staff": "Unknown expert.",
+        "cannot_disable_self": "You cannot deactivate your own account.",
+        "not_found": "Account not found.",
+        "unavailable": "Could not do that right now."
+      },
+      "forbidden": {
+        "title": "This area is not open to you",
+        "body": "Managing accounts belongs to Nour and Sophie: it grants access to all of the salon’s data."
+      },
+      "bookable": "This person takes appointments",
+      "bookableHint": "Also creates the profile clients pick when booking. Without it, nobody can book them."
     },
     "errors": {
       "forbidden": "You do not have access to this action.",
