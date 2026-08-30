@@ -4,14 +4,16 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { routing, type Locale } from '@/i18n/routing';
+import { callRpc } from '@/lib/supabase/server';
 import { getSupabaseSessionClient } from '@/lib/supabase/session';
 
 /**
  * Staff sign-in and sign-out.
  *
- * There is no sign-up. Accounts are created by an owner in the Supabase dashboard and given a
- * `public.users` row with a role — a console that let anyone register would hand out a login to
- * a surface holding every client's phone number.
+ * There is no public sign-up. Accounts are created by an owner from inside the console
+ * (`create_staff_account`), because a console that let anyone register would hand out a login to
+ * a surface holding every client's phone number. What a new worker gets is a temporary password
+ * said out loud once; `changePassword` below is how it stops being valid.
  *
  * Both actions take FormData so the forms work with JavaScript disabled or still downloading,
  * which on Algerian 4G is a real state and not a theoretical one.
@@ -76,4 +78,45 @@ export async function signOut(formData: FormData): Promise<void> {
 
   revalidatePath('/', 'layout');
   redirect(`/${locale}/connexion`);
+}
+
+/* ── changing your own password ───────────────────────────────────────────────────────────── */
+
+export type PasswordState =
+  | { status: 'idle' }
+  | { status: 'error'; error: 'too_short' | 'mismatch' | 'not_configured' | 'unavailable' };
+
+/**
+ * Sets a new password for whoever is signed in.
+ *
+ * The database function takes the subject from `auth.uid()` rather than a parameter, so this
+ * cannot be aimed at another account no matter what is posted. Clearing
+ * `must_change_password` is part of the same transaction — a password that changed but left the
+ * flag set would lock someone in the gate forever.
+ */
+export async function changePassword(
+  _previous: PasswordState,
+  formData: FormData,
+): Promise<PasswordState> {
+  const password = String(formData.get('password') ?? '');
+  const confirm = String(formData.get('confirm') ?? '');
+  const locale = String(formData.get('locale') ?? 'fr') as Locale;
+
+  if (password.length < 10) return { status: 'error', error: 'too_short' };
+  if (password !== confirm) return { status: 'error', error: 'mismatch' };
+
+  const supabase = await getSupabaseSessionClient();
+  if (!supabase) return { status: 'error', error: 'not_configured' };
+
+  const { error } = await callRpc<null>(supabase, 'change_own_password', {
+    p_new_password: password,
+  });
+
+  if (error) {
+    console.error('[N&S] password change failed:', error.message);
+    return { status: 'error', error: 'unavailable' };
+  }
+
+  revalidatePath(`/${locale}`, 'layout');
+  redirect(`/${locale}/aujourdhui`);
 }

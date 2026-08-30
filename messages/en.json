@@ -343,6 +343,23 @@
         "not_configured": "Sign-in is not configured yet.",
         "unavailable": "Cannot sign in right now. Try again in a moment."
       }
+    },
+    "password": {
+      "title": "Change password",
+      "subtitle": "Choose a new password for your account.",
+      "firstTitle": "Choose your password",
+      "firstSubtitle": "Your account was created with a temporary password. Choose your own to continue.",
+      "newPassword": "New password",
+      "confirm": "Confirm password",
+      "hint": "At least 10 characters.",
+      "submit": "Save",
+      "saving": "Saving…",
+      "errors": {
+        "too_short": "The password must be at least 10 characters.",
+        "mismatch": "The two passwords do not match.",
+        "not_configured": "No database connected.",
+        "unavailable": "Could not save right now."
+      }
     }
   },
   "atelier": {

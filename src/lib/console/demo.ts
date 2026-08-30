@@ -85,6 +85,8 @@ export const DEMO_SESSION: StaffSession = {
   tenantId: 'demo-tenant',
   staffId: 'demo-staff',
   staffSlug: 'sophie',
+  // Nothing to change: there is no auth server behind demo mode.
+  mustChangePassword: false,
 };
 
 const at = (hour: number, minute = 0) => hour * 60 + minute;

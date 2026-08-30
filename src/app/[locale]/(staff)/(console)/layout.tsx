@@ -32,6 +32,15 @@ export default async function ConsoleLayout({
   const session = await getStaffSession();
   if (!session) redirect(`/${typedLocale}/connexion`);
 
+  /*
+   * A temporary password gets you exactly one screen.
+   *
+   * Owners create accounts with a password they say out loud, so until it is replaced the account
+   * is only as private as that conversation was. Gating here rather than on each page means a new
+   * route cannot forget to check.
+   */
+  if (session.mustChangePassword) redirect(`/${typedLocale}/mot-de-passe`);
+
   return (
     <>
       {/* Above the sidebar and every screen: nothing in demo mode goes unlabelled. */}

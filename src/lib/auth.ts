@@ -23,6 +23,13 @@ export interface StaffSession {
   /** The bookable-person row, when this user is one. Reception may have no staff row. */
   staffId: string | null;
   staffSlug: string | null;
+  /**
+   * True while the account still carries the temporary password an owner set for it.
+   *
+   * The console gates everything behind changing it. A password that was said out loud once has
+   * been said out loud, and a salon's console is not a place to leave that standing.
+   */
+  mustChangePassword: boolean;
 }
 
 interface UserRow {
@@ -32,6 +39,7 @@ interface UserRow {
   full_name: string;
   email: string | null;
   is_active: boolean;
+  must_change_password: boolean;
 }
 
 interface StaffRow {
@@ -76,7 +84,7 @@ export const getStaffSession = cache(async (): Promise<StaffSession | null> => {
   // `users_self_read` lets any authenticated user read their own row and nothing else.
   const { data: profile } = await supabase
     .from('users')
-    .select('id, tenant_id, role_key, full_name, email, is_active')
+    .select('id, tenant_id, role_key, full_name, email, is_active, must_change_password')
     .eq('id', user.id)
     .maybeSingle()
     .returns<UserRow | null>();
@@ -103,11 +111,27 @@ export const getStaffSession = cache(async (): Promise<StaffSession | null> => {
     tenantId: profile.tenant_id,
     staffId: staff?.id ?? null,
     staffSlug: staff?.slug ?? null,
+    mustChangePassword: profile.must_change_password,
   };
 });
 
 /** Sophie and Nour. The only role that may write to the atelier (see the RLS migration). */
 export const isOwner = (session: StaffSession | null): boolean => session?.role === 'owner';
+
+/**
+ * The two dashboards.
+ *
+ * An owner runs the business: money, stock, the tariff, who works here. Everyone else runs the
+ * day: appointments, clients, and telling the owner what is running out. `isAdmin` is `isOwner`
+ * under the name the console uses when it is deciding which dashboard to show, because the two
+ * questions are genuinely different and only happen to share an answer today — a fourth role
+ * would change one and not the other.
+ */
+export const isAdmin = (session: StaffSession | null): boolean => isOwner(session);
+
+/** Reception and stylists — the people on the floor. */
+export const isWorker = (session: StaffSession | null): boolean =>
+  session?.role === 'reception' || session?.role === 'stylist';
 
 /** Owner or reception — the two roles that run the day across every client. */
 export const isFrontDesk = (session: StaffSession | null): boolean =>

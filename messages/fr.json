@@ -343,6 +343,23 @@
         "not_configured": "La connexion n’est pas encore configurée.",
         "unavailable": "Connexion impossible pour le moment. Réessayez dans un instant."
       }
+    },
+    "password": {
+      "title": "Changer le mot de passe",
+      "subtitle": "Choisissez un nouveau mot de passe pour votre compte.",
+      "firstTitle": "Choisissez votre mot de passe",
+      "firstSubtitle": "Votre compte a été créé avec un mot de passe provisoire. Choisissez le vôtre pour continuer.",
+      "newPassword": "Nouveau mot de passe",
+      "confirm": "Confirmer le mot de passe",
+      "hint": "Au moins 10 caractères.",
+      "submit": "Enregistrer",
+      "saving": "Enregistrement…",
+      "errors": {
+        "too_short": "Le mot de passe doit faire au moins 10 caractères.",
+        "mismatch": "Les deux mots de passe ne correspondent pas.",
+        "not_configured": "Aucune base de données connectée.",
+        "unavailable": "Impossible d’enregistrer pour le moment."
+      }
     }
   },
   "atelier": {
