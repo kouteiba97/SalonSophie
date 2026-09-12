@@ -92,6 +92,57 @@ describe('booking from the console', () => {
     expect(Number(rows.rows[0].price_charged)).toBe(70000);
   });
 
+  /**
+   * The assertion this file was missing, and the public booking tests always had.
+   *
+   * The first version of this function snapshotted `price_min` for every kind but `free`, so a
+   * range tariff booked at its floor and a "from" price became a bill. It shipped, and a console
+   * booking against the live database recorded a soins-capillaires at 14 000 DA — the bottom of a
+   * range whose top is 35 000.
+   *
+   * Reception is the heaviest user of this path, so that number would have been most of what
+   * /finances had to work with: the cheapest possible day, reported as fact, on the screen built
+   * to answer which of the three businesses earns most.
+   */
+  it.each([
+    { slug: 'soins-capillaires', kind: 'range' },
+    { slug: 'balayage', kind: 'from' },
+  ])('leaves the price unsettled for a $kind tariff ($slug)', async ({ slug, kind }) => {
+    const published = await db.query<{ kind: string }>(
+      `select kind::text as kind from public.services where slug = $1`,
+      [slug],
+    );
+    // Guards the fixture: if the seed changes shape this should say so, not pass for the wrong reason.
+    expect(published.rows[0].kind).toBe(kind);
+
+    const result = await bookAs(RECEPTION, {
+      service: slug,
+      staff: 'sophie',
+      start: inDays(30, '09:00'),
+      phone: '0557003030',
+    });
+
+    const charged = await db.query<{ price_charged: string | null }>(
+      `select price_charged from public.appointment_services where appointment_id = $1`,
+      [result.appointment_id],
+    );
+    expect(charged.rows[0].price_charged).toBeNull();
+  });
+
+  it('still records a settled price for a fixed tariff', async () => {
+    const result = await bookAs(RECEPTION, {
+      service: 'coupe',
+      staff: 'sophie',
+      start: inDays(31, '09:00'),
+      phone: '0557003131',
+    });
+    const charged = await db.query<{ price_charged: string }>(
+      `select price_charged from public.appointment_services where appointment_id = $1`,
+      [result.appointment_id],
+    );
+    expect(Number(charged.rows[0].price_charged)).toBe(70000);
+  });
+
   it('books onto the chosen business line', async () => {
     const result = await bookAs(RECEPTION, {
       line: 'makeup',

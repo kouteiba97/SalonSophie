@@ -101,6 +101,21 @@ export function NewAppointmentModal({ services, today }: { services: Service[]; 
     status: 'idle',
   });
 
+  /*
+   * The confirmation the desk has already read and finished with.
+   *
+   * `useActionState` keeps its last result until the next submission, so "En enregistrer un autre"
+   * could reset every field and still leave the success panel covering them — reception saw step 1
+   * announced above a reference number, with no form. Booking a second client meant closing the
+   * modal and starting again, which is the opposite of what that button promises.
+   *
+   * Comparing identity rather than storing a boolean is what makes it correct on the next
+   * submission too: `useActionState` hands back a new object each time, so the panel reappears for
+   * a genuinely new result without anything having to clear the flag.
+   */
+  const [acknowledged, setAcknowledged] = useState<AppointmentState | null>(null);
+  const success = result.status === 'success' && result !== acknowledged ? result : null;
+
   const searchId = useId();
   const nameId = useId();
   const phoneId = useId();
@@ -138,6 +153,7 @@ export function NewAppointmentModal({ services, today }: { services: Service[]; 
   }, [query]);
 
   const reset = () => {
+    setAcknowledged(result);
     setStep(1);
     setServiceSlug('');
     setStaffSlug('');
@@ -188,13 +204,13 @@ export function NewAppointmentModal({ services, today }: { services: Service[]; 
           {t('stepAnnounce', { current: step, title: stepTitles[step - 1] })}
         </p>
 
-        {result.status === 'success' ? (
+        {success ? (
           <div className="flex flex-col gap-3 py-2">
             <p className="font-display text-[20px] font-light text-charcoal">
-              {result.isRequest ? t('requestTitle') : t('bookedTitle')}
+              {success.isRequest ? t('requestTitle') : t('bookedTitle')}
             </p>
-            <p className="text-[13px] text-ink-2">{t('reference', { ref: result.reference })}</p>
-            {result.isRequest ? (
+            <p className="text-[13px] text-ink-2">{t('reference', { ref: success.reference })}</p>
+            {success.isRequest ? (
               <p className="rounded-[16px] bg-tint px-4 py-3 text-[12px] leading-relaxed text-ink-2">
                 {t('requestNote')}
               </p>
