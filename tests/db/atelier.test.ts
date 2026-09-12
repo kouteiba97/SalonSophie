@@ -13,7 +13,15 @@
  * cases goes through `asUser`.
  */
 import { beforeAll, describe, expect, it } from 'vitest';
-import { asUser, createTestDb, createUser, gownIdBySlug, TENANT_ID, type TestDb } from './harness';
+import {
+  asUser,
+  createTestDb,
+  createUser,
+  dateInDays,
+  gownIdBySlug,
+  TENANT_ID,
+  type TestDb,
+} from './harness';
 
 let db: TestDb;
 
@@ -73,7 +81,7 @@ beforeAll(async () => {
 
 describe('reserve_gown', () => {
   it('records the reservation, the reference and the bride', async () => {
-    const result = await reserve({ gown: 'abir', from: '2027-01-04', to: '2027-01-06' });
+    const result = await reserve({ gown: 'abir', from: dateInDays(1), to: dateInDays(3) });
 
     expect(result.reference).toMatch(/^[0-9A-F]{8}$/);
 
@@ -85,8 +93,8 @@ describe('reserve_gown', () => {
       [result.reservation_id],
     );
 
-    // Half-open: the bride has it on the 4th, 5th and 6th, so the range ends on the 7th.
-    expect(row.rows[0].period).toBe('[2027-01-04,2027-01-07)');
+    // Half-open: the bride has the dress for three days, so the range ends on the fourth.
+    expect(row.rows[0].period).toBe(`[${dateInDays(1)},${dateInDays(4)})`);
     expect(row.rows[0].status).toBe('held');
     // Renting a wedding gown is what makes someone a bride. That is a fact, not a guess.
     expect(row.rows[0].is_bride).toBe(true);
@@ -94,27 +102,27 @@ describe('reserve_gown', () => {
 
   /** Non-negotiable #1. Everything else in this file is secondary to this case. */
   it('refuses a second reservation overlapping the first', async () => {
-    await reserve({ gown: 'ryma', from: '2027-02-01', to: '2027-02-07' });
+    await reserve({ gown: 'ryma', from: dateInDays(29), to: dateInDays(35) });
 
     await expect(
-      reserve({ gown: 'ryma', from: '2027-02-05', to: '2027-02-10', phone: '0661234567' }),
+      reserve({ gown: 'ryma', from: dateInDays(33), to: dateInDays(38), phone: '0661234567' }),
     ).rejects.toThrow(/gown_double_booked/);
   });
 
   it('refuses a reservation entirely contained by another', async () => {
-    await reserve({ gown: 'anastasia', from: '2027-03-01', to: '2027-03-30' });
+    await reserve({ gown: 'anastasia', from: dateInDays(57), to: dateInDays(86) });
 
     await expect(
-      reserve({ gown: 'anastasia', from: '2027-03-10', to: '2027-03-12', phone: '0661234568' }),
+      reserve({ gown: 'anastasia', from: dateInDays(66), to: dateInDays(68), phone: '0661234568' }),
     ).rejects.toThrow(/gown_double_booked/);
   });
 
   it('allows the same dates on a different gown', async () => {
-    await reserve({ gown: 'abir', from: '2027-04-01', to: '2027-04-05' });
+    await reserve({ gown: 'abir', from: dateInDays(88), to: dateInDays(92) });
     const other = await reserve({
       gown: 'ryma',
-      from: '2027-04-01',
-      to: '2027-04-05',
+      from: dateInDays(88),
+      to: dateInDays(92),
       phone: '0661234569',
     });
 
@@ -123,11 +131,11 @@ describe('reserve_gown', () => {
 
   /** Half-open ranges are the point: the next bride may collect the morning after. */
   it('allows an adjacent reservation starting the day after the last', async () => {
-    await reserve({ gown: 'abir', from: '2027-05-01', to: '2027-05-03' });
+    await reserve({ gown: 'abir', from: dateInDays(118), to: dateInDays(120) });
     const next = await reserve({
       gown: 'abir',
-      from: '2027-05-04',
-      to: '2027-05-06',
+      from: dateInDays(121),
+      to: dateInDays(123),
       phone: '0661234570',
     });
 
@@ -138,8 +146,8 @@ describe('reserve_gown', () => {
     it('extends the stored range so the constraint protects the turnaround', async () => {
       const result = await reserve({
         gown: 'ryma',
-        from: '2027-06-01',
-        to: '2027-06-03',
+        from: dateInDays(149),
+        to: dateInDays(151),
         buffer: 2,
       });
 
@@ -148,31 +156,31 @@ describe('reserve_gown', () => {
         [result.reservation_id],
       );
 
-      // Worn to the 3rd, two days of cleaning, so the dress is free on the 6th.
-      expect(row.rows[0].period).toBe('[2027-06-01,2027-06-06)');
+      // Worn for three days, two days of cleaning, so the dress is free on the sixth.
+      expect(row.rows[0].period).toBe(`[${dateInDays(149)},${dateInDays(154)})`);
       // Still recorded separately, so the console can explain an otherwise invisible gap.
       expect(row.rows[0].cleaning_buffer_days).toBe(2);
     });
 
     it('blocks a reservation that would start inside the buffer', async () => {
-      await reserve({ gown: 'anastasia', from: '2027-07-01', to: '2027-07-03', buffer: 3 });
+      await reserve({ gown: 'anastasia', from: dateInDays(179), to: dateInDays(181), buffer: 3 });
 
       await expect(
-        reserve({ gown: 'anastasia', from: '2027-07-05', to: '2027-07-08', phone: '0661234571' }),
+        reserve({ gown: 'anastasia', from: dateInDays(183), to: dateInDays(186), phone: '0661234571' }),
       ).rejects.toThrow(/gown_double_booked/);
     });
   });
 
   describe('validation', () => {
     it('refuses an unknown gown', async () => {
-      await expect(reserve({ gown: 'nope', from: '2027-08-01', to: '2027-08-02' })).rejects.toThrow(
+      await expect(reserve({ gown: 'nope', from: dateInDays(210), to: dateInDays(211) })).rejects.toThrow(
         /reservation_unknown_gown/,
       );
     });
 
     it('refuses a period that ends before it starts', async () => {
       await expect(
-        reserve({ gown: 'abir', from: '2027-08-10', to: '2027-08-04' }),
+        reserve({ gown: 'abir', from: dateInDays(219), to: dateInDays(213) }),
       ).rejects.toThrow(/reservation_invalid_period/);
     });
 
@@ -184,13 +192,13 @@ describe('reserve_gown', () => {
 
     it('refuses a phone number that is not an Algerian mobile', async () => {
       await expect(
-        reserve({ gown: 'abir', from: '2027-09-01', to: '2027-09-03', phone: '0212345678' }),
+        reserve({ gown: 'abir', from: dateInDays(241), to: dateInDays(243), phone: '0212345678' }),
       ).rejects.toThrow(/reservation_invalid_phone/);
     });
 
     it('refuses an empty name', async () => {
       await expect(
-        reserve({ gown: 'abir', from: '2027-09-10', to: '2027-09-12', name: '   ' }),
+        reserve({ gown: 'abir', from: dateInDays(250), to: dateInDays(252), name: '   ' }),
       ).rejects.toThrow(/reservation_invalid_name/);
     });
   });
@@ -199,8 +207,8 @@ describe('reserve_gown', () => {
     it('loans each accessory over the reservation period', async () => {
       const result = await reserve({
         gown: 'ryma',
-        from: '2027-10-01',
-        to: '2027-10-04',
+        from: dateInDays(271),
+        to: dateInDays(274),
         accessories: ['voile', 'diademe'],
       });
 
@@ -216,7 +224,7 @@ describe('reserve_gown', () => {
       );
 
       expect(loans.rows.map((r) => r.slug)).toEqual(['diademe', 'voile']);
-      expect(loans.rows[0].period).toBe('[2027-10-01,2027-10-05)');
+      expect(loans.rows[0].period).toBe(`[${dateInDays(271)},${dateInDays(275)})`);
     });
 
     /**
@@ -227,8 +235,8 @@ describe('reserve_gown', () => {
       await expect(
         reserve({
           gown: 'ryma',
-          from: '2027-11-01',
-          to: '2027-11-04',
+          from: dateInDays(302),
+          to: dateInDays(305),
           accessories: ['voile', 'tiare-invente'],
         }),
       ).rejects.toThrow(/reservation_unknown_accessory/);
@@ -237,7 +245,7 @@ describe('reserve_gown', () => {
       const rows = await asUser(db, OWNER, () =>
         db.query(
           `select 1 from public.gown_reservations
-            where gown_id = $1 and period && daterange('2027-11-01','2027-11-05','[)')`,
+            where gown_id = $1 and period && daterange('${dateInDays(302)}','${dateInDays(306)}','[)')`,
           [rymaId],
         ),
       );
@@ -248,8 +256,8 @@ describe('reserve_gown', () => {
       // The seed leaves stock_total 0 — "not counted yet" (§6) — so loans are unrestricted.
       const first = await reserve({
         gown: 'abir',
-        from: '2027-12-01',
-        to: '2027-12-04',
+        from: dateInDays(332),
+        to: dateInDays(335),
         accessories: ['barnous'],
       });
       expect(first.reservation_id).toBeTruthy();
@@ -260,8 +268,8 @@ describe('reserve_gown', () => {
       await expect(
         reserve({
           gown: 'ryma',
-          from: '2027-12-02',
-          to: '2027-12-03',
+          from: dateInDays(333),
+          to: dateInDays(334),
           phone: '0661234572',
           accessories: ['barnous'],
         }),
@@ -274,7 +282,7 @@ describe('reserve_gown', () => {
 
 describe('set_reservation_status', () => {
   it('moves held to confirmed', async () => {
-    const r = await reserve({ gown: 'abir', from: '2028-01-04', to: '2028-01-06' });
+    const r = await reserve({ gown: 'abir', from: dateInDays(366), to: dateInDays(368) });
 
     const after = await asUser(db, OWNER, () =>
       db.query<{ set_reservation_status: string }>(
@@ -286,7 +294,7 @@ describe('set_reservation_status', () => {
   });
 
   it('refuses to skip from held straight to returned', async () => {
-    const r = await reserve({ gown: 'abir', from: '2028-02-04', to: '2028-02-06' });
+    const r = await reserve({ gown: 'abir', from: dateInDays(397), to: dateInDays(399) });
 
     await expect(
       asUser(db, OWNER, () =>
@@ -299,7 +307,7 @@ describe('set_reservation_status', () => {
   });
 
   it('refuses to re-open a cancelled reservation', async () => {
-    const r = await reserve({ gown: 'abir', from: '2028-03-04', to: '2028-03-06' });
+    const r = await reserve({ gown: 'abir', from: dateInDays(426), to: dateInDays(428) });
     await asUser(db, OWNER, () =>
       db.query(`select public.set_reservation_status($1, 'cancelled'::public.reservation_status)`, [
         r.reservation_id,
@@ -318,7 +326,7 @@ describe('set_reservation_status', () => {
 
   /** A cancellation must release the dates the same instant, or the dress sits idle. */
   it('frees the dates as soon as a reservation is cancelled', async () => {
-    const r = await reserve({ gown: 'ryma', from: '2028-04-01', to: '2028-04-10' });
+    const r = await reserve({ gown: 'ryma', from: dateInDays(454), to: dateInDays(463) });
     await asUser(db, OWNER, () =>
       db.query(`select public.set_reservation_status($1, 'cancelled'::public.reservation_status)`, [
         r.reservation_id,
@@ -327,8 +335,8 @@ describe('set_reservation_status', () => {
 
     const replacement = await reserve({
       gown: 'ryma',
-      from: '2028-04-01',
-      to: '2028-04-10',
+      from: dateInDays(454),
+      to: dateInDays(463),
       phone: '0661234573',
     });
     expect(replacement.reservation_id).toBeTruthy();
@@ -337,8 +345,8 @@ describe('set_reservation_status', () => {
   it('sends a rented gown to cleaning when it comes back', async () => {
     const r = await reserve({
       gown: 'anastasia',
-      from: '2028-05-01',
-      to: '2028-05-04',
+      from: dateInDays(484),
+      to: dateInDays(487),
       status: 'confirmed',
     });
 
@@ -361,8 +369,8 @@ describe('set_reservation_status', () => {
   it('appends the reason to the notes rather than overwriting them', async () => {
     const r = await reserve({
       gown: 'abir',
-      from: '2028-06-04',
-      to: '2028-06-06',
+      from: dateInDays(518),
+      to: dateInDays(520),
       notes: 'Retouche prévue',
     });
 
@@ -423,14 +431,14 @@ describe('gown_utilisation', () => {
     await asUser(db2, OWNER, () =>
       db2.query(
         `select public.reserve_gown('abir', 'Amel Benali', '0553366712',
-                                    '2029-03-01'::date, '2029-03-31'::date)`,
+                                    '${dateInDays(788)}'::date, '${dateInDays(818)}'::date)`,
       ),
     );
 
     const rows = await asUser(db2, OWNER, () =>
       db2.query<{ slug: string; days_reserved: number; reservation_count: number }>(
         `select slug, days_reserved, reservation_count
-           from public.gown_utilisation('2029-03-01'::date, '2029-03-10'::date)
+           from public.gown_utilisation('${dateInDays(788)}'::date, '${dateInDays(797)}'::date)
           order by slug`,
       ),
     );
@@ -451,7 +459,7 @@ describe('gown_utilisation', () => {
  */
 describe('row level security', () => {
   it('lets reception read the atelier', async () => {
-    await reserve({ gown: 'abir', from: '2028-09-01', to: '2028-09-04' });
+    await reserve({ gown: 'abir', from: dateInDays(607), to: dateInDays(610) });
 
     const rows = await asUser(db, RECEPTION, () =>
       db.query(`select id from public.gown_reservations`),
@@ -461,7 +469,7 @@ describe('row level security', () => {
 
   it('refuses to let reception take a reservation', async () => {
     await expect(
-      reserve({ gown: 'ryma', from: '2028-10-01', to: '2028-10-04', as: RECEPTION }),
+      reserve({ gown: 'ryma', from: dateInDays(637), to: dateInDays(640), as: RECEPTION }),
     ).rejects.toThrow(/reservation_forbidden|new row violates row-level security/);
   });
 
@@ -491,7 +499,7 @@ describe('row level security', () => {
 /** Non-negotiable #9: every mutation to a reservation leaves a trail. */
 describe('audit log', () => {
   it('records the insert and the status change', async () => {
-    const r = await reserve({ gown: 'abir', from: '2028-11-01', to: '2028-11-04' });
+    const r = await reserve({ gown: 'abir', from: dateInDays(668), to: dateInDays(671) });
     await asUser(db, OWNER, () =>
       db.query(`select public.set_reservation_status($1, 'confirmed'::public.reservation_status)`, [
         r.reservation_id,
