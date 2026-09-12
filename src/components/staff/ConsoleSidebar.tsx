@@ -118,7 +118,7 @@ export function ConsoleSidebar({
       </nav>
 
       <div className="flex flex-wrap items-center gap-3 lg:flex-col lg:items-start">
-        <LanguageSwitcher />
+        <LanguageSwitcher tone="dark" />
 
         <span className="flex flex-col leading-tight">
           <span className="text-[13px] text-charcoal">{fullName}</span>

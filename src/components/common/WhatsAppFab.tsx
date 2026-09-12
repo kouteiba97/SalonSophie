@@ -18,7 +18,7 @@ export function WhatsAppFab() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${t('whatsapp')} — ${BUSINESS.phoneInternational}`}
-      className="fixed bottom-5 end-5 z-50 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-[13px] font-normal text-white shadow-[0_10px_28px_-10px_rgba(37,211,102,.9)] transition-transform duration-200 hover:scale-[1.03]"
+      className="fixed bottom-5 end-5 z-50 inline-flex items-center gap-2 rounded-full bg-whatsapp px-4 py-3 text-[13px] font-normal text-charcoal shadow-[0_10px_28px_-10px_rgba(37,211,102,.9)] transition-transform duration-200 hover:scale-[1.03]"
     >
       <WhatsApp className="size-5" />
       <span className="hidden sm:inline">{t('whatsapp')}</span>

@@ -18,7 +18,8 @@ export function SiteFooter() {
           <p className="font-display text-[26px] font-light tracking-[.14em] text-cream">
             N<span className="font-script text-champagne">&amp;</span>S
           </p>
-          <p className="text-[10px] uppercase tracking-[.3em] text-taupe">{brand('tagline')}</p>
+          {/* champagne, not taupe: taupe on charcoal is 4.48:1 and this is 10px. */}
+          <p className="text-[10px] uppercase tracking-[.3em] text-champagne">{brand('tagline')}</p>
           <p className="mt-2 max-w-[34ch] text-[13px] leading-[1.75] text-muted-2/80">
             {brand('description')}
           </p>
@@ -60,9 +61,11 @@ export function SiteFooter() {
           {/*
             The design listed four handles (@thesisters.ns, @ns.institut, @ns.mariee, @ns.hair).
             None is verified, and a dead link in the footer of a real business is worse than none.
+
+            muted-2 at full strength: at /55 it measured 3.96:1 on charcoal, under AA.
           */}
           {isTodo(BUSINESS.instagram) ? (
-            <p className="max-w-[28ch] text-[13px] leading-[1.7] text-muted-2/55">
+            <p className="max-w-[28ch] text-[13px] leading-[1.7] text-muted-2">
               {instagram('empty')}
             </p>
           ) : null}
@@ -70,10 +73,11 @@ export function SiteFooter() {
       </div>
 
       <div className="mx-auto mt-12 flex w-full max-w-[1180px] flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6">
-        <span className="text-[12px] text-muted-2/60">
+        {/* /60 measured 4.40:1 — under AA by a tenth, on the line naming the business. */}
+        <span className="text-[12px] text-muted-2">
           {t('rights', { year: new Date().getFullYear() })}
         </span>
-        <LanguageSwitcher />
+        <LanguageSwitcher tone="dark" />
       </div>
     </footer>
   );

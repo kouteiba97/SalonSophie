@@ -22,7 +22,8 @@ export function SiteHeader() {
         <span className="font-display text-[22px] font-light tracking-[.14em] text-charcoal">
           N<span className="font-script text-champagne">&amp;</span>S
         </span>
-        <span className="mt-0.5 text-[9px] uppercase tracking-[.3em] text-taupe">
+        {/* ink-2, not taupe: taupe on cream is 2.87:1, and this is 9px. */}
+        <span className="mt-0.5 text-[9px] uppercase tracking-[.3em] text-ink-2">
           {brand('tagline')}
         </span>
       </Link>

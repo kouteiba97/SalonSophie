@@ -11,7 +11,20 @@
    ------------------------------------------------------------------------------------------ */
 @theme {
   /* §4 */
-  --color-rose-deep: #8b6f7d;
+
+  /*
+   * #8b6f7d in the design, darkened by one step.
+   *
+   * Rose-deep is both a fill and a text colour, and it was failing as both: white on the design's
+   * value measured 4.49:1 against AA's 4.5, and the colour itself measured 4.13:1 as text on
+   * cream, which is what 104 prices, links and accents are drawn in.
+   *
+   * 94% of the original brightness fixes both at once — the fill goes to 5.06:1 and the text to
+   * 4.59:1 — and does it in the token rather than in 104 class names, where the next person would
+   * have to remember the rule. Six percent is below what anyone notices side by side and well
+   * above what a contrast checker does.
+   */
+  --color-rose-deep: #826775;
   --color-rose-mid: #a8899a;
   --color-rose-dark: #7c6070;
   --color-rose-soft: #c9a9a6;
@@ -25,9 +38,33 @@
   --color-cream-warm: #fbf8f7;
   --color-charcoal: #2e2a28;
   --color-ink-2: #5c534e;
-  --color-taupe: #a08d82;
-  --color-taupe-2: #7a6e68;
+  /*
+   * #a08d82 in the design, darkened until it is readable.
+   *
+   * Taupe is the site's secondary text colour — eyebrows, counts, captions, mostly at 9 to 12px
+   * — and at the design's value it measured 2.87:1 on cream and 3.16:1 on white against a 4.5:1
+   * requirement. Not marginal: roughly two thirds of the contrast that WCAG AA asks for, on the
+   * small print, for a client reading a phone in Algerian daylight.
+   *
+   * This is the one change in the port that a designer would notice, and it is made under the
+   * brief's own instruction to fix the design's known defects rather than reproduce them — the
+   * same clause that removed the pointer-only slider and the faked availability. #10 asks for the
+   * design's visual output, not for text nobody can read.
+   *
+   * Darkened by scaling toward black, which holds the hue exactly: it is the same warm brown, a
+   * little over two thirds as bright. Set to clear 4.5:1 on every light surface it actually sits
+   * on — cream, white, and the blush cards at #efe2de, which is the harshest of them.
+   */
+  --color-taupe: #71645c;
+  /* #7a6e68 measured 4.47:1 on cream, and 4.01:1 on the blush cards. Set to clear both. */
+  --color-taupe-2: #70645f;
   --color-line: #e7deda;
+
+  /*
+   * WhatsApp's own green. It was a raw hex inside the component, which the conventions forbid
+   * outright — "no raw hex in components, ever; if a colour is missing, add a token."
+   */
+  --color-whatsapp: #25d366;
   --color-muted: #c7bab3;
   --color-muted-2: #dad1cb;
   --color-white: #ffffff;
