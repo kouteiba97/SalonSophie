@@ -36,10 +36,10 @@ export default async function SiteLayout({
 
   // Read once here and hand to the booking flow, so the modal's service list and the tariff on
   // the page behind it can never disagree.
-  const { categories, services, gowns } = await getCatalogue();
+  const { categories, services, gowns, team } = await getCatalogue();
 
   return (
-    <BookingProvider catalogue={{ categories, services, gowns }}>
+    <BookingProvider catalogue={{ categories, services, gowns, team }}>
       <SkipLink />
       <SiteHeader />
       <main id="main">{children}</main>

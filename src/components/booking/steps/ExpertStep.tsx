@@ -2,27 +2,37 @@
 
 import { useTranslations } from 'next-intl';
 import { useBooking } from '../BookingProvider';
-import { EXPERTS, NO_PREFERENCE } from '@/data/team';
+import { NO_PREFERENCE } from '@/data/team';
 import { cn } from '@/lib/utils';
 
 /**
  * Step 2 — the expert.
  *
  * The design offered four: Nour, Sophie, "Amina — Nails & cils" and "Lynda — Massage & épilation".
- * Only the first two are confirmed to exist (§6), so the other two are gone and a no-preference
- * option takes their place — which is also the honest default while the roster is unknown, and
- * the fastest path for a client who does not care who does her nails.
+ * The last two were invented, and are still not reproduced — but the roster no longer comes from
+ * a constant either. It is read from `staff`, so whoever an owner has actually hired appears
+ * here, and §6 is satisfied by the salon's own record rather than by a list of two.
+ *
+ * That list of two had become the bug it was written to prevent. A stylist hired through
+ * `/equipe` was bookable in the database, had a schedule, and could never be chosen by a client,
+ * because this step did not read the table she was in.
+ *
+ * The role line is optional on purpose. The seeded two have a translated one; somebody hired last
+ * week has `specialty` if an owner filled it in and nothing if they did not, and a blank line is
+ * more honest than inventing a job title for a real person.
  */
 export function ExpertStep() {
   const t = useTranslations('booking');
   const team = useTranslations('team');
-  const { state, dispatch } = useBooking();
+  const { state, dispatch, catalogue } = useBooking();
 
   const options = [
-    ...EXPERTS.map((expert) => ({
+    ...catalogue.team.map((expert) => ({
       slug: expert.slug,
       name: expert.name,
-      role: team(`${expert.slug}.role` as 'nour.role' | 'sophie.role'),
+      role: expert.roleKey
+        ? team(`${expert.slug}.role` as 'nour.role' | 'sophie.role')
+        : (expert.specialty ?? ''),
       initial: expert.name.charAt(0),
     })),
     {

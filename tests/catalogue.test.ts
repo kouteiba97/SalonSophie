@@ -89,10 +89,35 @@ describe('bridal (§6)', () => {
 });
 
 describe('staff (§6)', () => {
+  /**
+   * This constant is the *fallback*, not the roster.
+   *
+   * Who a client may book is read from the `staff` table — an owner hires from `/equipe`, and
+   * for a while this constant was the whole list, which meant a real stylist with a real schedule
+   * was bookable in the database and invisible on the website. §6 is satisfied by reading the
+   * salon's own record; it was never satisfied by a hardcoded pair.
+   *
+   * What stays true here: with no database configured, the only names shown are the two anyone
+   * has confirmed exist.
+   */
   it('lists only the two confirmed sisters', () => {
     expect(EXPERTS.map((e) => e.name)).toEqual(['Nour', 'Sophie']);
   });
 
+  // No test here for the database path: `getCatalogue` imports `server-only`, which will not
+  // load in this environment. It is verified against the live project in the browser instead.
+
+  it('keeps a role line for the seeded two, so the booking step is not blank', () => {
+    expect(EXPERTS.every((e) => Boolean(e.roleKey))).toBe(true);
+  });
+
+  /**
+   * Names only, and only in the seed. The salon has since hired someone called Amina Belkacem,
+   * who is a real person in the `staff` table — unrelated to the design's invented
+   * "Amina — Nails & cils". Do not read a database row as evidence this test has been defeated,
+   * and do not widen it to cover the roster: the roster is allowed to contain whoever the sisters
+   * actually employ.
+   */
   it('does not resurrect the design file’s invented staff', () => {
     const names = EXPERTS.map((e) => e.name);
     expect(names).not.toContain('Amina');

@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl';
 import { useBooking } from './BookingProvider';
-import { EXPERTS, NO_PREFERENCE } from '@/data/team';
+import { NO_PREFERENCE } from '@/data/team';
 import { formatLongDate, fromIsoDate } from '@/lib/datetime';
 import type { Locale } from '@/i18n/routing';
 
@@ -24,7 +24,7 @@ export function useBookingSummary(): string {
   }
 
   if (state.expertSlug) {
-    const expert = EXPERTS.find((e) => e.slug === state.expertSlug);
+    const expert = catalogue.team.find((e) => e.slug === state.expertSlug);
     parts.push(expert ? expert.name : team('noPreference.name'));
   }
 

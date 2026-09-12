@@ -1,11 +1,18 @@
 import { cache } from 'react';
 import { getSupabaseServerClient, isDatabaseConfigured } from '@/lib/supabase/server';
-import type { GownRow, ServiceCategoryRow, ServiceRow, AccessoryRow } from '@/lib/supabase/types';
+import type {
+  GownRow,
+  ServiceCategoryRow,
+  ServiceRow,
+  AccessoryRow,
+  StaffRow,
+} from '@/lib/supabase/types';
 import { TODO_GOWN_RENTAL_PRICE, TODO_SERVICE_DURATION } from '@/lib/todo';
 import type { Price } from '@/lib/money';
 import { ACCESSORIES as STATIC_ACCESSORIES, GOWNS as STATIC_GOWNS } from './bridal';
 import { CATEGORIES as STATIC_CATEGORIES, SERVICES as STATIC_SERVICES } from './services';
-import type { Accessory, Gown, Service, ServiceCategory } from './types';
+import { EXPERTS as STATIC_EXPERTS } from './team';
+import type { Accessory, Expert, Gown, Service, ServiceCategory } from './types';
 
 /**
  * The catalogue, read from the database when one is configured and from the static seed
@@ -25,8 +32,25 @@ export interface Catalogue {
   services: Service[];
   gowns: Gown[];
   accessories: Accessory[];
+  /**
+   * Who a client may book.
+   *
+   * Read from `staff`, not from a constant. It used to be a hardcoded pair, and the reasoning
+   * was sound at the time — §6 forbids inventing staff, and the design's roster invented two
+   * people. But the roster stopped being unknown the day an owner could hire from `/equipe`:
+   * it is now the salon's own record, and reading it is the opposite of inventing it.
+   *
+   * Leaving it hardcoded had already produced the failure §6 exists to prevent, pointing the
+   * other way. A real stylist with a real schedule was bookable in the database and invisible on
+   * the website, so no client could ever choose her.
+   */
+  team: Expert[];
   /** True when the rows came from Postgres; useful in diagnostics and tests. */
   fromDatabase: boolean;
+}
+
+function mapStaff(row: StaffRow): Expert {
+  return { slug: row.slug, name: row.display_name, specialty: row.specialty };
 }
 
 function toPrice(row: ServiceRow): Price {
@@ -82,6 +106,7 @@ const staticCatalogue = (): Catalogue => ({
   services: STATIC_SERVICES,
   gowns: STATIC_GOWNS,
   accessories: STATIC_ACCESSORIES,
+  team: STATIC_EXPERTS,
   fromDatabase: false,
 });
 
@@ -96,7 +121,7 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
      * supabase-js infer `never`. Once `supabase gen types` produces the real file, these calls
      * can drop the explicit type and let inference do it.
      */
-    const [categoriesRes, servicesRes, gownsRes, accessoriesRes] = await Promise.all([
+    const [categoriesRes, servicesRes, gownsRes, accessoriesRes, staffRes] = await Promise.all([
       supabase
         .from('service_categories')
         .select('*')
@@ -121,6 +146,12 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
         .eq('is_active', true)
         .order('name')
         .returns<AccessoryRow[]>(),
+      supabase
+        .from('staff')
+        .select('*')
+        .eq('is_bookable', true)
+        .order('sort_order')
+        .returns<StaffRow[]>(),
     ]);
 
     // Checked one at a time: a PostgrestResponse is a discriminated union, and testing the
@@ -129,6 +160,7 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
     if (servicesRes.error) throw servicesRes.error;
     if (gownsRes.error) throw gownsRes.error;
     if (accessoriesRes.error) throw accessoriesRes.error;
+    if (staffRes.error) throw staffRes.error;
 
     // An empty catalogue means the migration ran but the seed did not. Showing a client an empty
     // price list is worse than showing the committed one, so fall back rather than render blank.
@@ -141,6 +173,9 @@ export const getCatalogue = cache(async (): Promise<Catalogue> => {
       services: servicesRes.data.map((s) => mapService(s, categorySlugById)),
       gowns: gownsRes.data.map(mapGown),
       accessories: accessoriesRes.data.map(mapAccessory),
+      // An empty roster falls back rather than offering a client nobody to choose. The seeded
+      // two are the ones §6 confirms exist, so this is the same honesty as the tariff fallback.
+      team: staffRes.data.length > 0 ? staffRes.data.map(mapStaff) : STATIC_EXPERTS,
       fromDatabase: true,
     };
   } catch (error) {

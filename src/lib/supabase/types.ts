@@ -62,6 +62,17 @@ export interface AccessoryRow {
   is_active: boolean;
 }
 
+/** The roster a client picks from. `specialty` is free text the salon typed, often null. */
+export interface StaffRow {
+  id: string;
+  tenant_id: string;
+  display_name: string;
+  slug: string;
+  specialty: string | null;
+  is_bookable: boolean;
+  sort_order: number;
+}
+
 export interface BusinessHoursRow {
   weekday: number;
   opens_at: string | null;
@@ -129,6 +140,7 @@ export interface Database {
       services: Writable<ServiceRow>;
       gowns: Writable<GownRow>;
       accessories: Writable<AccessoryRow>;
+      staff: Writable<StaffRow>;
       business_hours: Writable<BusinessHoursRow>;
       business_hour_exceptions: Writable<BusinessHourExceptionRow>;
     };

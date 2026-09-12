@@ -66,6 +66,14 @@ export interface BridalPackage {
 export interface Expert {
   slug: string;
   name: string;
-  /** Role line. Only Nour and Sophie are confirmed to exist (§6). */
-  roleKey: string;
+  /**
+   * Message key for the role line, for the two the seed knows about.
+   *
+   * Absent for anyone hired since: the salon's own `staff.specialty` is the source then, and
+   * there is no message catalogue entry to point at. One of the two is always the role line;
+   * neither being present is honest for a new hire nobody has described yet.
+   */
+  roleKey?: string;
+  /** Free text from `staff.specialty`, untranslated because the salon typed it. */
+  specialty?: string | null;
 }

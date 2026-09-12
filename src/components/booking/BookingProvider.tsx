@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useMemo, useReducer, useRef, type ReactNode } from 'react';
-import type { Gown, Service, ServiceCategory } from '@/data/types';
+import type { Expert, Gown, Service, ServiceCategory } from '@/data/types';
 import {
   bookingReducer,
   canAdvance,
@@ -21,6 +21,8 @@ export interface BookingCatalogue {
   categories: ServiceCategory[];
   services: Service[];
   gowns: Gown[];
+  /** Who a client may book, read from `staff` rather than a constant. */
+  team: Expert[];
 }
 
 interface BookingContextValue {
