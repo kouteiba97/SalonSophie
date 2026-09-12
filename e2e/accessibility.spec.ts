@@ -66,7 +66,7 @@ const describeViolations = (vs: AxeViolation[]) =>
     .join('');
 
 // Arabic first, per §12.3 — it is the locale that catches layout and direction mistakes.
-const PAGES = ['/ar', '/fr', '/en', '/fr/services', '/fr/robes', '/ar/robes'];
+const PAGES = ['/ar', '/fr', '/en', '/fr/services', '/fr/robes', '/ar/robes', '/ar/confidentialite', '/fr/confidentialite'];
 
 test.describe('WCAG A and AA, machine-checkable', () => {
   for (const path of PAGES) {

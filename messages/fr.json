@@ -14,7 +14,8 @@
     "book": "Réserver",
     "skipToContent": "Aller au contenu",
     "language": "Langue",
-    "mainNavigation": "Navigation principale"
+    "mainNavigation": "Navigation principale",
+    "privacy": "Confidentialité"
   },
   "hero": {
     "eyebrow": "Là où la beauté rencontre l'art",
@@ -338,6 +339,10 @@
     "gownDetail": {
       "title": "Robe de mariée {name} — Location à Constantine | N&S",
       "description": "Louez la robe {name} ({sizes}) chez N&S à Ali Mendjeli, Constantine. Essai privé sur rendez-vous, retouches et repassage inclus."
+    },
+    "privacy": {
+      "title": "Confidentialité — N&S Constantine",
+      "description": "Ce que le site enregistre, pourquoi, et comment le faire effacer."
     }
   },
   "auth": {
@@ -1074,6 +1079,54 @@
         "unavailable": "Enregistrement impossible pour le moment."
       },
       "noDurationAll": "Aucune durée n’est renseignée pour le moment (§6) : ces rendez-vous seront enregistrés comme demandes, sans bloquer de créneau."
+    }
+  },
+  "privacy": {
+    "title": "Confidentialité",
+    "updated": "Dernière mise à jour : {date}",
+    "lead": "Ce que le site enregistre, pourquoi, et comment le faire effacer. Écrit à partir de ce que le code fait réellement, pas d'un modèle.",
+    "browsing": {
+      "title": "Si vous ne faites que consulter le site",
+      "body": "Nous n'enregistrons rien. Il n'y a ni Google Analytics, ni pixel Facebook, ni aucun outil de mesure d'audience : le site ne charge aucun script d'un autre domaine, et sa politique de sécurité l'en empêche techniquement.",
+      "cookie": "Un seul cookie est déposé, nommé « NEXT_LOCALE ». Il retient la langue que vous lisez — français, arabe ou anglais — et ne contient rien d'autre : ni identifiant, ni historique. Vous pouvez le supprimer depuis votre navigateur ; le site continuera de fonctionner, il affichera simplement le français.",
+      "banner": "C'est pour cette raison qu'il n'y a pas de bandeau de cookies à accepter. Un bandeau sert à obtenir votre consentement pour un suivi publicitaire ou statistique. Il n'y en a aucun ici."
+    },
+    "booking": {
+      "title": "Si vous prenez rendez-vous",
+      "body": "Nous enregistrons votre nom et votre numéro de téléphone, ainsi que la prestation, la date et l'experte choisies. Le numéro sert à vous confirmer le rendez-vous et à vous joindre si quelque chose change ; le nom sert à vous accueillir.",
+      "note": "Si vous laissez une note libre (une allergie, une couleur habituelle), elle est conservée avec votre fiche pour que l'équipe n'ait pas à la redemander.",
+      "ip": "Votre adresse IP est lue au moment de l'envoi du formulaire, uniquement pour empêcher qu'il soit rempli en boucle automatiquement. Elle reste en mémoire quelques minutes et n'est écrite dans aucune base de données."
+    },
+    "where": {
+      "title": "Où vos données sont conservées",
+      "body": "Dans une base Supabase hébergée à Paris, en Union européenne — la région la plus proche de Constantine. Elles ne sont ni vendues, ni louées, ni transmises à des tiers à des fins commerciales.",
+      "access": "Seules Nour, Sophie et les personnes à qui elles ouvrent un compte peuvent consulter votre fiche, et chacune ne voit que ce que son rôle permet : une coiffeuse voit ses propres rendez-vous, pas les comptes du salon. Cette limite est appliquée par la base de données elle-même, pas seulement par l'affichage.",
+      "audit": "Chaque modification d'un rendez-vous, d'une réservation ou d'un paiement est horodatée et attribuée à la personne qui l'a faite."
+    },
+    "retention": {
+      "title": "Combien de temps",
+      "body": "Tant que vous êtes cliente du salon. Rien ne s'efface automatiquement aujourd'hui : votre historique reste disponible pour que l'équipe se souvienne de ce qui a été fait la dernière fois. Vous pouvez demander la suppression à tout moment."
+    },
+    "rights": {
+      "title": "Vos droits",
+      "body": "Vous pouvez demander à consulter ce que nous avons sur vous, le faire corriger, ou le faire effacer. Un appel ou un message WhatsApp suffit — il n'y a pas de formulaire à remplir.",
+      "limit": "Une réserve honnête : les rendez-vous déjà facturés restent dans les comptes du salon, comme n'importe quel justificatif comptable, même après l'effacement de votre fiche."
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "body": "Le bouton WhatsApp du site ouvre l'application avec notre numéro pré-rempli. À partir de là, vous êtes chez WhatsApp : la conversation est soumise à leurs conditions et à leur politique de confidentialité, pas aux nôtres. Nous ne recevons rien de votre part tant que vous n'envoyez pas le message."
+    },
+    "staff": {
+      "title": "Pour l'équipe du salon",
+      "body": "La console interne dépose un cookie de session lors de la connexion, indispensable pour rester connectée d'une page à l'autre. Il disparaît à la déconnexion."
+    },
+    "contact": {
+      "title": "Nous écrire",
+      "body": "Pour toute question sur cette page ou sur vos données : {phone}, ou en personne au salon, {address}."
+    },
+    "review": {
+      "title": "À faire relire",
+      "body": "Cette page décrit fidèlement ce que la plateforme fait. Elle n'a pas encore été relue par un juriste, et devrait l'être avant l'ouverture : la loi algérienne 18-07 relative à la protection des personnes physiques dans le traitement des données à caractère personnel s'applique, et le RGPD peut s'appliquer aux visiteuses depuis l'Union européenne."
     }
   }
 }

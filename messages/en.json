@@ -14,7 +14,8 @@
     "book": "Book Now",
     "skipToContent": "Skip to content",
     "language": "Language",
-    "mainNavigation": "Main navigation"
+    "mainNavigation": "Main navigation",
+    "privacy": "Privacy"
   },
   "hero": {
     "eyebrow": "Where beauty meets artistry",
@@ -338,6 +339,10 @@
     "gownDetail": {
       "title": "{name} wedding gown — Rental in Constantine | N&S",
       "description": "Rent the {name} gown ({sizes}) at N&S in Ali Mendjeli, Constantine. Private fitting by appointment, alterations and pressing included."
+    },
+    "privacy": {
+      "title": "Privacy — N&S Constantine",
+      "description": "What this site records, why, and how to have it erased."
     }
   },
   "auth": {
@@ -1074,6 +1079,54 @@
         "unavailable": "Could not save right now."
       },
       "noDurationAll": "No durations are set yet (§6): these will be saved as requests and will not hold a slot."
+    }
+  },
+  "privacy": {
+    "title": "Privacy",
+    "updated": "Last updated: {date}",
+    "lead": "What this site records, why, and how to have it erased. Written from what the code actually does, not from a template.",
+    "browsing": {
+      "title": "If you are only looking",
+      "body": "We record nothing. There is no Google Analytics, no Facebook pixel, no audience measurement of any kind: the site loads no script from another domain, and its security policy prevents it from doing so.",
+      "cookie": "One cookie is set, named “NEXT_LOCALE”. It remembers which language you are reading — French, Arabic or English — and contains nothing else: no identifier, no history. You can delete it from your browser; the site will keep working and simply show French.",
+      "banner": "That is why there is no cookie banner to accept. A banner exists to collect your consent for advertising or analytics tracking. There is none here."
+    },
+    "booking": {
+      "title": "If you book an appointment",
+      "body": "We record your name and phone number, along with the service, date and expert you chose. The number is how we confirm the appointment and reach you if something changes; the name is how we greet you.",
+      "note": "If you leave a note — an allergy, your usual colour — it is kept with your record so the team does not have to ask again.",
+      "ip": "Your IP address is read when the form is submitted, only to stop it being filled in automatically on a loop. It stays in memory for a few minutes and is written to no database."
+    },
+    "where": {
+      "title": "Where it is kept",
+      "body": "In a Supabase database hosted in Paris, in the European Union — the closest region to Constantine. It is not sold, rented, or passed to third parties for commercial purposes.",
+      "access": "Only Nour, Sophie and the people they create accounts for can see your record, and each sees only what their role allows: a stylist sees her own appointments, not the salon’s accounts. That limit is enforced by the database itself, not only by what the screen shows.",
+      "audit": "Every change to an appointment, a reservation or a payment is timestamped and attributed to the person who made it."
+    },
+    "retention": {
+      "title": "For how long",
+      "body": "For as long as you are a client of the salon. Nothing is deleted automatically today: your history stays available so the team remembers what was done last time. You can ask for deletion at any point."
+    },
+    "rights": {
+      "title": "Your rights",
+      "body": "You can ask to see what we hold about you, have it corrected, or have it erased. A call or a WhatsApp message is enough — there is no form to fill in.",
+      "limit": "One honest caveat: appointments already invoiced stay in the salon’s accounts, like any accounting record, even after your client record is deleted."
+    },
+    "whatsapp": {
+      "title": "WhatsApp",
+      "body": "The WhatsApp button opens the app with our number filled in. From that point you are with WhatsApp: the conversation is governed by their terms and privacy policy, not ours. We receive nothing from you until you send the message."
+    },
+    "staff": {
+      "title": "For salon staff",
+      "body": "The internal console sets a session cookie when you sign in, which is what keeps you signed in from page to page. It disappears when you sign out."
+    },
+    "contact": {
+      "title": "Contact",
+      "body": "For any question about this page or your data: {phone}, or in person at the salon, {address}."
+    },
+    "review": {
+      "title": "Pending legal review",
+      "body": "This page describes faithfully what the platform does. It has not yet been reviewed by a lawyer, and should be before opening: Algerian Law 18-07 on the protection of natural persons in the processing of personal data applies, and the GDPR may apply to visitors from the European Union."
     }
   }
 }

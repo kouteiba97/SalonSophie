@@ -235,3 +235,30 @@ against the actual dresses.
 - **The tariff.** All 55 services across 8 categories are real (BUILD_BRIEF §6) and seeded.
 - **Gowns.** Anastasia (36–42, Signature), ABir (38–44, Essential), RYMA (36–40, Couture).
   Sizes are visible on every card — §6 calls it the most-asked question.
+
+---
+
+## From writing the privacy policy
+
+### 25. How long should a client's record be kept?
+The policy at `/[locale]/confidentialite` says records are kept "as long as you are a client, and
+deleted on request", because that is exactly what the system does today: nothing expires, nothing
+sweeps, and deletion happens when someone asks.
+
+That is honest but it is not a policy. Writing "24 months" would have been §6 applied to a legal
+document, which is the worst place to invent something — but a retention period is a normal thing
+for a salon to decide, and the page reads better once it says one.
+
+- After how long without a visit should a client's record be deleted?
+- Should invoiced appointments be kept longer for the accounts? (They are today, and the policy
+  says so.)
+
+**Where it goes:** the policy copy under `privacy.retention` in `messages/*.json`. No schema change
+until someone wants it enforced automatically.
+
+### 26. Legal review of the privacy policy
+The page describes what the platform does, accurately and from the code. It has not been read by a
+lawyer. Algerian Law 18-07 applies; the GDPR may apply to visitors from the EU.
+
+The page says so on itself, in all three languages, rather than hiding it in a comment — so the
+reminder is in front of whoever opens it.

@@ -41,6 +41,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...entry('', 1),
     ...entry('/services', 0.8),
     ...entry('/robes', 0.8),
+    // Linked from every page's footer, so it should be findable rather than only reachable.
+    ...entry('/confidentialite', 0.3),
     // A gown outranks a single service: it is the page a bride actually sends to somebody.
     ...gowns.flatMap((gown) => entry(`/robes/${gown.slug}`, 0.7)),
     ...services.flatMap((service) => entry(`/services/${service.slug}`, 0.6)),

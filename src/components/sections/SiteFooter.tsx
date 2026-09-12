@@ -77,6 +77,17 @@ export function SiteFooter() {
         <span className="text-[12px] text-muted-2">
           {t('rights', { year: new Date().getFullYear() })}
         </span>
+
+        {/*
+          In the footer rather than the header, which is where people look for it, and on every
+          page because it is reachable from every page that might collect something.
+        */}
+        <Link
+          href="/confidentialite"
+          className="text-[12px] text-muted-2 underline-offset-4 transition-colors hover:text-blush hover:underline"
+        >
+          {nav('privacy')}
+        </Link>
         <LanguageSwitcher tone="dark" />
       </div>
     </footer>
