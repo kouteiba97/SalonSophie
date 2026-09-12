@@ -96,7 +96,7 @@ scripts/e2e.mjs                   builds + runs Playwright with no database cred
 | 7 — Management console (not in the brief) | **Done — all 6 waves** |
 
 All six brief phases are built. Verified at the last commit: lint clean, typecheck clean,
-**396 unit tests**, **56 Playwright tests**, production build green.
+**398 unit tests**, **56 Playwright tests**, production build green.
 
 Phase 7 does not come from `BUILD_BRIEF.md`. It comes from a direct instruction to make the
 console the place the sisters run the whole business from — create, update and delete anything;

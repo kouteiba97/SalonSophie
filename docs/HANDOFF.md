@@ -52,7 +52,7 @@ Verify the checkout is sound:
 npm run typecheck && npm run lint && npm test
 ```
 
-Expect **396 tests across 21 files**, green, plus **56 Playwright tests** from `npm run e2e`. They need no database and no network: the database
+Expect **398 tests across 21 files**, green, plus **56 Playwright tests** from `npm run e2e`. They need no database and no network: the database
 tests run the real migration files against real Postgres compiled to WASM.
 
 ---
@@ -326,6 +326,47 @@ of *safety* will confirm security fixes that do not work.
 PGlite reproduces the hole. `20260817100000_revoke_anon_execute.sql` closes it, revoking from both
 `public` and `anon` so a fresh deploy and the live project land in the same state. Both are applied
 to the live project; the linter now reports only the four intended public functions.
+
+## Locked out of the console
+
+**Normally you are not.** `/equipe` has "Réinitialiser le mot de passe" on every account, so an
+owner resets anyone — including the other owner. Use that first.
+
+**The one case it cannot solve is nobody being able to sign in at all**, because the reset lives
+behind the sign-in it would repair. That happened: the accounts were created by a session that
+generated temporary passwords, showed them once, and ended. The hashes are bcrypt, so nothing is
+recoverable, and `@thesisters-ns.dz` receives no mail, which rules out every emailed reset.
+
+The way back in, which needs only the Supabase dashboard:
+
+1. **Authentication → Users → Add user → Create new user.** Set the password yourself and turn
+   **Auto Confirm User** on, or it waits on an email that will never arrive.
+2. Give it the profile row the app resolves role and tenant from. `auth.users` alone gets you
+   authenticated and refused everywhere — the same shape as the stylist who could sign in but
+   could not be booked.
+
+```sql
+insert into public.users (id, tenant_id, role_key, full_name, email, is_active, must_change_password)
+select au.id,
+       (select tenant_id from public.users limit 1),
+       'owner',
+       'Admin',
+       au.email,
+       true,
+       false
+from auth.users au
+where au.email = 'admin@thesisters-ns.dz'
+  and not exists (select 1 from public.users pu where pu.id = au.id);
+```
+
+Copying the tenant from an existing row means there is nothing to look up, and the `not exists`
+makes it safe to re-run. `must_change_password` is false because you chose the password yourself;
+set it true instead if somebody else will.
+
+Then sign in and reset the rest from `/equipe`, which is where this belongs.
+
+Worth fixing properly one day: the first owner has no recovery path inside the product. Everyone
+else does.
 
 ## Traps that have already cost time
 
