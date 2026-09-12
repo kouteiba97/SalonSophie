@@ -91,3 +91,31 @@ test.describe('sitemap.xml', () => {
     expect(services.length).toBeGreaterThan(10);
   });
 });
+
+/**
+ * The card WhatsApp draws when somebody sends the salon a link.
+ *
+ * Asserted per locale because it already broke per locale: Satori could not shape Arabic, the
+ * route returned 500, and `og:image` pointed at an image that could not exist. Nothing in the
+ * app surfaces that — you find out when a bride sends her mother a link and it arrives with a
+ * torn thumbnail.
+ */
+test.describe('link previews', () => {
+  for (const locale of LOCALES) {
+    test(`${locale} declares a preview image, and the image exists`, async ({ request }) => {
+      const html = await (await request.get(`/${locale}`)).text();
+
+      const url = /<meta property="og:image" content="([^"]+)"/.exec(html)?.[1];
+      expect(url, 'no og:image declared').toBeTruthy();
+
+      // The tag carries the canonical origin; fetch it from the server under test.
+      const path = new URL(url as string).pathname + new URL(url as string).search;
+      const image = await request.get(path);
+
+      expect(image.status(), `og:image for /${locale} is not reachable`).toBe(200);
+      expect(image.headers()['content-type']).toContain('image/png');
+      // A card that renders as an empty canvas still returns 200.
+      expect((await image.body()).byteLength).toBeGreaterThan(10_000);
+    });
+  }
+});
