@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <title>أسئلة قبل الإطلاق — The Sisters N&S</title>
+
+    <!--
+      The questionnaire that goes to Nour and Sophie, rendered to PDF by scripts/questions-pdf.mjs.
+
+      Deliberately NOT a translation of docs/OPEN_QUESTIONS.md. That file is written for whoever
+      is building the platform: it names columns, policies and migrations, and half of it explains
+      what the code does while an answer is missing. None of that is useful to the two people who
+      actually know the answers.
+
+      What is here is the questions themselves, in the order that unblocks the most: hours and
+      durations first, because those two turn every booking from a request the salon has to chase
+      into a slot a client can take. Each one says why it is being asked, because a question with
+      a reason attached gets a better answer than a blank field.
+
+      The font is embedded at render time — __FONT_BASE64__ is replaced by the script — so the PDF
+      is self-contained and the Arabic shapes correctly wherever it is opened.
+    -->
+
+    <style>
+      @font-face {
+        font-family: 'Noto Kufi Arabic';
+        src: url(data:font/woff2;base64,__FONT_BASE64__) format('woff2');
+        font-weight: 300 500;
+        font-display: block;
+      }
+
+      /* The real tokens, so the page looks like the salon rather than like a form. */
+      :root {
+        --rose-deep: #8b6f7d;
+        --rose-soft: #c9a9a6;
+        --blush: #e8d5d0;
+        --champagne: #d4b896;
+        --cream: #f7f3f0;
+        --charcoal: #2e2a28;
+        --ink-2: #5c534e;
+        --taupe: #a08d82;
+        --line: #e7deda;
+      }
+
+      @page {
+        size: A4;
+        margin: 18mm 16mm 20mm;
+      }
+
+      /*
+       * On paper the inset comes from @page, and the cover's negative margin pulls it back out to
+       * the sheet edge. On screen there is no @page, so the same negative margin pushed the cover
+       * off the left and right of the window. This file is likely to be opened in a browser as
+       * well as printed — it is easier to forward than a PDF — so it has to be right in both.
+       */
+      @media screen {
+        body {
+          padding: 18mm 16mm;
+          max-width: 210mm;
+          margin: 0 auto;
+        }
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: 'Noto Kufi Arabic', 'Segoe UI', Tahoma, sans-serif;
+        font-weight: 300;
+        line-height: 1.95;
+        color: var(--charcoal);
+        background: #fff;
+        font-size: 11.5pt;
+      }
+
+      /* ── cover ───────────────────────────────────────────────────────────── */
+      .cover {
+        min-height: 247mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        page-break-after: always;
+        background: linear-gradient(135deg, #fbf8f7 0%, #f3eae7 55%, #e8d5d0 100%);
+        margin: -18mm -16mm 0;
+        padding: 0 24mm;
+      }
+      .cover .mark {
+        font-size: 46pt;
+        letter-spacing: -1px;
+        color: var(--charcoal);
+        line-height: 1.2;
+      }
+      .cover .rule {
+        width: 70px;
+        height: 1px;
+        background: var(--champagne);
+        margin: 18px auto;
+      }
+      .cover h1 {
+        font-size: 20pt;
+        font-weight: 400;
+        color: var(--rose-deep);
+        margin: 10px 0 6px;
+      }
+      .cover .who { color: var(--taupe); font-size: 11pt; }
+      .cover .lead {
+        margin: 26px auto 0;
+        max-width: 118mm;
+        font-size: 11pt;
+        color: var(--ink-2);
+        text-align: right;
+        line-height: 2.05;
+      }
+
+      /* ── sections ────────────────────────────────────────────────────────── */
+      h2 {
+        font-size: 14pt;
+        font-weight: 400;
+        color: var(--charcoal);
+        margin: 26px 0 4px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+        page-break-after: avoid;
+      }
+      h2 .count { color: var(--taupe); font-size: 10pt; }
+      .section-note {
+        color: var(--taupe);
+        font-size: 10pt;
+        margin: 0 0 14px;
+        page-break-after: avoid;
+      }
+
+      .q {
+        page-break-inside: avoid;
+        margin: 0 0 16px;
+        padding: 12px 14px 14px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fffdfc;
+      }
+      .q.urgent { border-color: var(--rose-soft); background: #fdf9f8; }
+
+      .q h3 {
+        font-size: 12pt;
+        font-weight: 400;
+        margin: 0 0 2px;
+        color: var(--charcoal);
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+      .q h3 .n {
+        color: var(--rose-deep);
+        font-size: 10pt;
+        min-width: 22px;
+      }
+      .why {
+        margin: 0 0 10px;
+        color: var(--ink-2);
+        font-size: 10pt;
+        line-height: 1.85;
+      }
+      .why em { color: var(--rose-deep); font-style: normal; }
+
+      ul.asks { margin: 0 0 10px; padding-inline-start: 18px; }
+      ul.asks li { margin-bottom: 3px; font-size: 10.5pt; }
+
+      /* Space to actually write. Dotted rather than solid: it invites a pen. */
+      .answer {
+        border-top: 1px dotted var(--rose-soft);
+        margin-top: 10px;
+        padding-top: 6px;
+      }
+      .answer .label {
+        font-size: 8.5pt;
+        color: var(--taupe);
+        letter-spacing: 1px;
+      }
+      .line { border-bottom: 1px dotted #d8cdc8; height: 21px; }
+
+      table.hours {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        font-size: 10pt;
+      }
+      table.hours th {
+        text-align: right;
+        font-weight: 400;
+        color: var(--taupe);
+        font-size: 9pt;
+        padding: 4px 6px;
+        border-bottom: 1px solid var(--line);
+      }
+      table.hours td {
+        padding: 7px 6px;
+        border-bottom: 1px dotted #ded3ce;
+      }
+      table.hours td:first-child { color: var(--ink-2); width: 26%; }
+
+      .note {
+        background: #f7f3f0;
+        border-inline-start: 3px solid var(--champagne);
+        padding: 10px 12px;
+        border-radius: 0 8px 8px 0;
+        font-size: 10pt;
+        color: var(--ink-2);
+        margin: 14px 0 18px;
+        line-height: 1.85;
+      }
+
+      .answered li { font-size: 10.5pt; margin-bottom: 5px; color: var(--ink-2); }
+      .answered strong { color: var(--charcoal); font-weight: 400; }
+
+      footer {
+        margin-top: 26px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+        font-size: 9.5pt;
+        color: var(--taupe);
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="cover">
+      <div class="mark">N&amp;S</div>
+      <div class="rule"></div>
+      <h1>أسئلة قبل الإطلاق</h1>
+      <div class="who">إلى نور وصوفي — منصّة The Sisters N&amp;S</div>
+
+      <p class="lead">
+        المنصّة جاهزة تقنيًا. ما تبقّى ليس برمجة، بل معلومات لا يعرفها إلّا صاحبتا الصالون.
+        <br /><br />
+        القاعدة التي بُنيت عليها المنصّة كلّها: <strong>لا نخترع أيّ معلومة</strong>. السعر الناقص
+        يمكن تداركه، أمّا السعر الخاطئ الذي رأته زبونة فلا. لذلك كلّ ما هو مجهول يظهر اليوم على
+        شكل «—» أو «حسب الطلب»، لا على شكل رقم يبدو معقولًا.
+        <br /><br />
+        الأسئلة مرتّبة حسب الأثر: الأولان يفتحان الحجز الحقيقي، والباقي يمكن أن يأتي لاحقًا.
+        أجيبي عمّا تعرفينه واتركي الباقي — الفراغ هنا ليس نقصًا، بل هو ما يمنع المنصّة من الكذب.
+      </p>
+    </section>
+
+    <!-- ── 1. blocking ───────────────────────────────────────────────────── -->
+    <h2>أوّلًا: ما يظهر مباشرة للزبونة <span class="count">— أربعة أسئلة</span></h2>
+    <p class="section-note">
+      هذه وحدها تكفي لتحويل الحجز من «طلب» ننتظر تأكيده إلى موعد حقيقي محجوز.
+    </p>
+
+    <div class="q urgent">
+      <h3><span class="n">١</span> أوقات العمل</h3>
+      <p class="why">
+        بدون الأوقات لا يستطيع النظام أن يحسب ولو موعدًا واحدًا، فتبقى كلّ الحجوزات مجرّد طلبات
+        تتابعانها بأنفسكما. <em>هذا السؤال والذي يليه هما الأهمّ في الورقة كلّها.</em>
+      </p>
+      <table class="hours">
+        <tr><th>اليوم</th><th>من</th><th>إلى</th><th>مغلق؟</th></tr>
+        <tr><td>السبت</td><td></td><td></td><td></td></tr>
+        <tr><td>الأحد</td><td></td><td></td><td></td></tr>
+        <tr><td>الإثنين</td><td></td><td></td><td></td></tr>
+        <tr><td>الثلاثاء</td><td></td><td></td><td></td></tr>
+        <tr><td>الأربعاء</td><td></td><td></td><td></td></tr>
+        <tr><td>الخميس</td><td></td><td></td><td></td></tr>
+        <tr><td>الجمعة</td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="answer">
+        <div class="label">هل هناك أوقات استثنائية؟ (رمضان، نصف يوم أسبوعي، عطل…)</div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <div class="q urgent">
+      <h3><span class="n">٢</span> مدّة كلّ خدمة</h3>
+      <p class="why">
+        ٥٥ خدمة، ولا نعرف مدّة أيٍّ منها. المدّة هي ما يسمح للنظام بأن يقول «هذا الوقت متاح»
+        بدل «سنؤكّد لكِ لاحقًا». <em>لا حاجة لدقّة تامّة</em> — تقدير قريب أفضل بكثير من الفراغ،
+        ويمكن تعديله لاحقًا من لوحة التحكّم في أيّ وقت.
+      </p>
+      <ul class="asks">
+        <li>كم تستغرق كلّ خدمة تقريبًا؟ (قصّ، سشوار، بالياج، تنظيف بشرة، أظافر…)</li>
+        <li>هل تحتاجين وقتًا فاصلًا بين زبونة وأخرى للتحضير والتنظيف؟ كم دقيقة؟</li>
+      </ul>
+      <div class="note">
+        الأسهل: افتحي شاشة «الخدمات والأسعار» في لوحة التحكّم واكتبي المدّة أمام كلّ خدمة مباشرةً.
+        الشاشة تعرض عدد الخدمات التي ما تزال بلا مدّة، فتعرفين كم بقي.
+      </div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">٣</span> أسعار كراء فساتين الأعراس</h3>
+      <p class="why">
+        الفساتين الثلاثة معروضة بمقاساتها، لكن بلا سعر — تظهر «حسب الطلب». المقاس هو أكثر سؤال
+        تتلقّونه، وهو موجود؛ يبقى السعر.
+      </p>
+      <div class="answer">
+        <div class="label">أناستازيا (٣٦–٤٢)</div><div class="line"></div>
+        <div class="label">عبير (٣٨–٤٤)</div><div class="line"></div>
+        <div class="label">ريمة (٣٦–٤٠)</div><div class="line"></div>
+        <div class="label">هل السعر ثابت أم يتغيّر حسب مدّة الكراء؟</div><div class="line"></div>
+      </div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">٤</span> باقات العرائس: المحتوى والسعر</h3>
+      <p class="why">
+        ثلاث باقات معروضة بالاسم فقط. ما بداخل كلّ باقة ليس مجرّد كلام تسويقي — «كراء الفستان
+        ثلاثة أيام» قرار عمل، لا جملة إعلانية، ولذلك لا يمكن كتابته نيابةً عنكما.
+      </p>
+      <div class="answer">
+        <div class="label">Essential — ماذا تشمل، وبكم؟</div>
+        <div class="line"></div><div class="line"></div>
+        <div class="label">Signature — ماذا تشمل، وبكم؟</div>
+        <div class="line"></div><div class="line"></div>
+        <div class="label">Couture — ماذا تشمل، وبكم؟</div>
+        <div class="line"></div><div class="line"></div>
+      </div>
+    </div>
+
+    <!-- ── 2. atelier ────────────────────────────────────────────────────── -->
+    <h2>ثانيًا: قواعد ورشة العرائس <span class="count">— ستّة أسئلة</span></h2>
+    <p class="section-note">
+      لوحة التحكّم تعمل بدونها اليوم، لكنّ كلّ واحدة منها تظهر كخانة فارغة أو صفر ظاهر — عمدًا،
+      حتى تُطرح بدل أن تُنسى.
+    </p>
+
+    <div class="q">
+      <h3><span class="n">٥</span> العربون</h3>
+      <ul class="asks">
+        <li>كم عربون حجز الفستان — مبلغ ثابت أم نسبة من السعر؟</li>
+        <li>هل يُسترجع؟ وإلى أيّ وقت؟</li>
+      </ul>
+      <div class="answer"><div class="line"></div><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">٦</span> مهلة الإلغاء</h3>
+      <p class="why">
+        اليوم يمكن الإلغاء في أيّ وقت دون أيّ أثر، لأنّ العقوبة قرارٌ تجاريّ لا يُخترع.
+      </p>
+      <ul class="asks">
+        <li>إلى متى يمكن للعروس أن تلغي؟ وماذا تخسر إن ألغت بعد ذلك؟</li>
+      </ul>
+      <div class="answer"><div class="line"></div><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">٧</span> أيّام التنظيف بين كراءين</h3>
+      <p class="why">
+        القيمة الافتراضية اليوم <em>صفر</em>، أي أنّ الفستان قد يخرج لعروس في اليوم التالي مباشرةً
+        لعودته. اخترنا الصفر لأنّه خطأ ظاهر لمن يعرف الجواب، بعكس رقمٍ يبدو معقولًا فلا يُراجَع أبدًا.
+      </p>
+      <ul class="asks"><li>كم يومًا يحتاج الفستان بين عروس وأخرى؟</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">٨</span> مدّة الحجز المبدئي</h3>
+      <p class="why">
+        الحجز المبدئي يمنع الفستان تمامًا كالحجز المؤكّد، ولا ينتهي من تلقاء نفسه. لم نضع مدّة
+        لأنّ «سبعة أيام» قاعدة مخترعة ستبدأ يومًا بتحرير فستان عروسٍ حقيقية.
+      </p>
+      <ul class="asks"><li>بعد كم يوم يسقط الحجز غير المؤكّد؟</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">٩</span> مدّة قياس الفستان</h3>
+      <ul class="asks"><li>كم يستغرق موعد القياس؟ (بدونها يبقى القياس طلبًا لا موعدًا محجوزًا)</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">١٠</span> عدد الإكسسوارات</h3>
+      <p class="why">
+        العدد المسجَّل صفر، والنظام يقرأ الصفر على أنّه «لم تُحصَ بعد» فيسمح بأيّ عدد من الإعارات.
+        بمجرّد كتابة عدد حقيقي، يرفض النظام إعارة ما لا تملكانه.
+      </p>
+      <div class="answer">
+        <div class="label">برنوس</div><div class="line"></div>
+        <div class="label">تاج</div><div class="line"></div>
+        <div class="label">طرحة</div><div class="line"></div>
+      </div>
+    </div>
+
+    <!-- ── 3. content ────────────────────────────────────────────────────── -->
+    <h2>ثالثًا: الصور والمحتوى <span class="count">— أربعة أسئلة</span></h2>
+
+    <div class="q">
+      <h3><span class="n">١١</span> الصور — ٢١ موضعًا</h3>
+      <p class="why">
+        لا توجد صور حقيقية، وكلّ المواضع تعرض خلفية بشعار الصالون بالمقاس الصحيح، حتى تحلّ الصورة
+        محلّها دون أن يتغيّر الشكل. <em>لن نستعمل صور صالونات أخرى</em> مهما كانت جميلة.
+      </p>
+      <ul class="asks">
+        <li>الواجهة الرئيسية · الفساتين الثلاثة · نور · صوفي · قبل/بعد · ٣ تحوّلات · ٦ صور إنستغرام · صورة الموقع</li>
+      </ul>
+      <div class="answer">
+        <div class="label">متى يمكن تصويرها؟ ومن سيصوّر؟</div><div class="line"></div>
+      </div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">١٢</span> حسابات إنستغرام</h3>
+      <p class="why">لم نضع أيّ رابط لأنّ الحسابات غير مؤكّدة، ورابط خاطئ أسوأ من غيابه.</p>
+      <div class="answer">
+        <div class="label">الحساب الرئيسي</div><div class="line"></div>
+        <div class="label">حسابات أخرى</div><div class="line"></div>
+      </div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">١٣</span> آراء الزبونات</h3>
+      <p class="why">
+        التصميم الأوّلي احتوى ثلاث شهادات بأسماء وتواريخ. نشر شهادات مخترعة بأسماء تبدو حقيقية
+        على موقع تجاري له تبعات قانونية، لا أخلاقية فحسب. المكان يعرض اليوم دعوة لترك رأي حقيقي.
+      </p>
+      <ul class="asks"><li>هل توجد زبونات وافقن فعلًا على نشر آرائهنّ بأسمائهنّ؟</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">١٤</span> الأرقام</h3>
+      <p class="why">
+        التصميم ادّعى «٥٠٠+ زبونة سعيدة · ١٥+ خبيرة تجميل · ٨+ سنوات». عدد الخبيرات وحده يناقض
+        الواقع (نور وصوفي)، وهو ما جعل بقية الأرقام غير موثوقة، فحُذفت كلّها.
+      </p>
+      <ul class="asks"><li>هل من رقم حقيقي تودّان عرضه؟ (سنة التأسيس، عدد العرائس، متابعو إنستغرام)</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <!-- ── 4. smaller ────────────────────────────────────────────────────── -->
+    <h2>رابعًا: قرارات أصغر <span class="count">— للتأكيد فقط</span></h2>
+    <p class="section-note">وضعنا لها قيمًا مؤقّتة معقولة. تكفي كلمة «نعم» أو رقم مختلف.</p>
+
+    <div class="q">
+      <h3><span class="n">١٥</span> مهلة الحجز</h3>
+      <ul class="asks">
+        <li>أقرب موعد يمكن حجزه: <strong>٢٤ ساعة</strong> من الآن — مناسب؟</li>
+        <li>أبعد موعد يمكن حجزه: <strong>٩٠ يومًا</strong> — مناسب؟</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">١٦</span> صلاحيات الاستقبال</h3>
+      <p class="why">
+        اليوم: الاستقبال يحجز المواعيد ويسجّل المدفوعات، لكنّه <em>لا يرى الحسابات</em> ولا ينشئ
+        حجوزات الفساتين — يرى توفّرها فقط. إن دخلت عروس وأنتما مشغولتان، لا يستطيع الاستقبال حجزها.
+      </p>
+      <ul class="asks"><li>هل نوسّع صلاحياته ليحجز الفساتين أيضًا؟</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">١٧</span> عدّة خدمات في موعد واحد</h3>
+      <ul class="asks">
+        <li>هل تحجز الزبونة عادةً خدمتين معًا (قصّ + تنظيف بشرة)؟ النظام يدعمها، والواجهة تعرض واحدة.</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">١٨</span> مراجعة النصوص العربية</h3>
+      <p class="why">
+        كلّ نصوص الموقع مترجمة إلى العربية الفصحى بصيغة المخاطبة المؤنّثة. اللغة سليمة، لكنّ
+        <em>نبرة الكلام</em> قرار علامة تجارية لا قرار لغوي.
+      </p>
+      <ul class="asks">
+        <li>هل النبرة تشبهكما؟ وهل مصطلحات المهنة مكتوبة كما تقولانها فعلًا للزبونات؟</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">١٩</span> وصف الفساتين</h3>
+      <ul class="asks">
+        <li>«ذيل كاتدرائي، دانتيل مطرّز يدويًا، ظهر بأزرار» — هل تصف الفساتين الحقيقية فعلًا؟</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <!-- ── answered ──────────────────────────────────────────────────────── -->
+    <h2>ما هو محسوم — لا يحتاج جوابًا</h2>
+    <ul class="answered">
+      <li><strong>الهاتف:</strong> ٠٥٥٣٣٦٦٧١٢ — خطّ واحد، وهو نفسه رقم واتساب.</li>
+      <li><strong>الفريق:</strong> نور وصوفي، إضافة إلى «دون تفضيل». وأيّ توظيف جديد يُضاف من لوحة التحكّم مباشرةً.</li>
+      <li><strong>قائمة الأسعار:</strong> ٥٥ خدمة في ٨ فئات، مسجّلة كما زوّدتمونا بها.</li>
+      <li><strong>الفساتين:</strong> أناستازيا (٣٦–٤٢) · عبير (٣٨–٤٤) · ريمة (٣٦–٤٠).</li>
+    </ul>
+
+    <footer>
+      كلّ جواب هنا يُدخَل من لوحة التحكّم — لا حاجة لأيّ تدخّل تقني.
+      <br />
+      السؤالان ١ و ٢ هما الأهمّ: بهما يصبح الحجز فوريًا بدل أن يكون طلبًا.
+    </footer>
+  </body>
+</html>
