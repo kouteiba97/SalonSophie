@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "node scripts/e2e.mjs"
+    "e2e": "node scripts/e2e.mjs",
+    "perf": "node scripts/perf.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.1",

@@ -12,6 +12,20 @@ import localFont from 'next/font/local';
  * Cormorant Garamond, Jost and Noto Kufi Arabic are variable fonts (verified: `fvar` table
  * present), which is why the design's stylesheet pointed weights 300/400/500 at one file each.
  * Parisienne is static 400.
+ *
+ * `adjustFontFallback` is set on the three faces that carry body and heading text, and it is a
+ * performance fix rather than a typographic one. No font is preloaded in the built HTML — they
+ * are discovered only once the stylesheet parses — so on 4G the first paint is always the
+ * fallback. With unadjusted metrics that fallback is a different size from the real face, the
+ * swap reflows the text, and the reflow registers as a *new and larger* largest-contentful-paint
+ * candidate: LCP was being recorded at the swap rather than at the paint.
+ *
+ * Measured on Arabic, which pays for the largest face: LCP 3236ms against a 2500ms budget, and
+ * non-negotiable #4 was failing on the locale the brief says to test first. Matching the fallback
+ * metrics makes the first paint the final size, so nothing larger arrives later.
+ *
+ * Parisienne is left alone deliberately: it renders exactly one emphasised word per headline, so
+ * it is never the largest element, and a cursive face has no sane metric-compatible fallback.
  */
 
 export const cormorant = localFont({
@@ -20,7 +34,7 @@ export const cormorant = localFont({
   display: 'swap',
   preload: true,
   fallback: ['Georgia', 'Times New Roman', 'serif'],
-  adjustFontFallback: false,
+  adjustFontFallback: 'Times New Roman',
 });
 
 export const jost = localFont({
@@ -29,7 +43,7 @@ export const jost = localFont({
   display: 'swap',
   preload: true,
   fallback: ['system-ui', 'Segoe UI', 'sans-serif'],
-  adjustFontFallback: false,
+  adjustFontFallback: 'Arial',
 });
 
 export const parisienne = localFont({
@@ -52,7 +66,7 @@ export const notoKufi = localFont({
   display: 'swap',
   preload: false,
   fallback: ['Segoe UI', 'Tahoma', 'sans-serif'],
-  adjustFontFallback: false,
+  adjustFontFallback: 'Arial',
 });
 
 export const fontVariables = [
