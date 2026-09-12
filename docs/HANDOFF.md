@@ -1,14 +1,35 @@
 # Handoff — resume here
 
-Last worked: **12 September 2026**. Phase 7 is complete, the schema runs on a live database,
-staff accounts exist and an owner creates them from the console, and the function surface on that
-database is closed (it was not, twice — see below).
-Everything is pushed to `main`.
-Working tree clean; nothing is half-finished on disk.
+Last worked: **12 September 2026**. Everything is pushed to `main`; working tree clean; nothing
+is half-finished on disk.
 
-This file says **where the work stopped and what comes next**. It does not repeat the README
-(how the repo is laid out, how to run it) or `CLAUDE.md` (the rules). Read this first, then
-those two.
+## → The next task is deploying, and it is meant to be done *with* the owner
+
+**Do not deploy on your own.** The owner asked explicitly to do it together, step by step, so they
+learn the process and can repeat it. Walking them through it is the task; doing it for them is not.
+
+Read [docs/DEPLOYMENT.md](DEPLOYMENT.md) first — it names the platform (Vercel), says why, records
+what was rejected, lists the four environment variables, and has the post-deploy checklist. Then
+offer to start whenever they are ready.
+
+Two things from that file worth knowing before you open it, because they are the ones most likely
+to go wrong:
+
+1. **The function region must be `cdg1` (Paris).** Vercel defaults to Washington. Supabase is in
+   Paris, so the default puts the Atlantic between every page render and the database — on an app
+   whose entire performance budget was written for Algerian 4G.
+2. **A fresh clone has no credentials.** `.env.local` is gitignored, so the home PC will not have
+   the Supabase keys. They come from the dashboard: Settings → API, project `ns-beauty`, ref
+   `fwetlasbyyndjgowbxuo`. The **anon** key only — the service-role key is never used by this
+   application and must never appear in a `NEXT_PUBLIC_` variable.
+
+The app runs with no credentials at all, on the committed seed, so `npm run dev` works on a bare
+clone if you only want to look at it.
+
+---
+
+The rest of this file says **where the work stopped and what came before**. It does not repeat the
+README (how the repo is laid out, how to run it) or `CLAUDE.md` (the rules).
 
 ---
 
@@ -52,7 +73,7 @@ Verify the checkout is sound:
 npm run typecheck && npm run lint && npm test
 ```
 
-Expect **401 tests across 21 files**, green, plus **106 Playwright tests** from `npm run e2e`. They need no database and no network: the database
+Expect **401 tests across 21 files**, green, plus **110 Playwright tests** from `npm run e2e`. They need no database and no network: the database
 tests run the real migration files against real Postgres compiled to WASM.
 
 ---
@@ -260,9 +281,16 @@ a coding task.
   chain (sign-in, JWT, RLS role resolution, forced password change) has now been driven against the
   live project. There is still no public sign-up, deliberately: the console holds every client's
   phone number, so an open registration form hands that to whoever finds the URL.
-- **Real images.** Branded placeholders throughout, never stock photos of another salon.
+- **Real images.** Branded placeholders throughout, never stock photos of another salon. 21 slots,
+  listed in `docs/OPEN_QUESTIONS.md` question 7, and every one is sized so the real photo drops in
+  without shifting layout.
 - **Meta integration.** Nothing in the core blocks on it: the manual adapter reports
   `delivered: false` rather than pretending.
+- **Three accounts still hold a temporary password** — `nour@`, `sophie@` and `amina@`. An owner
+  resets any of them from `/equipe` in one click. This is the owner's to do, not a code change.
+- **A retention period, and a lawyer's read of the privacy policy** — questions 25 and 26. The
+  policy page states on itself, in all three languages, that no lawyer has seen it. Worth closing
+  before the site is shown to clients rather than after.
 - **The §6 values are seeded, and still provisional.** Durations, hours and gown prices were filled
   in so the platform could be shown end to end, so `book_appointment` now holds a real slot and
   returns `is_request: false`. They are recorded in `provisional_data` and are **not confirmed**:
@@ -327,7 +355,46 @@ PGlite reproduces the hole. `20260817100000_revoke_anon_execute.sql` closes it, 
 `public` and `anon` so a fresh deploy and the live project land in the same state. Both are applied
 to the live project; the linter now reports only the four intended public functions.
 
-## Performance — measured, with one locale still over
+## 12 September: the production-readiness pass
+
+Twelve commits, none of them features. What they have in common is that each fixed something
+nobody had checked — and in four cases, something that had shipped broken and invisible.
+
+**Two console bugs, found by driving it against the live database for the first time.**
+`book_appointment_as_staff` snapshotted `price_min` for every tariff kind except `free`, so a
+range booked at its floor and a "from" price became a bill. Reception is the heaviest user of that
+path, so in production it would have been the dominant source of revenue data — the wrong number,
+on the screen built to answer which business earns most. And "En enregistrer un autre" reset every
+field while leaving the success panel on top of them, so reception could only ever book one client
+per modal.
+
+**Discoverability did not exist.** No `robots.txt`, no `sitemap.xml`. 183 URLs now, across three
+locales, built from the catalogue so the sitemap follows the tariff rather than a second list that
+drifts. The console is excluded from the sitemap and disallowed in robots — not as the boundary,
+which is RLS, but because a crawler has no business walking screens that hold every client's phone
+number.
+
+**No security headers at all.** No CSP, no HSTS, no framing protection. `script-src` keeps
+`'unsafe-inline'` deliberately — Next streams its hydration payload through inline scripts, and the
+alternative is a per-request nonce that forces every page out of static rendering. The reasoning is
+in `next.config.ts` rather than only in a commit message.
+
+**WCAG AA contrast was failing on every page** — non-negotiable #8, never once checked. Taupe on
+cream measured 2.87:1 against a 4.5:1 requirement; the WhatsApp button was 1.98:1. Three tokens
+darkened by 6–8%, hue held exactly. This is the one change a designer would notice, made under the
+brief's own instruction to fix the design's known defects rather than reproduce them.
+
+**A share card**, because §1 says the client arrives from an Instagram reel and WhatsApp carries
+the booking — every share had been rendering as a bare grey link.
+
+**A privacy policy**, written from what the code does rather than from a template. There is
+deliberately no cookie banner: an anonymous visitor receives exactly one cookie, `NEXT_LOCALE`,
+holding a language code. Consent covers tracking, and a language preference is not tracking.
+
+**`global-error.tsx`**, the last structural gap — an error in the root layout produced a blank
+page. It carries the WhatsApp link, so a client who hits it is still one tap from the salon.
+
+## Performance — measured, all three locales inside budget
 
 `npm run perf -- http://localhost:3000/ar` against `npm start`. Regular 4G, 70ms RTT, 4x CPU,
 Pixel 5. Median of three warmed loads; it exits non-zero on a miss, so it can gate a deploy.

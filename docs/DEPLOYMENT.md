@@ -65,20 +65,93 @@ member of staff's own session, so their policies filter every query.
 `WHATSAPP_ACCESS_TOKEN` and `WHATSAPP_PHONE_NUMBER_ID` stay empty until Meta approves the account.
 The manual adapter runs meanwhile and reports `delivered: false` rather than pretending.
 
-## After the first deploy
+## The walkthrough
 
-- **Set the function region to `cdg1` (Paris).** Vercel → Settings → Functions. The default is
-  Washington, which puts the Atlantic between every page render and the database.
-- **Point `NEXT_PUBLIC_SITE_URL` at the final domain** and redeploy. Until then the sitemap and
-  the canonical tags name a domain that is not live.
-- **Add the domain in Supabase** → Authentication → URL Configuration, or the staff sign-in
-  redirect will bounce to localhost.
-- **Check the headers survived**: `curl -I https://<domain>` should show
-  `content-security-policy`, `strict-transport-security` and `x-frame-options: DENY`.
-- **Re-run the performance budget against the deployed URL**, which is the number that counts:
-  `npm run perf -- https://<domain>/ar`.
-- **Check `/robots.txt` and `/sitemap.xml`** name the real domain rather than `thesisters-ns.dz`
-  if the domain differs.
+Written to be read aloud while somebody else clicks. Roughly 20 minutes, most of it waiting for
+the first build.
+
+### 1. Push everything first
+
+```bash
+git status          # must be clean
+git push origin main
+```
+
+Vercel deploys what is on GitHub, not what is on the laptop. A local commit that was never pushed
+is the most common reason the deployed site is missing the thing you just fixed.
+
+### 2. Create the project
+
+1. **vercel.com** → sign in **with GitHub**. Signing in with email instead creates an account that
+   cannot see the repository, which then looks like the repository is missing.
+2. **Add New → Project**.
+3. Find **SalonSophie** → **Import**. If it is not listed, **Adjust GitHub App Permissions** and
+   grant access to that repository.
+4. Framework should read **Next.js** already. Leave the build command, output directory and
+   install command exactly as they are — the defaults are correct, and overriding them is how a
+   working build stops working.
+
+### 3. Environment variables — before the first build, not after
+
+On the same screen, open **Environment Variables** and add the three from the table above:
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`.
+
+Add them to **all three environments** (Production, Preview, Development) unless there is a reason
+not to. Leave `NEXT_PUBLIC_DEMO_DATA` out entirely.
+
+They are read at **build** time, not at request time — `NEXT_PUBLIC_*` values are compiled into
+the bundles. Adding one afterwards changes nothing until the next deploy, which is a confusing
+twenty minutes if nobody says so first.
+
+For `NEXT_PUBLIC_SITE_URL` on the very first deploy, the final domain may not exist yet. Use the
+`*.vercel.app` URL Vercel gives you, and change it once the real domain is attached — step 6.
+
+### 4. Deploy
+
+Press **Deploy** and wait. The first build takes a few minutes; later ones are faster.
+
+If it fails, read the log from the **top**, not the bottom: the first error is the real one and
+everything under it is fallout. A build that passes locally and fails here is almost always a
+missing environment variable.
+
+### 5. Move the functions to Paris
+
+**Settings → Functions → Function Region → Paris (cdg1)**, then **redeploy** — the region applies
+to the next deployment, not the current one.
+
+This is the step most likely to be skipped and least likely to be noticed, because the site still
+works without it, only slower. Supabase is in Paris. The default is Washington. Leaving it puts
+the Atlantic between every page render and the database, twice, on an app whose whole performance
+budget was written for Algerian 4G.
+
+### 6. The domain
+
+**Settings → Domains → Add.** Vercel prints the DNS records to create at whoever sells the domain
+— usually an `A` record, or a `CNAME` for `www`. DNS takes minutes to hours to propagate; the
+certificate is automatic once it resolves.
+
+Then, and this is easy to forget:
+
+- Set `NEXT_PUBLIC_SITE_URL` to the real domain and **redeploy**, or the sitemap and every
+  canonical tag keep naming the placeholder.
+- **Supabase → Authentication → URL Configuration** → add the domain to Site URL and Redirect
+  URLs, or staff sign-in bounces to localhost.
+
+### 7. Check it, rather than assume it
+
+```bash
+curl -I https://<domain>                     # CSP, HSTS, x-frame-options: DENY
+curl -s https://<domain>/robots.txt          # names the real domain
+curl -s https://<domain>/sitemap.xml | head  # ditto, and no console paths
+npm run perf -- https://<domain>/ar          # the locale with the least headroom
+```
+
+Then in a browser: the public site in all three languages, a booking taken as far as the slot list
+without submitting, and a staff sign-in.
+
+**Do not run `npm run e2e` against the deployed site.** It drives the booking flow to completion
+and would write real appointments into the live database — which has happened once already. The
+suite builds its own copy without credentials for exactly this reason.
 
 ## What deploying does not do
 
