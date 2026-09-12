@@ -1,7 +1,8 @@
 # Handoff — resume here
 
-Last worked: **17 August 2026**. Phase 7 is complete, the schema runs on a live database, and
-the function surface on that database is now actually closed (it was not, twice — see below).
+Last worked: **12 September 2026**. Phase 7 is complete, the schema runs on a live database,
+staff accounts exist and an owner creates them from the console, and the function surface on that
+database is closed (it was not, twice — see below).
 Everything is pushed to `main`.
 Working tree clean; nothing is half-finished on disk.
 
@@ -51,7 +52,7 @@ Verify the checkout is sound:
 npm run typecheck && npm run lint && npm test
 ```
 
-Expect **394 tests across 21 files**, green, plus **56 Playwright tests** from `npm run e2e`. They need no database and no network: the database
+Expect **396 tests across 21 files**, green, plus **56 Playwright tests** from `npm run e2e`. They need no database and no network: the database
 tests run the real migration files against real Postgres compiled to WASM.
 
 ---
@@ -80,6 +81,39 @@ are applied. If you are about to touch grants, read
 [Correction: the function surface was never actually closed](#correction-the-function-surface-was-never-actually-closed)
 first; it is the most expensive thing anyone has learned on this project, and the second half of
 it explains why a green PGlite run is not evidence about Supabase.
+
+### 18 August – 12 September: past the waves
+
+Four commits that are not part of the wave plan, and change what the platform *is*:
+
+**Staff accounts (`20260818090000`, `/equipe`).** An owner creates them; there is no public
+sign-up because the console holds every client's phone number. `create_staff_account` is
+SECURITY DEFINER — it writes into `auth` — which makes its `is_owner()` guard the only thing
+between a signed-in stylist and minting themselves an owner. The temporary password is shown once
+and forced to change at `/mot-de-passe`, gated on the layout so a new route cannot forget it.
+
+A working stylist needs **three** rows and the first version wrote one: `users` gives a login,
+`staff` makes them bookable, `staff_schedules` gives them hours. Miss either of the last two and
+you get someone who signs in, cannot be booked, and whose own day is empty — silently.
+
+**The §6 values are filled in (`20260818100000`).** Durations, hours and gown prices are seeded
+*and* recorded in `provisional_data` for confirmation. The effect is the big one:
+`book_appointment` now returns `is_request: false` and holds a real slot, with non-negotiable #1
+proven on the live database rather than only in PGlite.
+
+**The money paths existed nowhere (`20260818110000`).** `payments` and `invoices` were read by
+/finances and written by nothing, so a salon could complete a hundred appointments and read 0 DA.
+Adds `record_payment`, `record_invoice`, `set_invoice_paid`, `update_deal`,
+`set_appointment_status`. Reception takes the cash, so reception may insert a payment and still
+cannot read the ledger — note that `INSERT ... RETURNING` applies the SELECT policies to the new
+row, so the id is generated before the insert rather than returned from it.
+
+**The worker's screen (`/ma-journee`) and a four-month-old schema bug.**
+`appointments.gown_id` was declared as a bare uuid and the foreign key was never added, so
+PostgREST could not build the embedding and `select=gowns(name)` failed — and
+`getDayAppointments` treats any error as an empty day. **The day-line had been blank against
+every real database since Phase 5**, invisibly, because an empty day is what a quiet salon looks
+like and the PGlite tests query tables directly rather than through PostgREST.
 
 ### What waves 1–3 actually put in the repo
 
@@ -222,16 +256,19 @@ a coding task.
   schema change under the one constraint the whole project exists to guarantee, in exchange for
   silencing a warning. If it is ever done, do it with the exclusion-constraint tests in front of
   you.
-- **No staff account exists**, so nothing has ever signed in. It is two steps and both are in the
-  README: create the user in the Supabase dashboard, then give them a `public.users` row. Until
-  then, sign-in and cookie refresh are the one part of the stack never exercised against the real
-  thing, and the signed-in console screens have never been driven against a real database.
+- ~~No staff account exists~~ — **done.** An owner creates accounts from `/equipe`, and the whole
+  chain (sign-in, JWT, RLS role resolution, forced password change) has now been driven against the
+  live project. There is still no public sign-up, deliberately: the console holds every client's
+  phone number, so an open registration form hands that to whoever finds the URL.
 - **Real images.** Branded placeholders throughout, never stock photos of another salon.
 - **Meta integration.** Nothing in the core blocks on it: the manual adapter reports
   `delivered: false` rather than pretending.
-- **The §6 unknowns.** Durations and opening hours are the two that pay for themselves — they flip
-  the booking engine from `mode: 'request'` to real computed slots with no code change.
-  `docs/OPEN_QUESTIONS.md` has the list.
+- **The §6 values are seeded, and still provisional.** Durations, hours and gown prices were filled
+  in so the platform could be shown end to end, so `book_appointment` now holds a real slot and
+  returns `is_request: false`. They are recorded in `provisional_data` and are **not confirmed**:
+  Sophie checks each group and an owner confirms it in the console. Watch this one — it is where §6
+  can erode quietly, because `data_gaps()` counts NULLs and cannot see a filled-in guess.
+  `docs/OPEN_QUESTIONS.md` still has the list.
 
 ### Correction: the function surface was never actually closed
 
@@ -291,6 +328,22 @@ PGlite reproduces the hole. `20260817100000_revoke_anon_execute.sql` closes it, 
 to the live project; the linter now reports only the four intended public functions.
 
 ## Traps that have already cost time
+
+**Never write a literal future date in a test the database time-checks.** `book_appointment`
+refuses a start before `now()` and `reserve_gown` refuses a past date, so a test written against
+a calendar date is a test with an expiry. This has already happened once: the booking suite was
+written against 2026-09-01 … 2026-09-12 and, by 12 September, eight of its tests were failing on a
+clean checkout with nothing broken. It had been failing one more test per day for a week and a half.
+
+That failure mode is worse than a flaky test, because it points at the wrong thing — the error is
+`booking_in_the_past` raised by the booking function, so the obvious reading is "the booking code
+regressed" rather than "the fixture aged".
+
+Use `inDays(n, 'HH:MM')` and `dateInDays(n)` from `tests/db/harness.ts`. They say what the test
+means — "three days out" — and stay true whenever it runs. Every date the database compares against
+`now()` is now relative; the only literals left are the deliberate past ones (2020-01-01), which
+are the point of those tests. Literals in `schema.test.ts` and `management.test.ts` are fine
+where they are: those insert rows directly, so no `now()` comparison ever sees them.
 
 **A stale dev server survives across sessions.** A leftover `next start -p 3000` will serve a
 deleted `.next`, every chunk 404s, nothing hydrates, and it looks exactly like a broken feature —
