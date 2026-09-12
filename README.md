@@ -48,6 +48,8 @@ npm run lint         # eslint
 npm run typecheck    # tsc --noEmit
 npm test             # vitest — unit + real-Postgres schema tests
 npm run e2e          # playwright — builds for you, deliberately without database credentials
+npm run perf         # LCP and CLS on simulated 4G; exits non-zero on a miss
+npm run questions    # regenerates the Arabic questionnaire PDF
 ```
 
 `npx playwright install chromium` once, before the first `npm run e2e`.
@@ -60,6 +62,8 @@ npm run e2e          # playwright — builds for you, deliberately without datab
 BUILD_BRIEF.md                    the authoritative spec — read this first
 CLAUDE.md                         stack, conventions, non-negotiables, design tokens
 docs/OPEN_QUESTIONS.md            business rules still unanswered — READ BEFORE BUILDING
+docs/DEPLOYMENT.md                platform choice, environment variables, and what to check after
+docs/questions-sophie.ar.pdf      the same questions in Arabic, for Nour and Sophie
 Sisters NS Beauty - Standalone.html   the approved visual design (a self-extracting bundle)
 
 src/app/[locale]/(site)/          the public site: home, services, robes, + detail pages
@@ -96,7 +100,7 @@ scripts/e2e.mjs                   builds + runs Playwright with no database cred
 | 7 — Management console (not in the brief) | **Done — all 6 waves** |
 
 All six brief phases are built. Verified at the last commit: lint clean, typecheck clean,
-**401 unit tests**, **64 Playwright tests**, production build green.
+**401 unit tests**, **106 Playwright tests**, production build green.
 
 Phase 7 does not come from `BUILD_BRIEF.md`. It comes from a direct instruction to make the
 console the place the sisters run the whole business from — create, update and delete anything;

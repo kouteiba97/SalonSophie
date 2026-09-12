@@ -52,7 +52,7 @@ Verify the checkout is sound:
 npm run typecheck && npm run lint && npm test
 ```
 
-Expect **401 tests across 21 files**, green, plus **64 Playwright tests** from `npm run e2e`. They need no database and no network: the database
+Expect **401 tests across 21 files**, green, plus **106 Playwright tests** from `npm run e2e`. They need no database and no network: the database
 tests run the real migration files against real Postgres compiled to WASM.
 
 ---
