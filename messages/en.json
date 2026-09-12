@@ -248,7 +248,18 @@
       "slotsFor": "Slots — {date}",
       "chooseDateFirst": "choose a date",
       "noSlots": "No slots that day. Try another date.",
-      "availabilityPending": "Live availability is coming soon. Send us the date you want and we will confirm on WhatsApp."
+      "availabilityPending": "Live availability is coming soon. Send us the date you want and we will confirm on WhatsApp.",
+      "loadingSlots": "Checking availability…",
+      "empty": {
+        "closed": "The salon is closed that day. Pick another date.",
+        "full": "No times left that day. Try another one.",
+        "timeOff": "Your expert is away that day. Pick another date, or choose no preference.",
+        "past": "That date has already passed.",
+        "tooSoon": "That is too soon to confirm. Pick a later day.",
+        "tooFar": "That date is too far ahead to book online.",
+        "unknownHours": "Opening hours are not recorded for that day.",
+        "unknownDuration": "No duration is recorded for this service."
+      }
     },
     "form": {
       "name": "Full name",

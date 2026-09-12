@@ -248,7 +248,18 @@
       "slotsFor": "Créneaux — {date}",
       "chooseDateFirst": "choisissez une date",
       "noSlots": "Aucun créneau ce jour-là. Essayez une autre date.",
-      "availabilityPending": "Les disponibilités en temps réel arrivent bientôt. Envoyez-nous votre souhait, nous confirmons sur WhatsApp."
+      "availabilityPending": "Les disponibilités en temps réel arrivent bientôt. Envoyez-nous votre souhait, nous confirmons sur WhatsApp.",
+      "loadingSlots": "Recherche des disponibilités…",
+      "empty": {
+        "closed": "Le salon est fermé ce jour-là. Choisissez une autre date.",
+        "full": "Plus aucun créneau libre ce jour-là. Essayez un autre jour.",
+        "timeOff": "Votre experte n’est pas là ce jour-là. Choisissez une autre date, ou « sans préférence ».",
+        "past": "Cette date est déjà passée.",
+        "tooSoon": "C’est trop proche pour être confirmé. Choisissez un jour suivant.",
+        "tooFar": "Cette date est trop éloignée pour être réservée en ligne.",
+        "unknownHours": "Horaires non renseignés pour ce jour.",
+        "unknownDuration": "Durée non renseignée pour cette prestation."
+      }
     },
     "form": {
       "name": "Nom complet",

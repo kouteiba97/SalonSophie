@@ -49,8 +49,24 @@ export interface Catalogue {
   fromDatabase: boolean;
 }
 
+/**
+ * Slugs the message catalogues carry a translated role line for.
+ *
+ * Without this, reading the roster from the database quietly untranslated the two sisters: their
+ * `specialty` is stored in French, so the Arabic booking step showed "Coiffure & mariée" under
+ * Nour. Arabic is a first-class locale, not a translation layer, and it is the surface that
+ * catches this kind of regression — which is why it is tested first.
+ */
+const TRANSLATED_ROLES = new Set(['nour', 'sophie']);
+
 function mapStaff(row: StaffRow): Expert {
-  return { slug: row.slug, name: row.display_name, specialty: row.specialty };
+  return {
+    slug: row.slug,
+    name: row.display_name,
+    // The key wins where one exists; `specialty` is the untranslated fallback for a new hire.
+    roleKey: TRANSLATED_ROLES.has(row.slug) ? `team.${row.slug}.role` : undefined,
+    specialty: row.specialty,
+  };
 }
 
 function toPrice(row: ServiceRow): Price {

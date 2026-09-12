@@ -1,11 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useBooking } from '../BookingProvider';
 import { ChevronLeft, ChevronRight } from '@/components/common/icons';
 import { INTL_TAG, type Locale } from '@/i18n/routing';
 import { PROVISIONAL_SLOTS, monthGrid, monthOf, weekStrip } from '@/lib/availability/calendar';
+import { fetchAvailability } from '@/app/actions/availability';
+import type { DayAvailability } from '@/lib/availability/engine';
+import { NO_PREFERENCE } from '@/data/team';
 import { formatLongDate, formatMonthYear, fromIsoDate } from '@/lib/datetime';
 import { cn } from '@/lib/utils';
 
@@ -16,15 +19,27 @@ import { cn } from '@/lib/utils';
  * Every cell is a real `<button>` carrying `aria-pressed`, and a disabled day states *why* in
  * text rather than relying on grey and a strikethrough (§5.4 items 15, 16).
  *
- * Nothing here claims to know what is free. The design's `hash(iso)%11===0` marked one day in
- * eleven as full and `hash(iso+t)%4===0` struck out a quarter of the slots, deterministically
- * and with no basis — a client could be turned away from an empty Tuesday. All of it is gone;
- * see lib/availability/calendar.ts.
+ * The design's `hash(iso)%11===0` marked one day in eleven as full and `hash(iso+t)%4===0`
+ * struck out a quarter of the slots, deterministically and with no basis — a client could be
+ * turned away from an empty Tuesday. All of it is gone; see lib/availability/calendar.ts.
+ *
+ * What replaced it is the real engine, asked once a date is picked. Until durations and opening
+ * hours existed it had nothing to work with and every day came back in request mode, so this step
+ * showed seven fixed times and said so. Both are still here and still correct when the answer is
+ * genuinely unknown — a service with no duration, or a database that cannot be reached. The
+ * difference is that the request path is now the fallback rather than the only path.
  */
 export function DateStep() {
   const t = useTranslations('booking.calendar');
   const locale = useLocale() as Locale;
   const { state, dispatch } = useBooking();
+
+  /*
+   * Slots for the chosen day. `null` means "not asked yet or could not answer", which renders
+   * the provisional list — the same thing a client saw before any of this existed.
+   */
+  const [day, setDay] = useState<DayAvailability | null>(null);
+  const [loading, startLoading] = useTransition();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -35,6 +50,46 @@ export function DateStep() {
     () => (mounted ? formatMonthYear(monthOf(state.monthOffset), locale) : ''),
     [mounted, state.monthOffset, locale],
   );
+
+  /*
+   * Asked per selected day rather than per month: one day is one round trip on a phone on
+   * Algerian 4G, where a month of slots is a payload nobody looks at. The expert matters as much
+   * as the date — Nour's Tuesday is not Sophie's — so changing either re-asks.
+   */
+  useEffect(() => {
+    if (!state.date || !state.serviceSlug) {
+      setDay(null);
+      return;
+    }
+    let current = true;
+    const date = state.date;
+    const serviceSlug = state.serviceSlug;
+    const staffSlug =
+      !state.expertSlug || state.expertSlug === NO_PREFERENCE ? null : state.expertSlug;
+
+    startLoading(async () => {
+      const result = await fetchAvailability({ serviceSlug, staffSlug, fromIso: date, days: 1 });
+      if (!current) return;
+      setDay(result.status === 'ok' ? (result.days[0] ?? null) : null);
+    });
+
+    return () => {
+      current = false;
+    };
+  }, [state.date, state.serviceSlug, state.expertSlug]);
+
+  const computed = day?.mode === 'computed' ? day : null;
+  /*
+   * A day the engine ruled out entirely — closed, past, beyond the booking horizon, or the
+   * chosen expert is away. This is a real answer and must not fall through to the provisional
+   * list: offering seven bookable-looking times on a Friday the salon is shut is worse than the
+   * placeholder it replaced, because it looks like availability rather than a placeholder.
+   */
+  const unavailable = day?.mode === 'unavailable' ? day : null;
+  const slotTimes = computed ? computed.slots.map((slot) => slot.time) : PROVISIONAL_SLOTS;
+  /** Only claim real availability when the engine actually answered — either way. */
+  const isReal = computed !== null || unavailable !== null;
+  const emptyReason = unavailable?.reason ?? (computed && computed.slots.length === 0 ? (computed.reason ?? 'full') : null);
 
   const weekdays = t.raw('weekdays') as string[];
   const weekdaysFull = t.raw('weekdaysFull') as string[];
@@ -178,9 +233,23 @@ export function DateStep() {
 
         {!state.date ? (
           <p className="text-[13px] text-muted">{t('chooseDateFirst')}</p>
+        ) : loading ? (
+          <p className="text-[13px] text-muted" role="status">
+            {t('loadingSlots')}
+          </p>
+        ) : emptyReason ? (
+          /*
+           * Nothing free, and the engine said why. Saying which of "closed", "fully booked" or
+           * "she is away" applies is the difference between a client trying the next day and a
+           * client assuming the salon is broken — the same rule the disabled day cells follow
+           * (§5.4 item 16: never colour and a strikethrough alone).
+           */
+          <p className="text-[13px] text-charcoal" role="status">
+            {t(`empty.${emptyReason}` as 'empty.full')}
+          </p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            {PROVISIONAL_SLOTS.map((slot) => {
+            {slotTimes.map((slot) => {
               const selected = state.time === slot;
               return (
                 <button
@@ -202,7 +271,14 @@ export function DateStep() {
           </div>
         )}
 
-        <p className="text-[11px] leading-[1.65] text-taupe-2">{t('availabilityPending')}</p>
+        {/*
+          * Shown only when the times above are not real. Leaving it up once they are would tell a
+          * client her confirmed slot is a wish — and the reverse, dropping it while the engine
+          * cannot answer, would promise a booking nobody is holding.
+          */}
+        {!isReal ? (
+          <p className="text-[11px] leading-[1.65] text-taupe-2">{t('availabilityPending')}</p>
+        ) : null}
       </div>
     </div>
   );
