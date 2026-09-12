@@ -334,29 +334,28 @@ Pixel 5. Median of three warmed loads; it exits non-zero on a miss, so it can ga
 
 | Locale | LCP median | Budget | CLS |
 |---|---|---|---|
-| `/fr` | 964 ms | 2500 ms | 0.0001 |
-| `/en` | 920 ms | 2500 ms | 0.0002 |
-| `/ar` | **2592 ms** | 2500 ms | 0.0007 |
+| `/fr` | 752 ms | 2500 ms | 0.0001 |
+| `/en` | 732 ms | 2500 ms | 0.0001 |
+| `/ar` | 2380 ms | 2500 ms | 0.0007 |
+
+**All three pass.** Arabic was over at 3236ms and then 2592ms; it clears now, but with the least
+room of the three, and it is the one to re-measure after any change to fonts or to the amount of
+JavaScript on the page.
 
 **Always warm the route and take a median.** Measured once, cold, the same build gave 2136ms and
 2940ms on consecutive runs — the first request to a route in `next start` pays for work no real
 visitor pays for twice. A single sample proves whichever answer you were hoping for.
 
-**Arabic is 3.7% over and that is the honest number.** It was 3236ms before
-`adjustFontFallback` was set on the body and heading faces; see the comment in
-`src/lib/fonts.ts` for why that mattered more than the font's size did. What remains is weight:
-179.6 KB of fonts on `/ar` against 84.8 KB on `/fr`, because the Arabic page loads Noto Kufi
-*and* the three Latin faces.
+**Arabic has the least headroom, and here is why.** It loads 179.6 KB of fonts against
+French's 84.8 KB, because the Arabic page pulls Noto Kufi *and* the three Latin faces. The fix
+that moved it most was not size but `adjustFontFallback` — see the comment in
+`src/lib/fonts.ts`: without matched fallback metrics the font swap reflows the text, and the
+reflow registers as a new and larger LCP candidate, so LCP was being recorded at the swap rather
+than at the paint.
 
-Three options, none of them started:
-
-1. **Subset Noto Kufi harder.** It is already Arabic-only; the next cut is dropping glyphs the
-   copy never uses, which needs the final copy to be settled first.
-2. **Stop loading the Latin faces on `/ar`.** Worth ~85 KB, but the brand wordmark and the
-   numerals are Latin, so this needs a designer's eye rather than a build flag.
-3. **Accept it.** 2.6s on a deliberately harsh profile is not a bad page, and the budget is a
-   target rather than a law. Say so out loud if that is the decision, rather than leaving the
-   check failing and unexplained.
+If it ever regresses, the two levers not yet pulled are subsetting Noto Kufi past Arabic-only
+(needs the final copy settled) and not loading the Latin faces on `/ar` at all (worth ~85 KB,
+but the wordmark and the numerals are Latin, so it needs a designer's eye rather than a flag).
 
 CLS is effectively zero everywhere, which is the half of #4 that is genuinely done.
 
