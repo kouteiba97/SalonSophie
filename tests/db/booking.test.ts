@@ -2,7 +2,7 @@
  * @vitest-environment node
  */
 import { beforeAll, describe, expect, it } from 'vitest';
-import { createTestDb, type TestDb } from './harness';
+import { createTestDb, dateInDays, inDays, type TestDb } from './harness';
 
 let db: TestDb;
 
@@ -51,7 +51,7 @@ beforeAll(async () => {
 
 describe('book_appointment', () => {
   it('schedules a real slot when the duration is known', async () => {
-    const result = await book({ service: 'coupe', staff: 'nour', start: '2026-09-01T09:00:00Z' });
+    const result = await book({ service: 'coupe', staff: 'nour', start: inDays(1, '09:00') });
 
     expect(result.reference).toMatch(/^[0-9A-F]{8}$/);
     expect(result.is_request).toBe(false);
@@ -71,13 +71,13 @@ describe('book_appointment', () => {
    * rather than a constraint stack trace.
    */
   it('refuses a second booking for the same staff member and time', async () => {
-    await book({ service: 'coupe', staff: 'sophie', start: '2026-09-02T09:00:00Z' });
+    await book({ service: 'coupe', staff: 'sophie', start: inDays(2, '09:00') });
 
     await expect(
       book({
         service: 'coupe',
         staff: 'sophie',
-        start: '2026-09-02T09:30:00Z',
+        start: inDays(2, '09:30'),
         phone: '0554444444',
         name: 'Autre Cliente',
       }),
@@ -85,13 +85,13 @@ describe('book_appointment', () => {
   });
 
   it('refuses even a perfectly simultaneous booking', async () => {
-    await book({ service: 'coupe', staff: 'nour', start: '2026-09-03T11:00:00Z' });
+    await book({ service: 'coupe', staff: 'nour', start: inDays(3, '11:00') });
 
     await expect(
       book({
         service: 'coupe',
         staff: 'nour',
-        start: '2026-09-03T11:00:00Z',
+        start: inDays(3, '11:00'),
         phone: '0555555555',
         name: 'Simultanée',
       }),
@@ -99,34 +99,34 @@ describe('book_appointment', () => {
   });
 
   it('allows the adjoining hour', async () => {
-    await book({ service: 'coupe', staff: 'nour', start: '2026-09-04T09:00:00Z' });
+    await book({ service: 'coupe', staff: 'nour', start: inDays(4, '09:00') });
     await expect(
-      book({ service: 'coupe', staff: 'nour', start: '2026-09-04T10:00:00Z', phone: '0556666666' }),
+      book({ service: 'coupe', staff: 'nour', start: inDays(4, '10:00'), phone: '0556666666' }),
     ).resolves.toBeDefined();
   });
 
   it('falls back to another expert when none is named', async () => {
     // Nour is busy at this hour; "no preference" should land on Sophie rather than fail.
-    await book({ service: 'coupe', staff: 'nour', start: '2026-09-05T14:00:00Z' });
+    await book({ service: 'coupe', staff: 'nour', start: inDays(5, '14:00') });
 
     const result = await book({
       service: 'coupe',
       staff: 'sans-preference',
-      start: '2026-09-05T14:00:00Z',
+      start: inDays(5, '14:00'),
       phone: '0557777777',
     });
     expect(result.staff_slug).toBe('sophie');
   });
 
   it('reports the slot taken when every expert is busy', async () => {
-    await book({ service: 'coupe', staff: 'nour', start: '2026-09-06T16:00:00Z' });
-    await book({ service: 'coupe', staff: 'sophie', start: '2026-09-06T16:00:00Z', phone: '0558888888' });
+    await book({ service: 'coupe', staff: 'nour', start: inDays(6, '16:00') });
+    await book({ service: 'coupe', staff: 'sophie', start: inDays(6, '16:00'), phone: '0558888888' });
 
     await expect(
       book({
         service: 'coupe',
         staff: 'sans-preference',
-        start: '2026-09-06T16:00:00Z',
+        start: inDays(6, '16:00'),
         phone: '0559999999',
       }),
     ).rejects.toThrow(/booking_slot_taken/);
@@ -134,7 +134,7 @@ describe('book_appointment', () => {
 
   /** Non-negotiable #2 reaching the booking path: an unknown duration must not become a promise. */
   it('records a request, holding no slot, when the duration is unknown', async () => {
-    const result = await book({ service: 'balayage', staff: 'nour', start: '2026-09-10T09:00:00Z' });
+    const result = await book({ service: 'balayage', staff: 'nour', start: inDays(10, '09:00') });
     expect(result.is_request).toBe(true);
 
     const appt = await db.query<{ period: string | null; requested_start: string | null }>(
@@ -146,22 +146,22 @@ describe('book_appointment', () => {
   });
 
   it('lets two requests share a time, because neither holds the calendar', async () => {
-    await book({ service: 'balayage', staff: 'nour', start: '2026-09-11T09:00:00Z' });
+    await book({ service: 'balayage', staff: 'nour', start: inDays(11, '09:00') });
     await expect(
-      book({ service: 'balayage', staff: 'nour', start: '2026-09-11T09:00:00Z', phone: '0551212121' }),
+      book({ service: 'balayage', staff: 'nour', start: inDays(11, '09:00'), phone: '0551212121' }),
     ).resolves.toBeDefined();
   });
 
   it('never lets a request block a real booking', async () => {
-    await book({ service: 'balayage', staff: 'sophie', start: '2026-09-12T09:00:00Z' });
+    await book({ service: 'balayage', staff: 'sophie', start: inDays(12, '09:00') });
     await expect(
-      book({ service: 'coupe', staff: 'sophie', start: '2026-09-12T09:00:00Z', phone: '0551313131' }),
+      book({ service: 'coupe', staff: 'sophie', start: inDays(12, '09:00'), phone: '0551313131' }),
     ).resolves.toBeDefined();
   });
 
   /** §5.3 item 10 — a gown books a fitting, never a rental. */
   it('turns a gown into a bridal fitting, not a reservation', async () => {
-    const result = await book({ gown: 'anastasia', staff: 'sophie', start: '2026-09-15T10:00:00Z' });
+    const result = await book({ gown: 'anastasia', staff: 'sophie', start: inDays(15, '10:00') });
     expect(result.is_request).toBe(true);
 
     const appt = await db.query<{ line: string; gown_id: string | null }>(
@@ -182,7 +182,7 @@ describe('book_appointment', () => {
     it('rejects a phone that is not an Algerian mobile', async () => {
       for (const phone of ['0451111111', '123', '+213551111111']) {
         await expect(
-          book({ service: 'coupe', start: '2026-09-20T09:00:00Z', phone }),
+          book({ service: 'coupe', start: inDays(20, '09:00'), phone }),
         ).rejects.toThrow(/booking_invalid_phone/);
       }
     });
@@ -191,7 +191,7 @@ describe('book_appointment', () => {
       const result = await book({
         service: 'coupe',
         staff: 'nour',
-        start: '2026-09-21T09:00:00Z',
+        start: inDays(21, '09:00'),
         phone: '05 53 36 67 13',
       });
       const client = await db.query<{ phone: string }>(
@@ -204,7 +204,7 @@ describe('book_appointment', () => {
 
     it('rejects an empty name', async () => {
       await expect(
-        book({ service: 'coupe', start: '2026-09-22T09:00:00Z', name: '   ' }),
+        book({ service: 'coupe', start: inDays(22, '09:00'), name: '   ' }),
       ).rejects.toThrow(/booking_invalid_name/);
     });
 
@@ -215,28 +215,28 @@ describe('book_appointment', () => {
     });
 
     it('rejects an unknown service and an unknown gown', async () => {
-      await expect(book({ service: 'not-a-service', start: '2026-09-23T09:00:00Z' })).rejects.toThrow(
+      await expect(book({ service: 'not-a-service', start: inDays(23, '09:00') })).rejects.toThrow(
         /booking_unknown_service/,
       );
-      await expect(book({ gown: 'not-a-gown', start: '2026-09-23T09:00:00Z' })).rejects.toThrow(
+      await expect(book({ gown: 'not-a-gown', start: inDays(23, '09:00') })).rejects.toThrow(
         /booking_unknown_gown/,
       );
     });
 
     it('requires exactly one of service or gown', async () => {
-      await expect(book({ start: '2026-09-24T09:00:00Z' })).rejects.toThrow(
+      await expect(book({ start: inDays(24, '09:00') })).rejects.toThrow(
         /booking_invalid_subject/,
       );
       await expect(
-        book({ service: 'coupe', gown: 'anastasia', start: '2026-09-24T09:00:00Z' }),
+        book({ service: 'coupe', gown: 'anastasia', start: inDays(24, '09:00') }),
       ).rejects.toThrow(/booking_invalid_subject/);
     });
   });
 
   it('reuses a returning client rather than duplicating them', async () => {
     const phone = '0551414141';
-    await book({ service: 'coupe', staff: 'nour', start: '2026-09-25T09:00:00Z', phone, name: 'Yasmine' });
-    await book({ service: 'coupe', staff: 'nour', start: '2026-09-26T09:00:00Z', phone, name: 'Yasmine K' });
+    await book({ service: 'coupe', staff: 'nour', start: inDays(25, '09:00'), phone, name: 'Yasmine' });
+    await book({ service: 'coupe', staff: 'nour', start: inDays(26, '09:00'), phone, name: 'Yasmine K' });
 
     const clients = await db.query<{ count: number; full_name: string }>(
       `select count(*)::int as count, max(full_name) as full_name
@@ -252,7 +252,7 @@ describe('book_appointment', () => {
     const before = await db.query<{ count: number }>(
       `select count(*)::int as count from public.audit_log where table_name = 'appointments'`,
     );
-    await book({ service: 'coupe', staff: 'sophie', start: '2026-09-27T09:00:00Z', phone: '0551515151' });
+    await book({ service: 'coupe', staff: 'sophie', start: inDays(27, '09:00'), phone: '0551515151' });
     const after = await db.query<{ count: number }>(
       `select count(*)::int as count from public.audit_log where table_name = 'appointments'`,
     );
@@ -262,10 +262,10 @@ describe('book_appointment', () => {
 
 describe('busy_spans', () => {
   it('exposes occupied time without exposing who booked it', async () => {
-    await book({ service: 'coupe', staff: 'nour', start: '2026-10-15T09:00:00Z', phone: '0551616161' });
+    await book({ service: 'coupe', staff: 'nour', start: inDays(45, '09:00'), phone: '0551616161' });
 
     const res = await db.query<{ staff_slug: string; starts_at: string; ends_at: string }>(
-      `select * from public.busy_spans('2026-10-15'::date, '2026-10-15'::date)`,
+      `select * from public.busy_spans('${dateInDays(45)}'::date, '${dateInDays(45)}'::date)`,
     );
 
     expect(res.rows.length).toBeGreaterThan(0);
@@ -274,9 +274,9 @@ describe('busy_spans', () => {
   });
 
   it('omits requests, which hold nothing', async () => {
-    await book({ service: 'balayage', staff: 'nour', start: '2026-10-16T09:00:00Z', phone: '0551717171' });
+    await book({ service: 'balayage', staff: 'nour', start: inDays(46, '09:00'), phone: '0551717171' });
     const res = await db.query<{ count: number }>(
-      `select count(*)::int as count from public.busy_spans('2026-10-16'::date, '2026-10-16'::date)`,
+      `select count(*)::int as count from public.busy_spans('${dateInDays(46)}'::date, '${dateInDays(46)}'::date)`,
     );
     expect(res.rows[0].count).toBe(0);
   });
@@ -295,7 +295,7 @@ describe('the service that was booked', () => {
     const result = await book({
       service: 'coupe',
       staff: 'nour',
-      start: '2026-11-02T09:00:00Z',
+      start: inDays(63, '09:00'),
       phone: '0551818181',
     });
 
@@ -321,7 +321,7 @@ describe('the service that was booked', () => {
     const result = await book({
       service: 'coupe',
       staff: 'sophie',
-      start: '2026-11-03T09:00:00Z',
+      start: inDays(64, '09:00'),
       phone: '0551919191',
     });
 
@@ -340,9 +340,9 @@ describe('the service that was booked', () => {
    */
   it.each([
     // "14 000 – 35 000 DA" — which end depends on her hair.
-    { slug: 'soins-capillaires', kind: 'range', start: '2026-11-04T09:00:00Z', phone: '0552020202' },
+    { slug: 'soins-capillaires', kind: 'range', start: inDays(65, '09:00'), phone: '0552020202' },
     // "à partir de 16 000 DA" — a floor is not a price.
-    { slug: 'balayage', kind: 'from', start: '2026-11-06T09:00:00Z', phone: '0552222222' },
+    { slug: 'balayage', kind: 'from', start: inDays(67, '09:00'), phone: '0552222222' },
   ])('leaves the price unsettled for a $kind tariff ($slug)', async ({ slug, kind, start, phone }) => {
     const published = await db.query<{ kind: string }>(
       `select kind::text as kind from public.services where slug = $1`,
@@ -366,7 +366,7 @@ describe('the service that was booked', () => {
   it('links nothing for a gown fitting', async () => {
     const result = await book({
       gown: 'anastasia',
-      start: '2026-11-05T09:00:00Z',
+      start: inDays(66, '09:00'),
       phone: '0552121212',
     });
 

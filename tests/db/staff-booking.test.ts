@@ -2,7 +2,7 @@
  * @vitest-environment node
  */
 import { beforeAll, describe, expect, it } from 'vitest';
-import { asUser, createTestDb, createUser, TENANT_ID, type TestDb } from './harness';
+import { asUser, createTestDb, createUser, inDays, TENANT_ID, type TestDb } from './harness';
 
 let db: TestDb;
 
@@ -65,7 +65,7 @@ describe('booking from the console', () => {
     const result = await bookAs(RECEPTION, {
       service: 'coupe',
       staff: 'nour',
-      start: '2026-10-01T09:00:00Z',
+      start: inDays(1, '09:00'),
     });
 
     expect(result.reference).toMatch(/^[0-9A-F]{8}$/);
@@ -77,7 +77,7 @@ describe('booking from the console', () => {
     const result = await bookAs(RECEPTION, {
       service: 'coupe',
       staff: 'sophie',
-      start: '2026-10-02T09:00:00Z',
+      start: inDays(2, '09:00'),
       phone: '0557000002',
     });
 
@@ -97,7 +97,7 @@ describe('booking from the console', () => {
       line: 'makeup',
       service: 'coupe',
       staff: 'sophie',
-      start: '2026-10-03T09:00:00Z',
+      start: inDays(3, '09:00'),
       phone: '0557000003',
     });
     const row = await db.query<{ line: string }>(
@@ -112,14 +112,14 @@ describe('booking from the console', () => {
     await bookAs(RECEPTION, {
       service: 'coupe',
       staff: 'nour',
-      start: '2026-10-05T11:00:00Z',
+      start: inDays(5, '11:00'),
       phone: '0557000004',
     });
     await expect(
       bookAs(RECEPTION, {
         service: 'coupe',
         staff: 'nour',
-        start: '2026-10-05T11:15:00Z',
+        start: inDays(5, '11:15'),
         phone: '0557000005',
       }),
     ).rejects.toThrow(/booking_slot_taken/);
@@ -129,7 +129,7 @@ describe('booking from the console', () => {
     const result = await bookAs(RECEPTION, {
       service: 'balayage',
       staff: 'nour',
-      start: '2026-10-06T09:00:00Z',
+      start: inDays(6, '09:00'),
       phone: '0557000006',
     });
     expect(result.is_request).toBe(true);
@@ -145,7 +145,7 @@ describe('booking from the console', () => {
     const first = await bookAs(RECEPTION, {
       service: 'coupe',
       staff: 'sophie',
-      start: '2026-10-07T09:00:00Z',
+      start: inDays(7, '09:00'),
       name: 'Yasmine Retour',
       phone: '0557001111',
     });
@@ -157,7 +157,7 @@ describe('booking from the console', () => {
     await bookAs(RECEPTION, {
       service: 'coupe',
       staff: 'sophie',
-      start: '2026-10-08T09:00:00Z',
+      start: inDays(8, '09:00'),
       clientId: client.rows[0].client_id,
     });
 
@@ -169,7 +169,7 @@ describe('booking from the console', () => {
 
   it('still validates the phone for a walk-in', async () => {
     await expect(
-      bookAs(RECEPTION, { service: 'coupe', start: '2026-10-09T09:00:00Z', phone: '0451111111' }),
+      bookAs(RECEPTION, { service: 'coupe', start: inDays(9, '09:00'), phone: '0451111111' }),
     ).rejects.toThrow(/booking_invalid_phone/);
   });
 
@@ -183,7 +183,7 @@ describe('booking from the console', () => {
       bookAs(STYLIST, {
         service: 'coupe',
         staff: 'nour',
-        start: '2026-10-10T09:00:00Z',
+        start: inDays(10, '09:00'),
         phone: '0557000009',
       }),
     ).rejects.toThrow();
@@ -196,7 +196,7 @@ describe('booking from the console', () => {
     await bookAs(RECEPTION, {
       service: 'coupe',
       staff: 'sophie',
-      start: '2026-10-12T09:00:00Z',
+      start: inDays(12, '09:00'),
       phone: '0557000012',
     });
     const after = await db.query<{ count: number }>(

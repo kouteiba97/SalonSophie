@@ -188,3 +188,31 @@ export async function gownIdBySlug(db: TestDb, slug: string): Promise<string> {
 
 /** Postgres error code for an exclusion constraint violation. */
 export const EXCLUSION_VIOLATION = '23P01';
+
+/**
+ * Dates relative to today, for anything the database checks against `now()`.
+ *
+ * `book_appointment` refuses a past start and `reserve_gown` refuses a past date, so a test
+ * written with a literal calendar date is a test with an expiry. This suite had one: the booking
+ * tests were written against 2026-09-01 … 2026-09-12 and passed for weeks, then began failing one
+ * test per day as the calendar caught up, eight of them by the time anyone ran it. Nothing had
+ * broken. The suite had simply aged into the past.
+ *
+ * The offset is the point: `inDays(3)` says "three days out", which is what the test actually
+ * means and stays true whenever it runs. Each test keeps its own offset so bookings on different
+ * days cannot collide.
+ *
+ * Always UTC, matching the literals these replaced. Offsets must be at least 1 — an offset of 0
+ * is today, and an hour that has already passed is a booking in the past.
+ */
+export function inDays(offset: number, time = '09:00'): string {
+  if (offset < 1) throw new Error(`inDays(${offset}): use 1 or more, or the date may be past`);
+  return `${dateInDays(offset)}T${time}:00Z`;
+}
+
+/** The same day as `inDays(offset)`, as `YYYY-MM-DD` — for functions taking a date, not an instant. */
+export function dateInDays(offset: number): string {
+  const d = new Date();
+  d.setUTCDate(d.getUTCDate() + offset);
+  return d.toISOString().slice(0, 10);
+}
