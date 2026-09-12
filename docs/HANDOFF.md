@@ -327,6 +327,39 @@ PGlite reproduces the hole. `20260817100000_revoke_anon_execute.sql` closes it, 
 `public` and `anon` so a fresh deploy and the live project land in the same state. Both are applied
 to the live project; the linter now reports only the four intended public functions.
 
+## Performance — measured, with one locale still over
+
+`npm run perf -- http://localhost:3000/ar` against `npm start`. Regular 4G, 70ms RTT, 4x CPU,
+Pixel 5. Median of three warmed loads; it exits non-zero on a miss, so it can gate a deploy.
+
+| Locale | LCP median | Budget | CLS |
+|---|---|---|---|
+| `/fr` | 964 ms | 2500 ms | 0.0001 |
+| `/en` | 920 ms | 2500 ms | 0.0002 |
+| `/ar` | **2592 ms** | 2500 ms | 0.0007 |
+
+**Always warm the route and take a median.** Measured once, cold, the same build gave 2136ms and
+2940ms on consecutive runs — the first request to a route in `next start` pays for work no real
+visitor pays for twice. A single sample proves whichever answer you were hoping for.
+
+**Arabic is 3.7% over and that is the honest number.** It was 3236ms before
+`adjustFontFallback` was set on the body and heading faces; see the comment in
+`src/lib/fonts.ts` for why that mattered more than the font's size did. What remains is weight:
+179.6 KB of fonts on `/ar` against 84.8 KB on `/fr`, because the Arabic page loads Noto Kufi
+*and* the three Latin faces.
+
+Three options, none of them started:
+
+1. **Subset Noto Kufi harder.** It is already Arabic-only; the next cut is dropping glyphs the
+   copy never uses, which needs the final copy to be settled first.
+2. **Stop loading the Latin faces on `/ar`.** Worth ~85 KB, but the brand wordmark and the
+   numerals are Latin, so this needs a designer's eye rather than a build flag.
+3. **Accept it.** 2.6s on a deliberately harsh profile is not a bad page, and the budget is a
+   target rather than a law. Say so out loud if that is the decision, rather than leaving the
+   check failing and unexplained.
+
+CLS is effectively zero everywhere, which is the half of #4 that is genuinely done.
+
 ## Locked out of the console
 
 **Normally you are not.** `/equipe` has "Réinitialiser le mot de passe" on every account, so an
