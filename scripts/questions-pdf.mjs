@@ -21,7 +21,17 @@ const SOURCE = resolve('docs/questions-sophie.ar.html');
 const FONT = resolve('src/fonts/NotoKufiArabic-arabic.woff2');
 const OUT = resolve(process.argv[2] ?? 'docs/questions-sophie.ar.pdf');
 
-const html = readFileSync(SOURCE, 'utf8').replace(
+/*
+ * replaceAll, not replace.
+ *
+ * `__FONT_BASE64__` appears twice in the source: once in the HTML comment explaining the
+ * substitution, and once in `@font-face`. The comment comes first, so `.replace()` spent the
+ * substitution there and left the stylesheet holding the literal placeholder. The face failed to
+ * decode, Chrome fell back to Segoe UI — which has Arabic glyphs and shapes them, so the PDF
+ * still read correctly and simply was not in Noto Kufi. Every Arabic copy produced before this
+ * is set in the wrong typeface.
+ */
+const html = readFileSync(SOURCE, 'utf8').replaceAll(
   '__FONT_BASE64__',
   readFileSync(FONT).toString('base64'),
 );
@@ -34,7 +44,29 @@ await page.setContent(html, { waitUntil: 'load' });
 await page.emulateMedia({ media: 'print' });
 
 // The embedded face must be ready before layout is measured, or lines break at fallback metrics.
-await page.evaluate(() => document.fonts.ready);
+await page.evaluate(() => document.fonts.ready.catch(() => {}));
+
+/*
+ * Assert the face loaded, rather than inferring it from the file size.
+ *
+ * The size floor below was the only check, and it could not see the bug above: a fallback-font
+ * render still weighed ~149 KB, comfortably over the 60 KB threshold. The floor stays as a
+ * cheap backstop, but this is the check that actually holds.
+ */
+const faces = await page.evaluate(() =>
+  [...document.fonts].map((f) => ({ family: f.family, status: f.status })),
+);
+const broken = faces.filter((f) => f.status !== 'loaded');
+if (!faces.length || broken.length) {
+  console.error(
+    'FAIL: font did not load — ' +
+      (faces.length
+        ? broken.map((f) => `${f.family}=${f.status}`).join(', ')
+        : 'no @font-face reached the document'),
+  );
+  await browser.close();
+  process.exit(1);
+}
 
 await page.pdf({
   path: OUT,
