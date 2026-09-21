@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Questions avant lancement — The Sisters N&S</title>
+
+    <!--
+      The French companion to questions-sophie.ar.html, rendered by scripts/questions-pdf.mjs.
+
+      Same questions, same order, same reasons — not a translation of the Arabic but the same
+      document written natively in the locale the business works in day to day. French is the
+      platform's default locale (§12.3), so this is the version likely to be printed and left on
+      the desk; the Arabic one is the version likely to be forwarded on WhatsApp.
+
+      Deliberately NOT a translation of docs/OPEN_QUESTIONS.md. That file names columns, policies
+      and migrations, and half of it explains what the code does while an answer is missing. None
+      of that is useful to the two people who actually know the answers.
+
+      Latin faces here rather than Noto Kufi: Cormorant Garamond for display and Jost for body,
+      the same pairing as the site, at the brief's 1.65 body leading rather than the Arabic 1.95.
+      Both are inlined at render time — __FONT_CORMORANT__ and __FONT_JOST__ are replaced by the
+      script — so the PDF is self-contained.
+    -->
+
+    <style>
+      @font-face {
+        font-family: 'Cormorant Garamond';
+        src: url(data:font/woff2;base64,__FONT_CORMORANT__) format('woff2');
+        font-weight: 300 400;
+        font-display: block;
+      }
+      @font-face {
+        font-family: 'Jost';
+        src: url(data:font/woff2;base64,__FONT_JOST__) format('woff2');
+        font-weight: 300 400;
+        font-display: block;
+      }
+
+      /* The real tokens, so the page looks like the salon rather than like a form. */
+      :root {
+        --rose-deep: #8b6f7d;
+        --rose-soft: #c9a9a6;
+        --blush: #e8d5d0;
+        --champagne: #d4b896;
+        --cream: #f7f3f0;
+        --charcoal: #2e2a28;
+        --ink-2: #5c534e;
+        --taupe: #a08d82;
+        --line: #e7deda;
+      }
+
+      @page {
+        size: A4;
+        margin: 18mm 16mm 20mm;
+      }
+
+      /*
+       * On paper the inset comes from @page, and the cover's negative margin pulls it back out to
+       * the sheet edge. On screen there is no @page, so the same negative margin would push the
+       * cover off the left and right of the window. This file is likely to be opened in a browser
+       * as well as printed — it is easier to forward than a PDF — so it has to be right in both.
+       */
+      @media screen {
+        body {
+          padding: 18mm 16mm;
+          max-width: 210mm;
+          margin: 0 auto;
+        }
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: 'Jost', 'Segoe UI', Tahoma, sans-serif;
+        font-weight: 300;
+        line-height: 1.65;
+        color: var(--charcoal);
+        background: #fff;
+        font-size: 11pt;
+      }
+
+      /* ── cover ───────────────────────────────────────────────────────────── */
+      .cover {
+        min-height: 247mm;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        page-break-after: always;
+        background: linear-gradient(135deg, #fbf8f7 0%, #f3eae7 55%, #e8d5d0 100%);
+        margin: -18mm -16mm 0;
+        padding: 0 24mm;
+      }
+      .cover .mark {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 46pt;
+        font-weight: 300;
+        letter-spacing: -1px;
+        color: var(--charcoal);
+        line-height: 1.2;
+      }
+      .cover .rule {
+        width: 70px;
+        height: 1px;
+        background: var(--champagne);
+        margin: 18px auto;
+      }
+      .cover h1 {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 24pt;
+        font-weight: 400;
+        color: var(--rose-deep);
+        margin: 10px 0 6px;
+      }
+      .cover .who { color: var(--taupe); font-size: 10.5pt; }
+      .cover .lead {
+        margin: 26px auto 0;
+        max-width: 124mm;
+        font-size: 10.5pt;
+        color: var(--ink-2);
+        text-align: left;
+        line-height: 1.8;
+      }
+
+      /* ── sections ────────────────────────────────────────────────────────── */
+      h2 {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 17pt;
+        font-weight: 400;
+        color: var(--charcoal);
+        margin: 26px 0 4px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+        page-break-after: avoid;
+      }
+      h2 .count {
+        font-family: 'Jost', 'Segoe UI', sans-serif;
+        color: var(--taupe);
+        font-size: 9.5pt;
+      }
+      .section-note {
+        color: var(--taupe);
+        font-size: 9.5pt;
+        margin: 0 0 14px;
+        page-break-after: avoid;
+      }
+
+      .q {
+        page-break-inside: avoid;
+        margin: 0 0 16px;
+        padding: 12px 14px 14px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fffdfc;
+      }
+      .q.urgent { border-color: var(--rose-soft); background: #fdf9f8; }
+
+      .q h3 {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 14.5pt;
+        font-weight: 400;
+        margin: 0 0 2px;
+        color: var(--charcoal);
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+      }
+      .q h3 .n {
+        font-family: 'Jost', 'Segoe UI', sans-serif;
+        color: var(--rose-deep);
+        font-size: 10pt;
+        min-width: 22px;
+      }
+      .why {
+        margin: 0 0 10px;
+        color: var(--ink-2);
+        font-size: 9.5pt;
+        line-height: 1.7;
+      }
+      .why em { color: var(--rose-deep); font-style: normal; }
+
+      ul.asks { margin: 0 0 10px; padding-inline-start: 18px; }
+      ul.asks li { margin-bottom: 3px; font-size: 10pt; }
+
+      /* Space to actually write. Dotted rather than solid: it invites a pen. */
+      .answer {
+        border-top: 1px dotted var(--rose-soft);
+        margin-top: 10px;
+        padding-top: 6px;
+      }
+      .answer .label {
+        font-size: 8pt;
+        color: var(--taupe);
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+      }
+      .line { border-bottom: 1px dotted #d8cdc8; height: 21px; }
+
+      table.hours {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+        font-size: 10pt;
+      }
+      table.hours th {
+        text-align: left;
+        font-weight: 400;
+        color: var(--taupe);
+        font-size: 8.5pt;
+        letter-spacing: 0.6px;
+        text-transform: uppercase;
+        padding: 4px 6px;
+        border-bottom: 1px solid var(--line);
+      }
+      table.hours td {
+        padding: 7px 6px;
+        border-bottom: 1px dotted #ded3ce;
+      }
+      table.hours td:first-child { color: var(--ink-2); width: 26%; }
+
+      .note {
+        background: #f7f3f0;
+        border-inline-start: 3px solid var(--champagne);
+        padding: 10px 12px;
+        border-radius: 0 8px 8px 0;
+        font-size: 9.5pt;
+        color: var(--ink-2);
+        margin: 14px 0 18px;
+        line-height: 1.7;
+      }
+
+      .answered li { font-size: 10pt; margin-bottom: 5px; color: var(--ink-2); }
+      .answered strong { color: var(--charcoal); font-weight: 400; }
+
+      footer {
+        margin-top: 26px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+        font-size: 9pt;
+        color: var(--taupe);
+        text-align: center;
+        line-height: 1.7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <section class="cover">
+      <div class="mark">N&amp;S</div>
+      <div class="rule"></div>
+      <h1>Questions avant lancement</h1>
+      <div class="who">Pour Nour et Sophie — plateforme The Sisters N&amp;S</div>
+
+      <p class="lead">
+        La plateforme est prête, techniquement. Ce qu'il reste n'est pas du développement : ce
+        sont des informations que seules les propriétaires du salon connaissent.
+        <br /><br />
+        La règle sur laquelle tout a été construit : <strong>nous n'inventons aucune
+        donnée</strong>. Un prix manquant se rattrape ; un prix faux vu par une cliente, non.
+        C'est pourquoi tout ce qui est inconnu s'affiche aujourd'hui en « — » ou « Sur devis », et
+        jamais sous la forme d'un chiffre qui aurait l'air plausible.
+        <br /><br />
+        Les questions sont classées par impact : les deux premières ouvrent la réservation réelle,
+        le reste peut venir plus tard. Répondez à ce que vous savez et laissez le reste — ici, un
+        blanc n'est pas un manque, c'est ce qui empêche la plateforme de mentir.
+      </p>
+    </section>
+
+    <!-- ── 1. blocking ───────────────────────────────────────────────────── -->
+    <h2>1. Ce que la cliente voit tout de suite <span class="count">— quatre questions</span></h2>
+    <p class="section-note">
+      Celles-ci suffisent à transformer la réservation d'une « demande » que vous rappelez en un
+      vrai rendez-vous confirmé.
+    </p>
+
+    <div class="q urgent">
+      <h3><span class="n">1</span> Horaires d'ouverture</h3>
+      <p class="why">
+        Sans les horaires, le système ne peut pas calculer un seul créneau : toutes les
+        réservations restent de simples demandes que vous devez relancer vous-mêmes.
+        <em>Cette question et la suivante sont les deux plus importantes de la page.</em>
+      </p>
+      <table class="hours">
+        <tr><th>Jour</th><th>De</th><th>À</th><th>Fermé ?</th></tr>
+        <tr><td>Samedi</td><td></td><td></td><td></td></tr>
+        <tr><td>Dimanche</td><td></td><td></td><td></td></tr>
+        <tr><td>Lundi</td><td></td><td></td><td></td></tr>
+        <tr><td>Mardi</td><td></td><td></td><td></td></tr>
+        <tr><td>Mercredi</td><td></td><td></td><td></td></tr>
+        <tr><td>Jeudi</td><td></td><td></td><td></td></tr>
+        <tr><td>Vendredi</td><td></td><td></td><td></td></tr>
+      </table>
+      <div class="answer">
+        <div class="label">Des horaires exceptionnels ? (Ramadan, demi-journée hebdomadaire, congés…)</div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <div class="q urgent">
+      <h3><span class="n">2</span> Durée de chaque prestation</h3>
+      <p class="why">
+        55 prestations, et nous ne connaissons la durée d'aucune. C'est la durée qui permet au
+        système de dire « ce créneau est libre » au lieu de « nous vous confirmerons plus tard ».
+        <em>Aucune précision parfaite n'est nécessaire</em> — une estimation vaut infiniment mieux
+        qu'un blanc, et elle se corrige depuis la console à tout moment.
+      </p>
+      <ul class="asks">
+        <li>Combien de temps prend environ chaque prestation ? (coupe, brushing, balayage, soin du visage, ongles…)</li>
+        <li>Faut-il un temps de battement entre deux clientes pour préparer et nettoyer ? Combien de minutes ?</li>
+      </ul>
+      <div class="note">
+        Le plus simple : ouvrir l'écran « Prestations » dans la console et saisir la durée en face
+        de chaque ligne. L'écran affiche le nombre de prestations encore sans durée, vous voyez
+        donc ce qu'il reste.
+      </div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">3</span> Prix de location des robes de mariée</h3>
+      <p class="why">
+        Les trois robes sont présentées avec leurs tailles, mais sans prix — elles affichent
+        « Sur devis ». La taille est la question la plus posée, et elle est déjà là ; il ne manque
+        que le prix.
+      </p>
+      <div class="answer">
+        <div class="label">Anastasia (36–42)</div><div class="line"></div>
+        <div class="label">ABir (38–44)</div><div class="line"></div>
+        <div class="label">RYMA (36–40)</div><div class="line"></div>
+        <div class="label">Le prix est-il fixe, ou varie-t-il selon la durée de location ?</div><div class="line"></div>
+      </div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">4</span> Forfaits mariée : contenu et prix</h3>
+      <p class="why">
+        Trois forfaits sont affichés, avec leur nom seulement. Ce que contient chacun n'est pas de
+        l'argumentaire : « location de la robe pendant trois jours » est une décision commerciale,
+        pas une phrase publicitaire — nous ne pouvons pas l'écrire à votre place.
+      </p>
+      <div class="answer">
+        <div class="label">Essential — que comprend-il, et à quel prix ?</div>
+        <div class="line"></div><div class="line"></div>
+        <div class="label">Signature — que comprend-il, et à quel prix ?</div>
+        <div class="line"></div><div class="line"></div>
+        <div class="label">Couture — que comprend-il, et à quel prix ?</div>
+        <div class="line"></div><div class="line"></div>
+      </div>
+    </div>
+
+    <!-- ── 2. atelier ────────────────────────────────────────────────────── -->
+    <h2>2. Règles de l'atelier mariée <span class="count">— six questions</span></h2>
+    <p class="section-note">
+      La console fonctionne sans elles aujourd'hui, mais chacune apparaît comme un champ vide ou
+      un zéro visible — volontairement, pour qu'on les pose au lieu de les oublier.
+    </p>
+
+    <div class="q">
+      <h3><span class="n">5</span> L'acompte</h3>
+      <ul class="asks">
+        <li>Quel acompte pour retenir une robe — un montant fixe, ou un pourcentage du prix ?</li>
+        <li>Est-il remboursable ? Et jusqu'à quand ?</li>
+      </ul>
+      <div class="answer"><div class="line"></div><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">6</span> Délai d'annulation</h3>
+      <p class="why">
+        Aujourd'hui, une réservation peut être annulée à tout moment sans aucune conséquence,
+        parce qu'une pénalité est une décision commerciale et ne s'invente pas.
+      </p>
+      <ul class="asks">
+        <li>Jusqu'à quand une mariée peut-elle annuler ? Et que perd-elle si elle annule après ?</li>
+      </ul>
+      <div class="answer"><div class="line"></div><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">7</span> Jours de nettoyage entre deux locations</h3>
+      <p class="why">
+        La valeur par défaut est aujourd'hui <em>zéro</em> : la robe peut donc repartir chez une
+        mariée le lendemain même de son retour. Nous avons choisi zéro parce que c'est une erreur
+        visible pour qui connaît la réponse — un chiffre d'apparence raisonnable, lui, ne serait
+        jamais remis en question.
+      </p>
+      <ul class="asks"><li>Combien de jours faut-il à une robe entre deux mariées ?</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">8</span> Durée d'une option non confirmée</h3>
+      <p class="why">
+        Une option bloque la robe exactement comme une réservation confirmée, et n'expire jamais
+        d'elle-même. Nous n'avons fixé aucune durée, parce que « sept jours » serait une règle
+        inventée qui finirait un jour par libérer la robe d'une vraie mariée.
+      </p>
+      <ul class="asks"><li>Au bout de combien de jours une option non confirmée tombe-t-elle ?</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">9</span> Durée d'un essayage</h3>
+      <ul class="asks">
+        <li>Combien de temps dure un essayage ? (sans cela, l'essayage reste une demande et non un créneau réservé)</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">10</span> Nombre d'accessoires</h3>
+      <p class="why">
+        Le stock enregistré est à zéro, et le système lit zéro comme « pas encore compté » : il
+        autorise donc un nombre illimité de prêts. Dès qu'un vrai chiffre est saisi, il refuse de
+        prêter ce que vous ne possédez pas.
+      </p>
+      <div class="answer">
+        <div class="label">Barnous</div><div class="line"></div>
+        <div class="label">Diadème</div><div class="line"></div>
+        <div class="label">Voile</div><div class="line"></div>
+      </div>
+    </div>
+
+    <!-- ── 3. content ────────────────────────────────────────────────────── -->
+    <h2>3. Photos et contenu <span class="count">— quatre questions</span></h2>
+
+    <div class="q">
+      <h3><span class="n">11</span> Les photos — 21 emplacements</h3>
+      <p class="why">
+        Il n'existe aucune photo réelle : chaque emplacement affiche un fond au monogramme du
+        salon, à la bonne dimension, pour que la vraie photo s'y glisse sans décaler la mise en
+        page. <em>Nous n'utiliserons jamais les photos d'un autre salon</em>, si belles soient-elles.
+      </p>
+      <ul class="asks">
+        <li>Page d'accueil · les trois robes · Nour · Sophie · un avant/après · 3 transformations · 6 vignettes Instagram · le plan</li>
+      </ul>
+      <div class="answer">
+        <div class="label">Quand peut-on les photographier ? Et par qui ?</div><div class="line"></div>
+      </div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">12</span> Comptes Instagram</h3>
+      <p class="why">
+        Aucun lien n'a été posé, parce que les comptes ne sont pas vérifiés — et un lien erroné
+        est pire que pas de lien du tout.
+      </p>
+      <div class="answer">
+        <div class="label">Compte principal</div><div class="line"></div>
+        <div class="label">Autres comptes</div><div class="line"></div>
+      </div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">13</span> Avis des clientes</h3>
+      <p class="why">
+        La maquette contenait trois témoignages, avec noms et dates. Publier des avis inventés
+        sous des noms qui semblent réels sur le site d'un commerce a des conséquences juridiques,
+        pas seulement éthiques. L'emplacement affiche aujourd'hui une invitation à laisser un vrai
+        avis.
+      </p>
+      <ul class="asks">
+        <li>Y a-t-il des clientes qui ont réellement accepté que leur avis soit publié avec leur nom ?</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">14</span> Les chiffres</h3>
+      <p class="why">
+        La maquette annonçait « 500+ clientes heureuses · 15+ expertes beauté · 8+ ans ». Le
+        nombre d'expertes contredit à lui seul la réalité (Nour et Sophie), ce qui a rendu le
+        reste des chiffres non fiables : ils ont tous été retirés.
+      </p>
+      <ul class="asks">
+        <li>Y a-t-il un chiffre réel que vous souhaitez afficher ? (année de création, nombre de mariées, abonnés Instagram)</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <!-- ── 4. smaller ────────────────────────────────────────────────────── -->
+    <h2>4. Décisions plus légères <span class="count">— à confirmer seulement</span></h2>
+    <p class="section-note">
+      Nous leur avons donné des valeurs provisoires raisonnables. Un « oui », ou un autre chiffre, suffit.
+    </p>
+
+    <div class="q">
+      <h3><span class="n">15</span> Fenêtre de réservation</h3>
+      <ul class="asks">
+        <li>Rendez-vous le plus proche réservable : <strong>24 heures</strong> à l'avance — cela convient ?</li>
+        <li>Rendez-vous le plus lointain réservable : <strong>90 jours</strong> — cela convient ?</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">16</span> Droits de la réception</h3>
+      <p class="why">
+        Aujourd'hui : la réception prend les rendez-vous et enregistre les paiements, mais
+        <em>ne voit pas les comptes</em> et ne crée pas de réservation de robe — elle voit
+        seulement si une robe est libre. Si une mariée se présente pendant que vous êtes toutes
+        les deux occupées, la réception ne peut pas la réserver.
+      </p>
+      <ul class="asks"><li>Élargit-on ses droits pour qu'elle puisse aussi réserver les robes ?</li></ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">17</span> Plusieurs prestations en un rendez-vous</h3>
+      <ul class="asks">
+        <li>Une cliente réserve-t-elle souvent deux prestations à la suite (coupe + soin du visage) ? Le système le gère, l'interface n'en propose qu'une.</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">18</span> Relecture des textes arabes</h3>
+      <p class="why">
+        Tous les textes du site ont été traduits en arabe standard, à l'adresse féminine. La
+        langue est correcte, mais <em>le ton</em> est une décision de marque, pas une décision
+        linguistique.
+      </p>
+      <ul class="asks">
+        <li>Le ton vous ressemble-t-il ? Et les termes du métier sont-ils écrits comme vous les dites réellement aux clientes ?</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <div class="q">
+      <h3><span class="n">19</span> Description des robes</h3>
+      <ul class="asks">
+        <li>« Traîne cathédrale, dentelle rebrodée main, dos boutonné » — cela décrit-il vraiment les robes réelles ?</li>
+      </ul>
+      <div class="answer"><div class="line"></div></div>
+    </div>
+
+    <!-- ── answered ──────────────────────────────────────────────────────── -->
+    <h2>Ce qui est déjà tranché — aucune réponse attendue</h2>
+    <ul class="answered">
+      <li><strong>Téléphone :</strong> 0553366712 — une seule ligne, la même que le WhatsApp.</li>
+      <li><strong>L'équipe :</strong> Nour et Sophie, plus « Sans préférence ». Toute nouvelle recrue s'ajoute directement depuis la console.</li>
+      <li><strong>La grille tarifaire :</strong> 55 prestations en 8 catégories, saisies telles que vous nous les avez transmises.</li>
+      <li><strong>Les robes :</strong> Anastasia (36–42) · ABir (38–44) · RYMA (36–40).</li>
+    </ul>
+
+    <footer>
+      Chaque réponse se saisit depuis la console — aucune intervention technique n'est nécessaire.
+      <br />
+      Les questions 1 et 2 sont les plus importantes : ce sont elles qui rendent la réservation
+      immédiate au lieu d'une simple demande.
+    </footer>
+  </body>
+</html>
