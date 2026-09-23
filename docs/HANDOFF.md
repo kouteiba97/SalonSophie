@@ -469,6 +469,39 @@ else does.
 
 ## Traps that have already cost time
 
+**Never run two dev servers against this project at once.** They share one `.next` directory and
+overwrite each other's build output. The loser stops serving the app and starts serving Next's bare
+error shell instead — HTTP 200, about 3 KB, no `<title>`, and a page with none of its sections.
+It does not look like a build problem. It looks like the hero lost its content.
+
+It happened on 23 September: the owner started `npm run dev` and a session started a second one
+without checking. The second printed **"Port 3000 is in use, using 3001 instead"** — that line is
+the whole warning, and it scrolls past in a second.
+
+How to tell it apart from a real bug, in one command:
+
+```bash
+curl -s http://localhost:3000/fr | wc -c
+```
+
+The real page is around **480,000 bytes**. The error shell is around **3,300**. If you get the small
+number, nothing is broken in the code.
+
+The fix is always the same: stop every Next process, delete `.next`, start exactly one.
+
+```powershell
+Get-CimInstance Win32_Process -Filter "Name = 'node.exe'" |
+  Where-Object { $_.CommandLine -like '*salon*next*' } | Stop-Process -Force
+```
+
+Same root cause as running `npm run build` while `npm run dev` is live, which is already below —
+one `.next`, two writers.
+
+**While you are there: the hero has no `<img>` elements, and that is correct.** All 21 image slots
+render branded CSS placeholders until real photographs exist (question 7). A hero that looks
+emptier than the design mockup is the §6 rule working, not a missing asset. Check `broken: 0`
+rather than `images: 0`.
+
 **Never write a literal future date in a test the database time-checks.** `book_appointment`
 refuses a start before `now()` and `reserve_gown` refuses a past date, so a test written against
 a calendar date is a test with an expiry. This has already happened once: the booking suite was
