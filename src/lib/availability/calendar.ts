@@ -107,6 +107,30 @@ export function monthGrid(monthOffset: number, today = new Date()): DayState[] {
   });
 }
 
+/**
+ * The month the calendar should open on.
+ *
+ * Not always the current one. A cell is disabled when it is outside the grid's month, in the
+ * past, or inside the minimum lead time — so on the last day of a month **every one of the 42
+ * cells is disabled**: the earlier days have passed, today is too soon to book, and the trailing
+ * days belong to next month. The client is shown a calendar greyed out from corner to corner,
+ * with nothing to click and nothing saying to press "next month".
+ *
+ * With a 24-hour lead time that is the last day of every month — twelve days a year on which the
+ * booking flow appears broken to a visitor who arrived from an Instagram reel. A longer lead time
+ * would make it worse.
+ *
+ * So the opening month is the first one that actually contains a bookable day. It looks at three
+ * months and then gives up: beyond that the booking horizon is the real constraint, and paging
+ * further would be hiding a configuration problem rather than solving a calendar one.
+ */
+export function initialMonthOffset(today = new Date()): number {
+  for (let offset = 0; offset < 3; offset++) {
+    if (monthGrid(offset, today).some((cell) => !cell.disabled)) return offset;
+  }
+  return 0;
+}
+
 /** The rolling 7-day strip (design's mobile view). */
 export function weekStrip(weekOffset: number, today = new Date()): DayState[] {
   const base = startOfDay(today);

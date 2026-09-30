@@ -9,6 +9,7 @@ import {
   workingWindows,
   type EngineConfig,
 } from '@/lib/availability/engine';
+import { initialMonthOffset, monthGrid } from '@/lib/availability/calendar';
 
 const NOW = new Date('2026-08-15T08:00:00Z');
 const IN_RANGE = new Date('2026-08-20T00:00:00');
@@ -209,5 +210,42 @@ describe('slotsForDay', () => {
     if (result.mode !== 'computed') throw new Error('expected computed');
     const times = result.slots.map((s) => s.time);
     expect(times).toEqual(['09:00', '10:00', '11:00', '14:00', '15:00', '16:00']);
+  });
+});
+
+/**
+ * The calendar must never open on a month with nothing to click.
+ *
+ * Found on 30 September 2026, when the booking e2e failed on desktop and passed on mobile. A cell
+ * is disabled when it is outside the grid's month, in the past, or inside the minimum lead time —
+ * so on the last day of a month all 42 cells are disabled at once: the earlier days have passed,
+ * today is too soon, and the trailing days belong to next month. The mobile week strip is a
+ * rolling seven days and crosses the boundary, which is why only one of the two views broke.
+ *
+ * With a 24-hour lead that is the last day of every month. A client arriving from an Instagram
+ * reel would see a calendar greyed out corner to corner and no hint to press "next month".
+ *
+ * Dates here are deliberately literal: the bug is about where *today* falls in its month, so a
+ * relative date would sample whichever day the suite happened to run on and prove nothing.
+ */
+describe('the month the calendar opens on', () => {
+  it.each([
+    ['the last day of a 30-day month', new Date('2026-09-30T09:00:00Z')],
+    ['the last day of a 31-day month', new Date('2026-07-31T09:00:00Z')],
+    ['the last day of February', new Date('2027-02-28T09:00:00Z')],
+    ['the day before the last', new Date('2026-09-29T09:00:00Z')],
+  ])('offers at least one bookable day on %s', (_label, today) => {
+    const offset = initialMonthOffset(today);
+    const bookable = monthGrid(offset, today).filter((cell) => !cell.disabled);
+    expect(bookable.length).toBeGreaterThan(0);
+  });
+
+  it('still opens on the current month when that month has room', () => {
+    // Mid-month: nothing forces a jump, and jumping would hide today's availability.
+    expect(initialMonthOffset(new Date('2026-09-15T09:00:00Z'))).toBe(0);
+  });
+
+  it('jumps exactly one month on the last day, never further', () => {
+    expect(initialMonthOffset(new Date('2026-09-30T09:00:00Z'))).toBe(1);
   });
 });

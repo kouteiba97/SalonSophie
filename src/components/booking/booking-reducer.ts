@@ -1,3 +1,4 @@
+import { initialMonthOffset } from '@/lib/availability/calendar';
 import type { IsoDate } from '@/lib/datetime';
 
 /**
@@ -56,7 +57,11 @@ export const initialBookingState: BookingState = {
   expertSlug: null,
   date: null,
   time: null,
-  monthOffset: 0,
+  /*
+   * Not 0. On the last day of a month every cell in the current grid is disabled, so opening
+   * there shows a client a calendar with nothing to click — see initialMonthOffset.
+   */
+  monthOffset: initialMonthOffset(),
   weekOffset: 0,
   submitting: false,
   result: null,
