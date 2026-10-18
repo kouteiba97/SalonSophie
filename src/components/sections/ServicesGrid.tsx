@@ -108,8 +108,20 @@ export function ServicesGrid({ category, categories, services }: ServicesGridPro
                   <div className="mt-auto flex items-end justify-between gap-3 border-t border-line pt-3.5">
                     <div className="flex flex-col">
                       <span className="text-[17px] text-rose-deep">{price(service.price)}</span>
-                      {/* Durations are unknown for every service (§6) — an em dash, never a guess. */}
-                      <span className="text-[12px] text-muted">{duration(service.duration)}</span>
+                      {/*
+                        `taupe-2`, not `muted`, and that is an accessibility fix rather than a
+                        restyle. `--muted` (#C7BAB3) on white is 1.89:1 — far under the 4.5:1 AA
+                        floor (non-negotiable #8) and unreadable at 12px on a phone in daylight,
+                        which is the exact condition this site is built for.
+
+                        It went unnoticed because every duration was an em dash while §6 had them
+                        all unknown, and axe does not flag a slot with nothing in it. The first
+                        real durations turned the same token into failing body text on four pages.
+
+                        `--taupe-2` (#7A6E68) is 4.93:1 and the nearest token in the same warm
+                        grey family, so the hierarchy the design intended survives.
+                      */}
+                      <span className="text-[12px] text-taupe-2">{duration(service.duration)}</span>
                     </div>
                     <BookButton
                       label={t('book')}

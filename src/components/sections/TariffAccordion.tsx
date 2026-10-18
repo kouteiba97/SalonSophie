@@ -187,7 +187,8 @@ export function TariffAccordion({ categories, services, gowns }: TariffAccordion
                         >
                           <span className="text-[14px] text-charcoal">{row.name}</span>
                           <span aria-hidden className="hidden flex-1 border-b border-dotted border-muted-2 sm:block" />
-                          <span className="text-[12px] text-muted">{row.meta}</span>
+                          {/* taupe-2 for 4.93:1 — see the note in ServicesGrid; `muted` is 1.89:1. */}
+                          <span className="text-[12px] text-taupe-2">{row.meta}</span>
                           <span className="text-[14px] text-rose-deep">{row.price}</span>
                         </div>
                       ))}
