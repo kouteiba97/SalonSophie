@@ -42,6 +42,8 @@ going to exceed 100 GB of bandwidth a month.
 
 ## Before deploying
 
+0. **Migrations applied to the remote database.** See the section below — a deploy does not do
+   this, and the application reads Postgres rather than the committed seed.
 1. **Everything green.** `npm run typecheck && npm run lint && npm test && npm run e2e`
 2. **A production build locally.** `npm run build` — a build that fails on Vercel and passes here
    is almost always an environment variable, and it is quicker to find at home.
@@ -64,6 +66,50 @@ member of staff's own session, so their policies filter every query.
 
 `WHATSAPP_ACCESS_TOKEN` and `WHATSAPP_PHONE_NUMBER_ID` stay empty until Meta approves the account.
 The manual adapter runs meanwhile and reports `delivered: false` rather than pretending.
+
+## The database comes first, and this page used to forget it
+
+Vercel deploys the application. It does **not** touch Postgres. Nothing in a deploy applies a
+migration, and this document said nothing about it for several releases — which is how the live
+database ended up holding the design file's invented opening hours (09 h – 19 h, Friday closed)
+while the repository held the salon's real ones.
+
+The application reads the database, so whatever is in Postgres is what a client sees, no matter
+what the committed seed says. **Apply migrations before the deploy that depends on them.**
+
+### Applying a migration
+
+Use the SQL editor for a single file. Supabase → SQL Editor → New query → paste the contents of
+the migration → Run. Every migration in this repo is written to be idempotent, so running one
+twice is safe and running one that is already applied is a no-op.
+
+The CLI route exists and is better for a batch:
+
+```bash
+npx supabase link --project-ref <ref>
+npx supabase db push
+```
+
+One caveat worth knowing before reaching for it: `db push` applies whatever is missing from
+`supabase_migrations.schema_migrations` on the remote. If this project's schema was ever built by
+pasting SQL rather than by the CLI, that table does not know about those files and `db push` will
+try to apply **all** of them — failing part-way on objects that already exist. Check the table
+first, or paste the one file you need.
+
+### Verifying it took
+
+```sql
+select weekday, opens_at, closes_at, is_closed from public.business_hours order by weekday;
+-- expect: weekday 0 closed; 1..6 open 09:30–17:00
+
+select count(*) filter (where duration_minutes is not null) as known,
+       count(*) filter (where duration_minutes is null)     as unknown
+  from public.services;
+-- expect: known = 16, unknown = 39
+```
+
+If `known` comes back 55, the database still holds the guessed durations and the migration has
+not run. If it comes back 0, the migration ran against a database that was never seeded.
 
 ## The walkthrough
 
