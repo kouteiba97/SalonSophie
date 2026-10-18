@@ -15,7 +15,10 @@
     "skipToContent": "Aller au contenu",
     "language": "Langue",
     "mainNavigation": "Navigation principale",
-    "privacy": "Confidentialité"
+    "privacy": "Confidentialité",
+    "menu": "Menu",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu"
   },
   "hero": {
     "eyebrow": "Là où la beauté rencontre l'art",
@@ -288,7 +291,15 @@
       "confirmOnWhatsapp": "Confirmer sur WhatsApp",
       "reference": "Référence {ref}"
     },
-    "whatsappMessage": "Bonjour N&S, je souhaite confirmer : {summary}"
+    "whatsapp": {
+      "confirmed": "Bonjour N&S, je viens de réserver en ligne.",
+      "request": "Bonjour N&S, je souhaite ce rendez-vous :",
+      "reference": "Réf. :",
+      "details": "Détails :",
+      "client": "Au nom de :",
+      "closingConfirmed": "Merci, à bientôt !",
+      "closingRequest": "Pouvez-vous me confirmer ce créneau ?"
+    }
   },
   "sticky": {
     "book": "Réserver mon rendez-vous",

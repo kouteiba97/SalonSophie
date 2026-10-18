@@ -27,6 +27,12 @@ export const ArrowRight = (props: IconProps) => (
   </svg>
 );
 
+export const Menu = (props: IconProps) => (
+  <svg {...base(props)}>
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+);
+
 export const ChevronDown = (props: IconProps) => (
   <svg {...base(props)}>
     <path d="M6 9l6 6 6-6" />

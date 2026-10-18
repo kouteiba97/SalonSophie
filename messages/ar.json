@@ -15,7 +15,10 @@
     "skipToContent": "انتقلي إلى المحتوى",
     "language": "اللغة",
     "mainNavigation": "التنقّل الرئيسي",
-    "privacy": "الخصوصية"
+    "privacy": "الخصوصية",
+    "menu": "القائمة",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "hero": {
     "eyebrow": "حيث يلتقي الجمال بالفنّ",
@@ -288,7 +291,15 @@
       "confirmOnWhatsapp": "أكّدي على واتساب",
       "reference": "المرجع {ref}"
     },
-    "whatsappMessage": "مرحبًا N&S، أودّ تأكيد: {summary}"
+    "whatsapp": {
+      "confirmed": "مرحبًا N&S، لقد حجزتُ للتوّ عبر الموقع.",
+      "request": "مرحبًا N&S، أودّ هذا الموعد:",
+      "reference": "المرجع:",
+      "details": "التفاصيل:",
+      "client": "باسم:",
+      "closingConfirmed": "شكرًا لكم، إلى اللقاء!",
+      "closingRequest": "هل يمكنكم تأكيد هذا الموعد من فضلكم؟"
+    }
   },
   "sticky": {
     "book": "احجزي موعدكِ",

@@ -15,7 +15,10 @@
     "skipToContent": "Skip to content",
     "language": "Language",
     "mainNavigation": "Main navigation",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "hero": {
     "eyebrow": "Where beauty meets artistry",
@@ -288,7 +291,15 @@
       "confirmOnWhatsapp": "Confirm on WhatsApp",
       "reference": "Reference {ref}"
     },
-    "whatsappMessage": "Hello N&S, I would like to confirm: {summary}"
+    "whatsapp": {
+      "confirmed": "Hello N&S, I have just booked online.",
+      "request": "Hello N&S, I would like this appointment:",
+      "reference": "Ref.:",
+      "details": "Details:",
+      "client": "Booked under:",
+      "closingConfirmed": "Thank you, see you soon!",
+      "closingRequest": "Could you confirm this slot, please?"
+    }
   },
   "sticky": {
     "book": "Book my appointment",
