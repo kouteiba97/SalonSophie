@@ -10,6 +10,8 @@ interface BookButtonProps {
   gownSlug?: string;
   variant?: 'solid' | 'ghost' | 'quiet';
   className?: string;
+  /** Applied to the label span, so a caller can hide the word and keep the arrow. */
+  labelClassName?: string;
 }
 
 /**
@@ -22,6 +24,7 @@ export function BookButton({
   gownSlug,
   variant = 'solid',
   className,
+  labelClassName,
 }: BookButtonProps) {
   const { open, openWithService, openWithGown } = useBooking();
 
@@ -35,6 +38,7 @@ export function BookButton({
     <button
       type="button"
       onClick={handleClick}
+      aria-label={label}
       className={cn(
         'group inline-flex cursor-pointer items-center justify-center gap-2 rounded-full transition-colors duration-200',
         variant === 'solid' &&
@@ -45,7 +49,13 @@ export function BookButton({
         className,
       )}
     >
-      {label}
+      {/*
+        `labelClassName` exists for the tariff rows, where the word "Réserver" repeats twenty-four
+        times down a 375px screen and pushes service names onto a second line. There it is hidden
+        below `sm` and the arrow carries the affordance; `aria-label` keeps the button named for
+        anyone not reading the glyph.
+      */}
+      <span className={labelClassName}>{label}</span>
       <ArrowRight className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 rtl:-scale-x-100" />
     </button>
   );

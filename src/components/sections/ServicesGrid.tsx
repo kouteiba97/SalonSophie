@@ -77,37 +77,59 @@ export function ServicesGrid({ category, categories, services }: ServicesGridPro
           ))}
         </div>
 
+          {/*
+            A price list on a phone, a card grid from `sm` up.
+
+            The card is right on a wide screen and wrong on a narrow one. At 375px the track
+            `minmax(min(100%,286px),1fr)` can only ever resolve to a single column, so twenty-four
+            services became twenty-four stacked blocks roughly 340px tall — about eight thousand
+            pixels of scrolling to read a tariff. The client arriving from an Instagram reel wants
+            to know what a brushing costs, and was being asked to scroll past twenty-three other
+            answers to find it.
+
+            Below `sm` each one is now a row: name on the left, price and duration on the right,
+            around 76px tall. The same information, roughly a quarter of the travel, and it reads
+            the way a salon's printed tariff reads. From `sm` the original card returns untouched.
+          */}
         {visible.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="mt-8 grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(min(100%,286px),1fr))]">
+          <div className="mt-8 grid gap-2 sm:gap-4 sm:[grid-template-columns:repeat(auto-fill,minmax(min(100%,286px),1fr))]">
             {visible.map((service) => {
               const categoryName = categories.find((c) => c.slug === service.categorySlug)?.name;
               return (
                 <article
                   key={service.slug}
-                  className="flex flex-col gap-3 rounded-[22px] border border-rose-soft/30 bg-white p-5 transition-colors duration-200 hover:border-rose-deep/45"
+                  className="flex items-center gap-4 rounded-[16px] border border-rose-soft/30 bg-white p-4 transition-colors duration-200 hover:border-rose-deep/45 sm:flex-col sm:items-stretch sm:gap-3 sm:rounded-[22px] sm:p-5"
                 >
-                  <p className="text-[10px] uppercase tracking-[.22em] text-taupe">{categoryName}</p>
-
-                  <h3 className="font-display text-[21px] font-light leading-tight text-charcoal">
-                    <Link
-                      href={`/services/${service.slug}`}
-                      className="text-charcoal transition-colors hover:text-rose-deep"
-                    >
-                      {service.name}
-                    </Link>
-                  </h3>
-
-                  {service.note ? (
-                    <p className="text-[12px] text-taupe-2">
-                      {tc(service.note as 'supplement' | 'withAnyMassage')}
+                  <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-none sm:gap-3">
+                    {/*
+                      The category is redundant on mobile — the filter pills above already say
+                      which one is showing — and it is the line that made each row three tall.
+                    */}
+                    <p className="hidden text-[10px] uppercase tracking-[.22em] text-taupe sm:block">
+                      {categoryName}
                     </p>
-                  ) : null}
 
-                  <div className="mt-auto flex items-end justify-between gap-3 border-t border-line pt-3.5">
-                    <div className="flex flex-col">
-                      <span className="text-[17px] text-rose-deep">{price(service.price)}</span>
+                    <h3 className="font-display text-[17px] font-light leading-tight text-charcoal sm:text-[21px]">
+                      <Link
+                        href={`/services/${service.slug}`}
+                        className="text-charcoal transition-colors hover:text-rose-deep"
+                      >
+                        {service.name}
+                      </Link>
+                    </h3>
+
+                    {service.note ? (
+                      <p className="text-[12px] text-taupe-2">
+                        {tc(service.note as 'supplement' | 'withAnyMassage')}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div className="flex shrink-0 items-center gap-3 sm:mt-auto sm:items-end sm:justify-between sm:border-t sm:border-line sm:pt-3.5">
+                    <div className="flex flex-col items-end sm:items-start">
+                      <span className="text-[16px] text-rose-deep sm:text-[17px]">{price(service.price)}</span>
                       {/*
                         `taupe-2`, not `muted`, and that is an accessibility fix rather than a
                         restyle. `--muted` (#C7BAB3) on white is 1.89:1 — far under the 4.5:1 AA
@@ -121,13 +143,14 @@ export function ServicesGrid({ category, categories, services }: ServicesGridPro
                         `--taupe-2` (#7A6E68) is 4.93:1 and the nearest token in the same warm
                         grey family, so the hierarchy the design intended survives.
                       */}
-                      <span className="text-[12px] text-taupe-2">{duration(service.duration)}</span>
+                      <span className="whitespace-nowrap text-[11px] text-taupe-2 sm:text-[12px]">{duration(service.duration)}</span>
                     </div>
                     <BookButton
                       label={t('book')}
                       serviceSlug={service.slug}
                       variant="quiet"
-                      className="pb-0.5"
+                      className="shrink-0 pb-0.5"
+                      labelClassName="hidden sm:inline"
                     />
                   </div>
                 </article>
