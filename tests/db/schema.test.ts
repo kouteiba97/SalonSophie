@@ -419,11 +419,41 @@ describe('seeded catalogue', () => {
     expect(Number(soins.rows[0].price_max)).toBe(3500000);
   });
 
-  it('invents no service durations', async () => {
-    const res = await db.query<{ count: number }>(
-      'select count(*)::int as count from public.services where duration_minutes is not null',
+  /**
+   * Sixteen durations are the salon's own; the other thirty-nine are still genuinely unknown.
+   *
+   * Both halves matter. The seeded values must match what the salon said — a duration that is
+   * too short books a client into a slot she overruns — and the unanswered ones must stay null,
+   * because null is what the booking RPC reads as "cannot size this, make it a request".
+   */
+  it('carries the salon’s real durations and leaves the rest null', async () => {
+    const counts = await db.query<{ known: number; unknown: number }>(
+      `select count(*) filter (where duration_minutes is not null)::int as known,
+              count(*) filter (where duration_minutes is null)::int     as unknown
+         from public.services`,
     );
-    expect(res.rows[0].count).toBe(0);
+    expect(counts.rows[0].known).toBe(16);
+    expect(counts.rows[0].unknown).toBe(39);
+
+    const sample = await db.query<{ slug: string; duration_minutes: number }>(
+      `select slug, duration_minutes from public.services
+        where slug in ('brushing-courts', 'soins-capillaires', 'pose-capsule',
+                       'soin-des-mains', 'pedicure-soin-avec-paraffine')
+        order by slug`,
+    );
+    expect(sample.rows).toEqual([
+      { slug: 'brushing-courts', duration_minutes: 15 },
+      { slug: 'pedicure-soin-avec-paraffine', duration_minutes: 45 },
+      { slug: 'pose-capsule', duration_minutes: 120 },
+      { slug: 'soin-des-mains', duration_minutes: 30 },
+      { slug: 'soins-capillaires', duration_minutes: 300 },
+    ]);
+
+    // Déco is a +500 DA supplement, not an appointment. "nails : 2 h" must not have reached it.
+    const deco = await db.query<{ duration_minutes: number | null }>(
+      `select duration_minutes from public.services where slug = 'deco'`,
+    );
+    expect(deco.rows[0].duration_minutes).toBeNull();
   });
 
   it('invents no gown rental prices', async () => {
@@ -433,11 +463,86 @@ describe('seeded catalogue', () => {
     expect(res.rows[0].count).toBe(0);
   });
 
-  it('invents no opening hours', async () => {
-    const res = await db.query<{ count: number }>(
-      'select count(*)::int as count from public.business_hours',
+  /**
+   * The real trading week, in the database as well as the static fallback.
+   *
+   * The two must agree. The public site reads Postgres when it is configured and the committed
+   * seed when it is not, so hours that differ between them would show a client one thing on the
+   * deployed site and another in a preview build.
+   */
+  it('seeds the salon’s real opening hours', async () => {
+    const res = await db.query<{
+      weekday: number;
+      opens_at: string | null;
+      closes_at: string | null;
+      is_closed: boolean;
+    }>('select weekday, opens_at, closes_at, is_closed from public.business_hours order by weekday');
+
+    expect(res.rows).toHaveLength(7);
+
+    const sunday = res.rows[0];
+    expect(sunday.weekday).toBe(0);
+    expect(sunday.is_closed).toBe(true);
+
+    for (const row of res.rows.slice(1)) {
+      expect(row.is_closed, `weekday ${row.weekday}`).toBe(false);
+      expect(row.opens_at, `weekday ${row.weekday}`).toMatch(/^09:30/);
+      expect(row.closes_at, `weekday ${row.weekday}`).toMatch(/^17:00/);
+    }
+
+    // Friday (5) trades. The design hardcoded it closed; reproducing that would turn clients away.
+    expect(res.rows.find((r) => r.weekday === 5)?.is_closed).toBe(false);
+  });
+
+  /**
+   * The corrective path, which a fresh database never exercises.
+   *
+   * Applying the migrations in order starts from a seed where every duration is already null and
+   * `business_hours` is already empty, so the clearing half of 20261018090000 does nothing and is
+   * never proven. The live database is the opposite case: it had been seeded with the design's
+   * invented values — 09 h – 19 h with Friday closed, and a guessed duration on all fifty-five
+   * services — and the migration has to overwrite that, not merely fill a gap.
+   *
+   * So this puts the wrong data back, re-runs the migration, and checks it corrects rather than
+   * co-exists. It doubles as the idempotency test: the file is safe to apply twice.
+   */
+  it('overwrites invented hours and clears guessed durations when re-applied', async () => {
+    await db.query(
+      `update public.business_hours
+          set opens_at = '09:00', closes_at = '19:00',
+              is_closed = (weekday = 5)
+        where tenant_id = '${TENANT_ID}'`,
     );
-    expect(res.rows[0].count).toBe(0);
+    await db.query(
+      `update public.services set duration_minutes = 45 where tenant_id = '${TENANT_ID}'`,
+    );
+
+    const { readFileSync } = await import('node:fs');
+    const { join } = await import('node:path');
+    await db.exec(
+      readFileSync(
+        join(process.cwd(), 'supabase/migrations/20261018090000_real_hours_and_durations.sql'),
+        'utf8',
+      ),
+    );
+
+    const hours = await db.query<{ weekday: number; is_closed: boolean; closes_at: string | null }>(
+      'select weekday, is_closed, closes_at from public.business_hours order by weekday',
+    );
+    expect(hours.rows.find((r) => r.weekday === 0)?.is_closed).toBe(true); // Sunday shut
+    expect(hours.rows.find((r) => r.weekday === 5)?.is_closed).toBe(false); // Friday trades
+    expect(hours.rows.find((r) => r.weekday === 1)?.closes_at).toMatch(/^17:00/);
+
+    const counts = await db.query<{ known: number }>(
+      `select count(*) filter (where duration_minutes is not null)::int as known
+         from public.services`,
+    );
+    expect(counts.rows[0].known).toBe(16);
+
+    const balayage = await db.query<{ duration_minutes: number | null }>(
+      `select duration_minutes from public.services where slug = 'balayage'`,
+    );
+    expect(balayage.rows[0].duration_minutes).toBeNull();
   });
 
   it('seeds only the two confirmed sisters as bookable staff', async () => {

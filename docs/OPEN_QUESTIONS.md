@@ -20,32 +20,48 @@ Everything unknown flows through `src/lib/todo.ts`, which prints the full list a
 
 These appear on screens a client will look at.
 
-### 1. Opening hours
-The design showed "Samedi – Jeudi, 09 h 00 – 19 h 00 / Vendredi Fermé". Invented.
+### 1. Opening hours — ✅ ANSWERED (18 Oct 2026)
+**Open every day 09:30 – 17:00. Closed Sunday.**
 
-Also blocks the availability engine: with no hours it cannot compute a single slot, so **every
-booking is currently a *request*** rather than a confirmed appointment.
+Seeded into `business_hours` by `20261018090000_real_hours_and_durations.sql` and into the static
+fallback at `src/data/business.ts`, so the deployed site and a credential-less build agree.
 
-- Which days is the salon open, and what hours?
-- Does it close on Friday? (The design hardcoded it; the schema does not assume it.)
-- Any regular exceptions — Ramadan hours, a weekly half-day?
+Worth recording how wrong the prototype was, since it looked authoritative: it invented
+09 h – 19 h *and* hardcoded `d.getDay() === 5` to close Friday. The salon trades on Friday,
+closes on Sunday, and shuts two hours earlier than the mockup claimed. Shipping those values
+would have turned clients away on Friday and sent them to a locked door on Sunday.
 
-**Where it goes:** `business_hours` rows (per weekday) and `business_hour_exceptions` (per date).
-Both tables exist and ship empty. Nothing else needs changing.
+**Still open:** `business_hour_exceptions` is empty. Ramadan hours, public holidays and days the
+sisters are working a wedding are all real and none are recorded.
 
-### 2. Service durations
-Unknown for all 55 services. The design invented "45 min", "2 h" and so on.
+- Any regular exceptions — Ramadan hours, a weekly half-day, planned closures?
 
-Needed for the availability engine to size a slot. Until then, services with no duration produce
-requests, not bookings.
+### 2. Service durations — ◐ PARTLY ANSWERED (18 Oct 2026)
+**Sixteen of fifty-five are now real.** The remaining thirty-nine still render as `—` and still
+produce requests rather than bookable slots.
 
-**Where it goes:** `services.duration_minutes`, currently null for every row.
-Optionally `services.buffer_minutes` for turnaround between clients.
+| Given | Applied to | Minutes |
+|---|---|---|
+| brushing | all four lengths (courts, mi-longs, longs, très très longs) | 15 |
+| hand care | Soin des mains | 30 |
+| foot care | Soin sans paraffine, Soin avec paraffine | 45 |
+| facial simple / profond / hydro | the three Soin de visage lines | 60 |
+| nails | the five full poses (capsule, gel, french ×2, babyboomer) | 120 |
+| hair care | Soins capillaires | 300 |
 
-This is the highest-leverage unknown on the list. The console's **Prestations** screen shows the
-count of services still missing one, because filling them in is what turns every booking from a
-request the salon has to chase into a slot the client can actually take — and it is also what
-lets the day-line draw a real block instead of a pin.
+Deliberately not spread wider than what was said: `Déco` is a 500 DA supplement, not an
+appointment, and the pédicure gel lines are nail work rather than foot care.
+
+**Four durations have no line in the tariff to attach to** — these need a price before they can
+become services, and a price is not something to invent:
+
+- **maquillage** (1 h) — no makeup service exists in the §6 tariff. What does it cost?
+- **maquillage + coiffure** (2 h) — same.
+- **coloration** (2 h) — no coloration line exists. Is this `CCRP`, or a separate service?
+- **mèches** (2 h) — is this the existing `Balayage` (from 16 000 DA), or a distinct service?
+
+**Still open:** the other 39 durations. The console's **Prestations** screen shows the running
+count, so it is visible how many remain.
 
 ### 3. Bridal rental prices
 The design invented 38 000 / 45 000 / 55 000 DA for ABir / Anastasia / RYMA.

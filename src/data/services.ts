@@ -7,8 +7,20 @@ import type { Service, ServiceCategory } from './types';
  *
  * This is NOT the design file's SERVICES array. That array was prototype filler whose numbers
  * contradict the published tariff (it priced "Balayage & Ombré" at 7 500 when the real floor is
- * 16 000) and invented a duration for every line. Durations are unknown for all 55 services and
- * render as an em dash until Nour or Sophie supplies them.
+ * 16 000) and invented a duration for every line.
+ *
+ * ── Durations ────────────────────────────────────────────────────────────────────────────────
+ * Sixteen are now real, given by the salon. The rest stay `d` and render as an em dash.
+ *
+ * Partial is the honest state and the engine already handles it per service: a service with a
+ * duration yields real bookable slots, one without still yields `mode: 'request'`. There was no
+ * reason to hold the sixteen back waiting for the other thirty-nine, and no reason to spread
+ * sixteen answers across fifty-five lines to make the list look finished — a guessed duration
+ * does not fail loudly, it just quietly offers a client the wrong slot.
+ *
+ * Four durations the salon gave have no line in the published tariff to attach to — maquillage,
+ * maquillage + coiffure, coloration and mèches. They are recorded in docs/OPEN_QUESTIONS.md
+ * rather than invented here, because adding a service means inventing its price.
  */
 
 export const CATEGORIES: ServiceCategory[] = [
@@ -22,6 +34,7 @@ export const CATEGORIES: ServiceCategory[] = [
   { slug: 'massage', name: 'Massage', order: 8 },
 ];
 
+/** Still unknown — thirty-nine of the fifty-five. */
 const d = TODO_SERVICE_DURATION;
 
 export const SERVICES: Service[] = [
@@ -29,40 +42,40 @@ export const SERVICES: Service[] = [
   { slug: 'coupe', categorySlug: 'coiffure', name: 'Coupe', price: fixed(700), duration: d },
   { slug: 'coupe-brushing-courts', categorySlug: 'coiffure', name: 'Coupe + brushing courts', price: fixed(1200), duration: d },
   { slug: 'coupe-brushing-longs', categorySlug: 'coiffure', name: 'Coupe + brushing longs', price: fixed(1500), duration: d },
-  { slug: 'brushing-courts', categorySlug: 'coiffure', name: 'Brushing courts', price: fixed(1000), duration: d },
-  { slug: 'brushing-mi-longs', categorySlug: 'coiffure', name: 'Brushing mi-longs', price: fixed(1200), duration: d },
-  { slug: 'brushing-longs', categorySlug: 'coiffure', name: 'Brushing longs', price: fixed(1500), duration: d },
-  { slug: 'brushing-tres-tres-longs', categorySlug: 'coiffure', name: 'Brushing très très longs', price: fixed(2000), duration: d },
+  { slug: 'brushing-courts', categorySlug: 'coiffure', name: 'Brushing courts', price: fixed(1000), duration: 15 },
+  { slug: 'brushing-mi-longs', categorySlug: 'coiffure', name: 'Brushing mi-longs', price: fixed(1200), duration: 15 },
+  { slug: 'brushing-longs', categorySlug: 'coiffure', name: 'Brushing longs', price: fixed(1500), duration: 15 },
+  { slug: 'brushing-tres-tres-longs', categorySlug: 'coiffure', name: 'Brushing très très longs', price: fixed(2000), duration: 15 },
 
   // ── Soins Capillaires ───────────────────────────────────────────────────────────────────
-  { slug: 'soins-capillaires', categorySlug: 'soins-capillaires', name: 'Soins capillaires', price: range(14000, 35000), duration: d },
+  { slug: 'soins-capillaires', categorySlug: 'soins-capillaires', name: 'Soins capillaires', price: range(14000, 35000), duration: 300 },
   { slug: 'ccrp', categorySlug: 'soins-capillaires', name: 'CCRP', price: from(6000), duration: d },
   { slug: 'balayage', categorySlug: 'soins-capillaires', name: 'Balayage', price: from(16000), duration: d },
 
   // ── Soin de Visage ──────────────────────────────────────────────────────────────────────
-  { slug: 'soin-visage-simple', categorySlug: 'soin-de-visage', name: 'Soin de visage simple', price: fixed(3500), duration: d },
-  { slug: 'soin-visage-profond', categorySlug: 'soin-de-visage', name: 'Soin de visage profond', price: fixed(5000), duration: d },
-  { slug: 'hydra-facial', categorySlug: 'soin-de-visage', name: 'Hydra Facial', price: fixed(8000), duration: d },
-  { slug: 'soin-des-mains', categorySlug: 'soin-de-visage', name: 'Soin des mains', price: fixed(2500), duration: d },
+  { slug: 'soin-visage-simple', categorySlug: 'soin-de-visage', name: 'Soin de visage simple', price: fixed(3500), duration: 60 },
+  { slug: 'soin-visage-profond', categorySlug: 'soin-de-visage', name: 'Soin de visage profond', price: fixed(5000), duration: 60 },
+  { slug: 'hydra-facial', categorySlug: 'soin-de-visage', name: 'Hydra Facial', price: fixed(8000), duration: 60 },
+  { slug: 'soin-des-mains', categorySlug: 'soin-de-visage', name: 'Soin des mains', price: fixed(2500), duration: 30 },
 
   // ── Nails ───────────────────────────────────────────────────────────────────────────────
-  { slug: 'pose-capsule', categorySlug: 'nails', name: 'Pose capsule', price: fixed(4000), duration: d },
-  { slug: 'gel-ongle-naturel', categorySlug: 'nails', name: 'Gel sur ongle naturel', price: fixed(3500), duration: d },
+  { slug: 'pose-capsule', categorySlug: 'nails', name: 'Pose capsule', price: fixed(4000), duration: 120 },
+  { slug: 'gel-ongle-naturel', categorySlug: 'nails', name: 'Gel sur ongle naturel', price: fixed(3500), duration: 120 },
   { slug: 'verni-semi-permanent', categorySlug: 'nails', name: 'Verni semi-permanent', price: fixed(2500), duration: d },
   { slug: 'remplissage', categorySlug: 'nails', name: 'Remplissage', price: fixed(3500), duration: d },
   { slug: 'depose-manucure-russe', categorySlug: 'nails', name: 'Dépose + manucure russe', price: fixed(2000), duration: d },
   { slug: 'manucure-russe', categorySlug: 'nails', name: 'Manucure russe', price: fixed(1000), duration: d },
-  { slug: 'french-pose-capsule', categorySlug: 'nails', name: 'French pose capsule', price: fixed(4500), duration: d },
-  { slug: 'french-gel-ongle-naturel', categorySlug: 'nails', name: 'French gel sur ongle naturel', price: fixed(4000), duration: d },
-  { slug: 'babyboomer', categorySlug: 'nails', name: 'Babyboomer', price: fixed(5000), duration: d },
+  { slug: 'french-pose-capsule', categorySlug: 'nails', name: 'French pose capsule', price: fixed(4500), duration: 120 },
+  { slug: 'french-gel-ongle-naturel', categorySlug: 'nails', name: 'French gel sur ongle naturel', price: fixed(4000), duration: 120 },
+  { slug: 'babyboomer', categorySlug: 'nails', name: 'Babyboomer', price: fixed(5000), duration: 120 },
   { slug: 'deco', categorySlug: 'nails', name: 'Déco', price: addon(500), duration: d, note: 'supplement' },
 
   // ── Pédicure ────────────────────────────────────────────────────────────────────────────
   { slug: 'pedicure-capsule', categorySlug: 'pedicure', name: 'Capsule', price: fixed(3500), duration: d },
   { slug: 'pedicure-gel-ongle-naturel', categorySlug: 'pedicure', name: 'Gel sur ongle naturel', price: fixed(3000), duration: d },
   { slug: 'pedicure-semi-permanent', categorySlug: 'pedicure', name: 'Semi-permanent', price: fixed(2500), duration: d },
-  { slug: 'pedicure-soin-sans-paraffine', categorySlug: 'pedicure', name: 'Soin sans paraffine', price: fixed(3000), duration: d },
-  { slug: 'pedicure-soin-avec-paraffine', categorySlug: 'pedicure', name: 'Soin avec paraffine', price: fixed(3500), duration: d },
+  { slug: 'pedicure-soin-sans-paraffine', categorySlug: 'pedicure', name: 'Soin sans paraffine', price: fixed(3000), duration: 45 },
+  { slug: 'pedicure-soin-avec-paraffine', categorySlug: 'pedicure', name: 'Soin avec paraffine', price: fixed(3500), duration: 45 },
   { slug: 'pedicure-peeling', categorySlug: 'pedicure', name: 'Peeling', price: fixed(5000), duration: d },
 
   // ── Extension de Cils ───────────────────────────────────────────────────────────────────

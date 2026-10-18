@@ -83,7 +83,9 @@ describe('known', () => {
 
 describe('the registry', () => {
   it('returns the same instance for the same field', () => {
-    expect(todo('Durée des prestations')).toBe(TODO_SERVICE_DURATION);
+    // Keyed off the constant's own label rather than a copy of it: this pins the dedupe
+    // behaviour, not the wording, which moves as questions get partly answered.
+    expect(todo(TODO_SERVICE_DURATION.field)).toBe(TODO_SERVICE_DURATION);
   });
 
   it('lists every unknown for the build warning, with somebody to ask', () => {

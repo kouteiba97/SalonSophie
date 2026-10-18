@@ -1,16 +1,18 @@
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { BrandedImage } from '@/components/common/BrandedImage';
 import { Reveal } from '@/components/common/Reveal';
 import { SectionHeading } from '@/components/common/SectionHeading';
 import { ArrowRight, MapPin, Phone, WhatsApp } from '@/components/common/icons';
-import { BUSINESS, whatsappLink } from '@/data/business';
-import { isTodo } from '@/lib/todo';
+import { BUSINESS, type OpeningDay, whatsappLink } from '@/data/business';
+import { formatOpeningHours } from '@/lib/datetime';
+import type { Locale } from '@/i18n/routing';
 
 const MAPS_URL = 'https://maps.google.com/?q=Ali+Mendjeli+UV5+Constantine';
 
-export function ContactSection() {
+export function ContactSection({ openingHours }: { openingHours: readonly OpeningDay[] }) {
   const t = useTranslations('contact');
   const tc = useTranslations('common');
+  const locale = useLocale() as Locale;
 
   return (
     <Reveal
@@ -28,15 +30,29 @@ export function ContactSection() {
           </p>
 
           {/*
-            The design printed "Samedi – Jeudi · 09 h 00 – 19 h 00" and "Vendredi · Fermé".
-            Opening hours are unknown (§6), and hours are exactly the kind of thing a client
-            acts on — someone drives across Ali Mendjeli on the strength of this line.
+            The design printed "Samedi – Jeudi · 09 h 00 – 19 h 00" and "Vendredi · Fermé", and
+            every part of that was wrong: the salon shuts at 17:00, trades on Friday and closes
+            on Sunday. Hours are exactly the kind of line a client acts on — someone drives
+            across Ali Mendjeli on the strength of it — so these are the salon's own.
+
+            Grouped rather than seven rows, so the one line that matters (Sunday, closed) is not
+            buried in a list where every other row says the same thing.
           */}
           <div className="flex flex-col gap-1 rounded-[18px] border border-rose-soft/30 bg-white px-5 py-4">
             <p className="text-[11px] uppercase tracking-[.2em] text-taupe">{t('hoursTitle')}</p>
-            <p className="text-[15px] text-charcoal">
-              {isTodo(BUSINESS.openingHours) ? tc('unknown') : null}
-            </p>
+            <dl className="m-0 flex flex-col gap-1">
+              {formatOpeningHours(openingHours, locale).map((line) => (
+                <div key={line.days} className="flex flex-wrap items-baseline justify-between gap-x-4">
+                  <dt className="text-[15px] capitalize text-charcoal">{line.days}</dt>
+                  <dd
+                    className={`m-0 text-[15px] ${line.hours ? 'text-ink-2' : 'text-taupe'}`}
+                    dir={line.hours ? 'ltr' : undefined}
+                  >
+                    {line.hours ?? tc('closed')}
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">

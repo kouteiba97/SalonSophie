@@ -1,4 +1,20 @@
-import { TODO_INSTAGRAM_HANDLES, TODO_OPENING_HOURS } from '@/lib/todo';
+import { TODO_INSTAGRAM_HANDLES } from '@/lib/todo';
+
+/**
+ * One day of the trading week.
+ *
+ * Deliberately the same shape as the `business_hours` row and as `openingDay` in the management
+ * schema: weekday 0 = Sunday .. 6 = Saturday, matching JS `getDay()`. One shape across the seed,
+ * the database and the console editor means hours cannot mean one thing in the fallback and
+ * another in Postgres.
+ */
+export interface OpeningDay {
+  weekday: number;
+  isClosed: boolean;
+  /** "HH:MM" wall clock, Africa/Algiers. Null only when closed. */
+  opensAt: string | null;
+  closesAt: string | null;
+}
 
 /**
  * The business itself — BUILD_BRIEF §1.
@@ -29,8 +45,28 @@ export const BUSINESS = {
      */
   },
 
-  /** Unknown (§6). The design invented "Samedi – Jeudi, 09 h 00 – 19 h 00 / Vendredi Fermé". */
-  openingHours: TODO_OPENING_HOURS,
+  /**
+   * The real trading week, given by the salon: open every day 09:30–17:00, closed Sunday.
+   *
+   * This was the single highest-leverage unknown in §6. Without it the availability engine could
+   * not size or place a slot, so every booking fell back to `mode: 'request'` — a message the
+   * salon had to chase. With it the same engine returns real slots for any service whose duration
+   * is also known.
+   *
+   * Note the design was wrong in both directions, not just vague: it invented 09 h – 19 h and
+   * hardcoded `d.getDay() === 5` to close Friday. The salon is open on Friday and closed on
+   * Sunday, and closes two hours earlier than the mockup claimed. Anyone who had trusted the
+   * prototype would have sent clients to a shut door on Sunday and turned them away on Friday.
+   */
+  openingHours: [
+    { weekday: 0, isClosed: true, opensAt: null, closesAt: null }, // dimanche
+    { weekday: 1, isClosed: false, opensAt: '09:30', closesAt: '17:00' },
+    { weekday: 2, isClosed: false, opensAt: '09:30', closesAt: '17:00' },
+    { weekday: 3, isClosed: false, opensAt: '09:30', closesAt: '17:00' },
+    { weekday: 4, isClosed: false, opensAt: '09:30', closesAt: '17:00' },
+    { weekday: 5, isClosed: false, opensAt: '09:30', closesAt: '17:00' },
+    { weekday: 6, isClosed: false, opensAt: '09:30', closesAt: '17:00' },
+  ] satisfies OpeningDay[] as OpeningDay[],
 
   /** Unverified (§6). Rendered only once confirmed. */
   instagram: TODO_INSTAGRAM_HANDLES,

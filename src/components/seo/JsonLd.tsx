@@ -1,5 +1,5 @@
 import { useLocale, useTranslations } from 'next-intl';
-import { BUSINESS } from '@/data/business';
+import { BUSINESS, type OpeningDay } from '@/data/business';
 import type { Gown, Service, ServiceCategory } from '@/data/types';
 import { isTodo } from '@/lib/todo';
 import { priceFloor } from '@/lib/money';
@@ -20,17 +20,34 @@ function JsonLd({ data }: { data: Record<string, unknown> }) {
 /**
  * LocalBusiness — BUILD_BRIEF §5.6 item 25. The design carried no metadata at all.
  *
- * `openingHoursSpecification` is deliberately absent: hours are unknown (§6) and publishing
- * invented hours into structured data would put them in a Google knowledge panel, where a wrong
- * answer travels furthest. `geo` is absent for the same reason — the coordinates were never
- * surveyed, and a wrong pin sends a bride to the wrong side of Ali Mendjeli.
+ * `openingHoursSpecification` is now published: the hours are the salon's own (09:30–17:00,
+ * closed Sunday), so they belong in the knowledge panel where clients check them before setting
+ * out. It was held back while they were unknown precisely because that is where a wrong answer
+ * travels furthest.
+ *
+ * `geo` is still absent, for that unchanged reason — the coordinates were never surveyed, and a
+ * wrong pin sends a bride to the wrong side of Ali Mendjeli.
  */
+/** Index 0 = Sunday, matching `getDay()` and the `business_hours` weekday column. */
+const SCHEMA_DAYS = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+] as const;
+
 export function LocalBusinessJsonLd({
   services,
   categories,
+  openingHours,
 }: {
   services: Service[];
   categories: ServiceCategory[];
+  /* The same hours the page prints and the engine honours — see src/data/hours.ts. */
+  openingHours: readonly OpeningDay[];
 }) {
   const locale = useLocale() as Locale;
   const t = useTranslations('meta.home');
@@ -54,6 +71,19 @@ export function LocalBusinessJsonLd({
           addressCountry: BUSINESS.address.country,
         },
         areaServed: { '@type': 'City', name: 'Constantine' },
+        /*
+         * Schema.org wants English day URIs regardless of the page's locale, and only the open
+         * days are listed — omitting Sunday is how the vocabulary says "closed". Emitting it
+         * with 00:00–00:00 would read as open around midnight.
+         */
+        openingHoursSpecification: openingHours
+          .filter((day) => !day.isClosed && day.opensAt && day.closesAt)
+          .map((day) => ({
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: `https://schema.org/${SCHEMA_DAYS[day.weekday]}`,
+            opens: day.opensAt,
+            closes: day.closesAt,
+          })),
         makesOffer: categories.map((category) => ({
           '@type': 'OfferCatalog',
           name: category.name,

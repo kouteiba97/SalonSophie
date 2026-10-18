@@ -300,6 +300,7 @@
     "fromPrice": "from {price}",
     "free": "Free",
     "unknown": "—",
+    "closed": "Closed",
     "withAnyMassage": "Free with any massage",
     "supplement": "Add-on",
     "loading": "One moment…",

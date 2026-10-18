@@ -72,8 +72,14 @@ export function known<T>(value: Unless<T>, fallback: T): T {
    The unknowns, named once. Import these rather than calling todo() ad hoc.
    --------------------------------------------------------------------------------------------- */
 
-/** §6: service durations are not known. The design invented "45 min", "2 h" etc. */
-export const TODO_SERVICE_DURATION = todo('Durée des prestations');
+/**
+ * §6: durations. Sixteen of the fifty-five are now real; this covers the remaining thirty-nine.
+ *
+ * Still registered, and deliberately so. A partly answered question is the one most likely to be
+ * remembered as finished — "Sophie sent the durations" is true, and two thirds of the tariff
+ * still cannot offer a bookable slot. The build warning keeps the remainder visible.
+ */
+export const TODO_SERVICE_DURATION = todo('Durée des prestations (39 des 55 restantes)');
 
 /** §6: bridal rental prices are not known. The design invented 38 000 / 45 000 / 55 000 DA. */
 export const TODO_GOWN_RENTAL_PRICE = todo('Tarifs de location des robes');
@@ -81,8 +87,19 @@ export const TODO_GOWN_RENTAL_PRICE = todo('Tarifs de location des robes');
 /** §6: bridal package prices are not known. The design invented 65 000 / 95 000 / 140 000 DA. */
 export const TODO_PACKAGE_PRICE = todo('Tarifs des forfaits mariée');
 
-/** §6: opening hours are not known. The design invented "Samedi – Jeudi, 09 h – 19 h". */
-export const TODO_OPENING_HOURS = todo('Horaires d’ouverture');
+/**
+ * §6: opening hours — ANSWERED. Open 09:30–17:00, closed Sunday.
+ *
+ * Kept as an export because `business_hour_exceptions` still has none: Ramadan hours, a public
+ * holiday and a wedding the sisters are working are all real and all unrecorded. The weekly
+ * pattern is known; the exceptions to it are not.
+ *
+ * Removed from UNKNOWN_FIELDS, so it no longer prints at build time. The constant stays for any
+ * caller that still needs to say "this particular date's hours are not known".
+ *
+ * @deprecated for the weekly pattern — use `BUSINESS.openingHours`.
+ */
+export const TODO_OPENING_HOURS = todo('Exceptions d’horaires (Ramadan, jours fériés)');
 
 /** §6: only Nour and Sophie are confirmed. The design invented "Amina" and "Lynda". */
 export const TODO_STAFF_LIST = todo('Liste complète de l’équipe');
@@ -123,7 +140,7 @@ export const UNKNOWN_FIELDS = [
   TODO_GOWN_RENTAL_PRICE,
   TODO_PACKAGE_PRICE,
   TODO_PACKAGE_CONTENTS,
-  TODO_OPENING_HOURS,
+  /* TODO_OPENING_HOURS is answered — 09:30–17:00, closed Sunday — and no longer warned about. */
   TODO_STAFF_LIST,
   TODO_TESTIMONIALS,
   TODO_INSTAGRAM_HANDLES,

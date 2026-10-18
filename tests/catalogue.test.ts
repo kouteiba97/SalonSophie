@@ -63,11 +63,43 @@ describe('the published tariff (§6)', () => {
     for (const service of SERVICES) expect(known.has(service.categorySlug)).toBe(true);
   });
 
-  /** §6: durations are unknown for every service. */
-  it('invents no durations', () => {
+  /**
+   * §6: durations. Sixteen are the salon's own; the other thirty-nine are still unknown.
+   *
+   * This used to assert that every one was unknown. That rule has not been relaxed — it has been
+   * answered in part, and the test now pins both halves: the real values must not drift, and the
+   * unanswered ones must not quietly acquire a plausible-looking number.
+   */
+  it('carries the salon’s real durations and invents none of the rest', () => {
+    const real = new Map<string, number>([
+      ['brushing-courts', 15],
+      ['brushing-mi-longs', 15],
+      ['brushing-longs', 15],
+      ['brushing-tres-tres-longs', 15],
+      ['soins-capillaires', 300],
+      ['soin-visage-simple', 60],
+      ['soin-visage-profond', 60],
+      ['hydra-facial', 60],
+      ['soin-des-mains', 30],
+      ['pose-capsule', 120],
+      ['gel-ongle-naturel', 120],
+      ['french-pose-capsule', 120],
+      ['french-gel-ongle-naturel', 120],
+      ['babyboomer', 120],
+      ['pedicure-soin-sans-paraffine', 45],
+      ['pedicure-soin-avec-paraffine', 45],
+    ]);
+
     for (const service of SERVICES) {
-      expect(isTodo(service.duration)).toBe(true);
+      const expected = real.get(service.slug);
+      if (expected === undefined) {
+        expect(isTodo(service.duration), `${service.slug} should still be unknown`).toBe(true);
+      } else {
+        expect(service.duration, `${service.slug} duration`).toBe(expected);
+      }
     }
+
+    expect(SERVICES.filter((s) => !isTodo(s.duration))).toHaveLength(real.size);
   });
 });
 
@@ -138,7 +170,29 @@ describe('contact (§1)', () => {
     expect(serialised).not.toContain('213661234567');
   });
 
-  it('invents no opening hours', () => {
-    expect(isTodo(BUSINESS.openingHours)).toBe(true);
+  /**
+   * The salon's real week: 09:30–17:00, closed Sunday.
+   *
+   * Pinned rather than merely "present", because the design's invented hours were wrong in three
+   * separate ways — 09 h – 19 h, and Friday hardcoded closed via `d.getDay() === 5`. The salon
+   * trades on Friday and closes on Sunday. A regression toward the mockup would send clients to
+   * a locked door, so the closed day and both ends of the clock are asserted explicitly.
+   */
+  it('publishes the salon’s real opening hours', () => {
+    expect(BUSINESS.openingHours).toHaveLength(7);
+
+    const sunday = BUSINESS.openingHours.find((d) => d.weekday === 0);
+    expect(sunday?.isClosed).toBe(true);
+
+    const trading = BUSINESS.openingHours.filter((d) => d.weekday !== 0);
+    expect(trading).toHaveLength(6);
+    for (const day of trading) {
+      expect(day.isClosed, `weekday ${day.weekday}`).toBe(false);
+      expect(day.opensAt, `weekday ${day.weekday}`).toBe('09:30');
+      expect(day.closesAt, `weekday ${day.weekday}`).toBe('17:00');
+    }
+
+    // Friday (5) is a trading day. The design closed it; the salon does not.
+    expect(BUSINESS.openingHours.find((d) => d.weekday === 5)?.isClosed).toBe(false);
   });
 });
