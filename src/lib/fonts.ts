@@ -57,13 +57,34 @@ export const parisienne = localFont({
 
 /**
  * Arabic is 121 KB — three times the Latin faces combined. `preload: false` keeps French and
- * English pages from paying for a font they never paint; on `/ar` the face is discovered as
- * soon as the stylesheet applies it, and `display: swap` renders fallback text meanwhile.
+ * English pages from paying for a font they never paint.
+ *
+ * `display: 'optional'`, not `'swap'`, and that is the CLS budget rather than a preference.
+ *
+ * With `swap` the face arrives around 1 470ms on throttled 4G, well after first paint, and the
+ * Arabic headline re-wraps when it lands: measured at +56px on the headline and +83px on
+ * everything beneath it, for a layout shift of 0.108 against a 0.1 budget — non-negotiable #4,
+ * failing on the locale the brief says to test first.
+ *
+ * `adjustFontFallback: 'Arial'` cannot save it. It size-adjusts against Arial's metrics, and
+ * Arial is not what renders Arabic on the target device — a mid-range Android reaches for its
+ * own Noto Sans Arabic, whose metrics the adjustment knows nothing about. Multiply a small
+ * mismatch by the 1.95 line-height Arabic carries and by a three-line headline and you get the
+ * 56px.
+ *
+ * `optional` gives the font ~100ms to arrive. If it makes it, it paints; if not, this load keeps
+ * the fallback and never swaps, so the shift cannot happen. The file still downloads and caches,
+ * so the second page view and every later visit are in Noto Kufi.
+ *
+ * The cost is real and worth stating: a first-time Arabic visitor on a slow connection may read
+ * one page in their system's Arabic face instead of ours. Against that, the alternative is the
+ * page visibly jumping under their thumb as they start to read — and preloading instead would
+ * put 121 KB on the French and English critical path to fix a problem neither of them has.
  */
 export const notoKufi = localFont({
   src: [{ path: '../fonts/NotoKufiArabic-arabic.woff2', weight: '300 500', style: 'normal' }],
   variable: '--font-arabic',
-  display: 'swap',
+  display: 'optional',
   preload: false,
   fallback: ['Segoe UI', 'Tahoma', 'sans-serif'],
   adjustFontFallback: 'Arial',
