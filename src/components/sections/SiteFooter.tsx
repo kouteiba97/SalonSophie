@@ -31,7 +31,7 @@ export function SiteFooter() {
             <Link
               key={key}
               href={`/#${key === 'services' ? 'services' : key === 'prices' ? 'tarifs' : key === 'sisters' ? 'soeurs' : 'contact'}`}
-              className="text-[13px] text-muted-2/80 transition-colors hover:text-blush"
+              className="inline-flex min-h-11 items-center text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:min-h-0"
             >
               {nav(key)}
             </Link>
@@ -40,14 +40,14 @@ export function SiteFooter() {
 
         <nav aria-label={t('bridal')} className="flex flex-col gap-2.5">
           <p className="mb-1 text-[11px] uppercase tracking-[.24em] text-champagne">{t('bridal')}</p>
-          <Link href="/robes" className="text-[13px] text-muted-2/80 transition-colors hover:text-blush">
+          <Link href="/robes" className="inline-flex min-h-11 items-center text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:min-h-0">
             {t('rentGowns')}
           </Link>
           {GOWNS.map((gown) => (
             <Link
               key={gown.slug}
               href={`/robes/${gown.slug}`}
-              className="text-[13px] text-muted-2/80 transition-colors hover:text-blush"
+              className="inline-flex min-h-11 items-center text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:min-h-0"
             >
               {gown.name}
             </Link>

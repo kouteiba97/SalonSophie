@@ -173,7 +173,7 @@ export function DateStep() {
             onClick={() => dispatch({ type: 'shiftWeek', by: -1 })}
             disabled={state.weekOffset === 0}
             aria-label={t('previousWeek')}
-            className="grid size-8 cursor-pointer place-items-center rounded-full border border-rose-soft/45 text-ink-2 disabled:opacity-35"
+            className="grid size-11 cursor-pointer place-items-center rounded-full border border-rose-soft/45 text-ink-2 disabled:opacity-35"
           >
             <ChevronLeft className="size-4 rtl:-scale-x-100" />
           </button>
@@ -186,7 +186,7 @@ export function DateStep() {
             type="button"
             onClick={() => dispatch({ type: 'shiftWeek', by: 1 })}
             aria-label={t('nextWeek')}
-            className="grid size-8 cursor-pointer place-items-center rounded-full border border-rose-soft/45 text-ink-2"
+            className="grid size-11 cursor-pointer place-items-center rounded-full border border-rose-soft/45 text-ink-2"
           >
             <ChevronRight className="size-4 rtl:-scale-x-100" />
           </button>

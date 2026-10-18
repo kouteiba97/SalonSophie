@@ -63,7 +63,7 @@ export function HeroBookingCard() {
             onClick={() => dispatch({ type: 'shiftWeek', by: -1 })}
             disabled={!mounted || state.weekOffset === 0}
             aria-label={tb('calendar.previousWeek')}
-            className="grid size-7 cursor-pointer place-items-center rounded-full border border-rose-soft/45 text-ink-2 transition-colors hover:border-rose-deep hover:text-rose-deep disabled:cursor-default disabled:opacity-35"
+            className="grid size-11 cursor-pointer sm:size-7 place-items-center rounded-full border border-rose-soft/45 text-ink-2 transition-colors hover:border-rose-deep hover:text-rose-deep disabled:cursor-default disabled:opacity-35"
           >
             <ChevronLeft className="size-4 rtl:-scale-x-100" />
           </button>
@@ -72,7 +72,7 @@ export function HeroBookingCard() {
             onClick={() => dispatch({ type: 'shiftWeek', by: 1 })}
             disabled={!mounted}
             aria-label={tb('calendar.nextWeek')}
-            className="grid size-7 cursor-pointer place-items-center rounded-full border border-rose-soft/45 text-ink-2 transition-colors hover:border-rose-deep hover:text-rose-deep disabled:opacity-35"
+            className="grid size-11 cursor-pointer sm:size-7 place-items-center rounded-full border border-rose-soft/45 text-ink-2 transition-colors hover:border-rose-deep hover:text-rose-deep disabled:opacity-35"
           >
             <ChevronRight className="size-4 rtl:-scale-x-100" />
           </button>

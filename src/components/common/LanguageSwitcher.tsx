@@ -64,10 +64,16 @@ export function LanguageSwitcher({
             className={cn(
               /*
                  Three tiny pills side by side is the worst shape for a thumb: miss FR and you get
-                 Arabic. Sized to 40px on touch and left at the design's proportions on a pointer,
-                 where the original 28px is deliberate and fine.
+                 Arabic. Left at the design's proportions on a pointer, where the original 28px is
+                 deliberate and fine.
+
+                 On touch this was 40px tall with no width floor, which left the Arabic pill at
+                 32×40 — the single smallest control on the site, and the one that switches a
+                 whole locale. `min-w-11 min-h-11` puts all three on the 44px floor regardless of
+                 how wide their label happens to render; `justify-center` keeps the glyph centred
+                 now that the box is wider than the text.
               */
-              'inline-flex min-h-10 cursor-pointer items-center rounded-full px-[13px] text-[11px] tracking-[.1em] transition-colors duration-200 lg:min-h-0 lg:px-[11px] lg:py-[5px]',
+              'inline-flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full px-[13px] text-[11px] tracking-[.1em] transition-colors duration-200 lg:min-h-0 lg:min-w-0 lg:px-[11px] lg:py-[5px]',
               isActive
                 ? 'bg-rose-deep text-white'
                 : tone === 'dark'
