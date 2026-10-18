@@ -13,8 +13,15 @@ export function SiteFooter() {
 
   return (
     <footer className="bg-charcoal px-[clamp(20px,4vw,56px)] pb-[clamp(90px,9vw,120px)] pt-[clamp(48px,5vw,86px)] text-line">
-      <div className="mx-auto grid w-full max-w-[1180px] gap-10 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="flex flex-col gap-2">
+      {/*
+        Two columns from 375px, not one.
+        
+        Stacked single-column with `gap-10`, the four blocks ran 1 098px — 1.4 screens of footer
+        under a 1 384px page, so better than two fifths of the scroll was the bit nobody came for.
+        The two link lists sit side by side now and the gap tightens below `sm`.
+      */}
+      <div className="mx-auto grid w-full max-w-[1180px] grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
+        <div className="col-span-2 flex flex-col gap-2 lg:col-span-1">
           <p className="font-display text-[26px] font-light tracking-[.14em] text-cream">
             N<span className="font-script text-champagne">&amp;</span>S
           </p>
@@ -25,36 +32,36 @@ export function SiteFooter() {
           </p>
         </div>
 
-        <nav aria-label={t('salon')} className="flex flex-col gap-2.5">
+        <nav aria-label={t('salon')} className="flex flex-col gap-1 sm:gap-2.5">
           <p className="mb-1 text-[11px] uppercase tracking-[.24em] text-champagne">{t('salon')}</p>
           {(['services', 'prices', 'sisters', 'contact'] as const).map((key) => (
             <Link
               key={key}
               href={`/#${key === 'services' ? 'services' : key === 'prices' ? 'tarifs' : key === 'sisters' ? 'soeurs' : 'contact'}`}
-              className="inline-flex min-h-11 items-center text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:min-h-0"
+              className="inline-flex items-center py-2 text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:py-0"
             >
               {nav(key)}
             </Link>
           ))}
         </nav>
 
-        <nav aria-label={t('bridal')} className="flex flex-col gap-2.5">
+        <nav aria-label={t('bridal')} className="flex flex-col gap-1 sm:gap-2.5">
           <p className="mb-1 text-[11px] uppercase tracking-[.24em] text-champagne">{t('bridal')}</p>
-          <Link href="/robes" className="inline-flex min-h-11 items-center text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:min-h-0">
+          <Link href="/robes" className="inline-flex items-center py-2 text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:py-0">
             {t('rentGowns')}
           </Link>
           {GOWNS.map((gown) => (
             <Link
               key={gown.slug}
               href={`/robes/${gown.slug}`}
-              className="inline-flex min-h-11 items-center text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:min-h-0"
+              className="inline-flex items-center py-2 text-[13px] text-muted-2/80 transition-colors hover:text-blush sm:py-0"
             >
               {gown.name}
             </Link>
           ))}
         </nav>
 
-        <div className="flex flex-col gap-2.5">
+        <div className="col-span-2 flex flex-col gap-1 sm:col-span-1 sm:gap-2.5">
           <p className="mb-1 text-[11px] uppercase tracking-[.24em] text-champagne">
             {t('instagram')}
           </p>

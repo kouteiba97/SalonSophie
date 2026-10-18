@@ -39,7 +39,14 @@ export function InstagramGrid() {
           ) : null}
         </div>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        {/*
+          Three across on a phone, which is what Instagram itself does.
+          
+          Two columns made each tile a 161px square and the six of them 519px — half a screen of
+          placeholders between the client and the contact details. Three across is both denser and
+          more familiar, and it is the grid these images are cropped for anyway.
+        */}
+        <div className="mt-8 grid grid-cols-3 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-6">
           {TILES.map((id) => (
             <BrandedImage
               key={id}
