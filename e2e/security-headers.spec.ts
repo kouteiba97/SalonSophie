@@ -39,6 +39,25 @@ test.describe('security headers', () => {
   });
 
   /**
+   * `'unsafe-eval'` is a development-only concession and must never reach a deployment.
+   *
+   * It is in the dev policy because Next's Fast Refresh compiles modules with `eval`; without it
+   * the client entry chunk throws before React hydrates, and the whole page sits at `opacity: 0`
+   * because `Reveal` never gets to run. That is a real cost to pay in dev and an unacceptable one
+   * in production, where `eval` is the gap that turns an inline-script XSS into arbitrary code.
+   *
+   * This suite builds with `next build` and serves with `next start`, so the header read here is
+   * the one a client would receive. If the environment switch in next.config.ts is ever flattened
+   * back to a single string, this is what notices.
+   */
+  test('never ships unsafe-eval to production', async ({ request }) => {
+    const csp = (await request.get('/fr')).headers()['content-security-policy'] ?? '';
+
+    expect(csp).toContain("script-src 'self' 'unsafe-inline'");
+    expect(csp).not.toContain('unsafe-eval');
+  });
+
+  /**
    * There is no browser-side Supabase client: every database call goes through a Server Action or
    * a Server Component. If that ever changes, `connect-src` has to learn the Supabase origin, and
    * this test is where that decision gets noticed rather than discovered.

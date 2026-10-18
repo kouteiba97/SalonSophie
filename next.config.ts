@@ -28,9 +28,31 @@ const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
  * server-side and the browser only ever talks to this origin. If a browser client is ever added,
  * this line has to learn the Supabase URL — and the fact that it does not is worth keeping.
  */
+/*
+ * `'unsafe-eval'`, in development only.
+ *
+ * Next's Fast Refresh runtime compiles modules with `eval`. Under this policy the browser
+ * refused it, the error took down the whole client entry chunk before React could hydrate, and
+ * every `useEffect` on the page silently never ran.
+ *
+ * The visible result was worse than a broken refresh: `Reveal` fades its sections in from an
+ * IntersectionObserver started in an effect, so with no hydration nothing ever set
+ * `data-revealed` and all eight sections stayed at `opacity: 0`. `npm run dev` served a site
+ * that was blank below the hero while `npm run build` was perfect — the kind of split that gets
+ * chased as a CSS bug for an afternoon.
+ *
+ * Production is untouched: there is no react-refresh in a production build and no `eval` to
+ * allow, so the deployed policy is exactly as strict as it was. The one directive that would
+ * weaken it is the one directive dev cannot run without.
+ */
+const SCRIPT_SRC =
+  process.env.NODE_ENV === 'development'
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+    : "script-src 'self' 'unsafe-inline'";
+
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline'",
+  SCRIPT_SRC,
   // Tailwind and next/font both emit inline styles; there is no build without this.
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
