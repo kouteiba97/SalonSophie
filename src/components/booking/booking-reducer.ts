@@ -43,6 +43,8 @@ export interface BookingState {
     reference: string;
     isRequest: boolean;
     notified: boolean;
+    /** Carried so the WhatsApp hand-off can name the client the booking was made under. */
+    clientName: string;
   } | null;
   /** Set when the server refused; keyed so the UI can translate it. */
   error: 'slot_taken' | 'rate_limited' | 'invalid' | 'unavailable' | null;
@@ -83,7 +85,7 @@ export type BookingAction =
   | { type: 'shiftMonth'; by: number }
   | { type: 'shiftWeek'; by: number }
   | { type: 'submitStart' }
-  | { type: 'submitSuccess'; reference: string; isRequest: boolean; notified: boolean }
+  | { type: 'submitSuccess'; reference: string; isRequest: boolean; notified: boolean; clientName: string }
   | { type: 'submitError'; error: NonNullable<BookingState['error']> }
   | { type: 'reset' };
 
@@ -155,6 +157,7 @@ export function bookingReducer(state: BookingState, action: BookingAction): Book
         result: {
           reference: action.reference,
           isRequest: action.isRequest,
+          clientName: action.clientName,
           notified: action.notified,
         },
         step: STEP_COUNT - 1,

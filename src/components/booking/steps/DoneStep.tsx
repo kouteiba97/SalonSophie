@@ -21,11 +21,47 @@ import { useBookingSummary } from '../useBookingSummary';
  */
 export function DoneStep() {
   const t = useTranslations('booking.done');
-  const tb = useTranslations('booking');
+  const tw = useTranslations('booking.whatsapp');
   const summary = useBookingSummary();
   const { state } = useBooking();
   const result = state.result;
   const isRequest = result?.isRequest ?? true;
+
+  /*
+   * The WhatsApp hand-off, written so the salon can act on it without asking anything back.
+   *
+   * It used to send "Bonjour N&S, je souhaite confirmer : {summary}" — one run-on line naming
+   * the service, the stylist and the time, and nothing else. Three things were missing, and each
+   * one cost a round trip:
+   *
+   *   - the reference, so whoever reads the message can find the row instead of searching by
+   *     name and date;
+   *   - the client's name, because the sender's WhatsApp display name is whatever they set it
+   *     to, and often is not the name they booked under;
+   *   - whether this is a held slot or a request. That is the one thing the salon must know and
+   *     the one thing the old message never said: a confirmed booking needs no reply, a request
+   *     is not a booking until someone answers it. Same words for both is how a bride ends up
+   *     believing a time is hers.
+   *
+   * The phone number is deliberately left out — it arrives with the message by definition.
+   *
+   * Built as labelled lines rather than prose: it is read on a phone, mid-service, and scanning
+   * for "Réf." beats parsing a sentence.
+   *
+   * Each label carries its own colon rather than the code appending one. French puts a space
+   * before a colon and Arabic and English do not, so a hardcoded " : " was correct in exactly
+   * one of the three locales and quietly wrong in the other two.
+   */
+  const lines = [
+    isRequest ? tw('request') : tw('confirmed'),
+    '',
+    ...(result?.reference ? [`${tw('reference')} ${result.reference}`] : []),
+    ...(summary ? [`${tw('details')} ${summary}`] : []),
+    ...(result?.clientName ? [`${tw('client')} ${result.clientName}`] : []),
+    '',
+    isRequest ? tw('closingRequest') : tw('closingConfirmed'),
+  ];
+  const message = lines.join('\n');
 
   return (
     <div className="flex flex-col items-center gap-4 py-4 text-center">
@@ -57,7 +93,7 @@ export function DoneStep() {
       </p>
 
       <a
-        href={whatsappLink(tb('whatsappMessage', { summary }))}
+        href={whatsappLink(message)}
         target="_blank"
         rel="noopener noreferrer"
         className="mt-1 inline-flex items-center gap-2.5 rounded-full bg-rose-deep px-7 py-3.5 text-[14px] text-white transition-colors hover:bg-rose-dark"

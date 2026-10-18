@@ -61,6 +61,7 @@ export function BookingModal() {
           reference: result.reference,
           isRequest: result.isRequest,
           notified: result.notified,
+          clientName: details.name,
         });
       } else {
         dispatch({ type: 'submitError', error: result.error });
