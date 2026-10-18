@@ -63,6 +63,21 @@ become services, and a price is not something to invent:
 **Still open:** the other 39 durations. The console's **Prestations** screen shows the running
 count, so it is visible how many remain.
 
+### 2b. Who works which days? *(new, 19 Oct 2026)*
+Correcting the opening hours exposed a second copy of them. `give_default_schedule` snapshots the
+salon's hours into `staff_schedules` when an account is created, and all three stylists were
+created while the invented week was still in place — so they were scheduled on Sunday (shut) and
+not on Friday (trading). Friday was unbookable for every client.
+
+`20261019090000_realign_staff_schedules.sql` rebuilds every bookable stylist's shifts from the
+real trading week, which is the same rule a new hire gets. That propagates hours the salon gave
+rather than inventing anything — but it does assume **Nour, Sophie and Amina each work all six
+open days**, and that is a guess.
+
+- Does each of them work Monday to Saturday, or do they have their own days off?
+
+**Where it goes:** `/equipe` in the console, per person. No deploy, no migration.
+
 ### 3. Bridal rental prices
 The design invented 38 000 / 45 000 / 55 000 DA for ABir / Anastasia / RYMA.
 

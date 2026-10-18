@@ -545,6 +545,49 @@ describe('seeded catalogue', () => {
     expect(balayage.rows[0].duration_minutes).toBeNull();
   });
 
+  /**
+   * Shifts have to agree with the trading week, or the engine offers nothing.
+   *
+   * A slot exists only where opening hours and a staff member's shift overlap, so correcting
+   * `business_hours` alone was not enough. `give_default_schedule` snapshots the salon's hours
+   * when an account is created, and every account on the live database was created while those
+   * hours were still the design's invented week — leaving all three stylists scheduled on Sunday
+   * (shut) and none on Friday (trading). Friday was unbookable for every client, and nothing
+   * about it looked broken: the calendar simply offered no times.
+   *
+   * Asserted against `business_hours` rather than against literal days, so the two cannot drift
+   * apart again the next time the salon changes its week.
+   */
+  it('schedules bookable staff on exactly the days the salon trades', async () => {
+    const open = await db.query<{ weekday: number }>(
+      `select weekday from public.business_hours where not is_closed order by weekday`,
+    );
+    const openDays = open.rows.map((r) => r.weekday);
+
+    const staff = await db.query<{ slug: string; weekday: number }>(
+      `select s.slug, sch.weekday
+         from public.staff_schedules sch
+         join public.staff s on s.id = sch.staff_id
+        where s.is_bookable
+        order by s.slug, sch.weekday`,
+    );
+
+    const byStaff = new Map<string, number[]>();
+    for (const row of staff.rows) {
+      byStaff.set(row.slug, [...(byStaff.get(row.slug) ?? []), row.weekday]);
+    }
+
+    expect(byStaff.size).toBeGreaterThan(0);
+    for (const [slug, days] of byStaff) {
+      expect(days, `${slug} works exactly the salon's open days`).toEqual(openDays);
+    }
+
+    // Friday (5) trades, so somebody must be on it — the specific day the old snapshot dropped.
+    expect(openDays).toContain(5);
+    // Sunday (0) is shut, so nobody should be scheduled.
+    expect(openDays).not.toContain(0);
+  });
+
   it('seeds only the two confirmed sisters as bookable staff', async () => {
     const res = await db.query<{ slug: string }>(
       `select slug from public.staff where slug in ('amina', 'lynda')`,
