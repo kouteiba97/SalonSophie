@@ -79,11 +79,31 @@ export function Hero() {
       </div>
 
       {/* ── Right: the studio ────────────────────────────────────────────────────────── */}
-      <div className="relative min-h-[clamp(420px,58vw,760px)]">
+      {/*
+        `min-h` floors at 460px on a phone rather than 420.
+
+        At 375px the 58vw term resolves to 217px, so the clamp always takes its minimum — and 420
+        was not enough to hold what sits inside it. The neon starts 24px down and ran to about
+        107px over three lines; the booking card is roughly 280px tall and anchored 34px off the
+        bottom. That totals 445px in a 420px box, so the card landed on the neon's last line and
+        "beautiful" was cut in half.
+
+        The extra 40px is 0.05 of a screen — a fair price for the brand line being readable, and
+        far cheaper than the alternative of shrinking the card that takes the bookings.
+      */}
+      <div className="relative min-h-[clamp(460px,58vw,760px)]">
         <HeroParallax alt={t('imageAlt')} />
 
         {/* Neon sign — nsFlicker, 2.6s ease-out .4s both, exactly as designed. */}
-        <div className="pointer-events-none absolute top-[clamp(24px,3.5vw,54px)] end-[clamp(22px,3.5vw,60px)] max-w-[min(260px,46%)] text-end [animation:nsFlicker_2.6s_ease-out_.4s_both]">
+        {/*
+          62% of the column on a phone, 46% from `sm`.
+
+          46% is 154px at 375px wide, which broke "Be your own kind of beautiful" across three
+          lines of script and made the sign tall enough to collide with the card below it. The
+          width was tuned for a desktop column where 46% is comfortably over 300px; on a phone it
+          was squeezing a decorative line into a column narrower than the words.
+        */}
+        <div className="pointer-events-none absolute top-[clamp(24px,3.5vw,54px)] end-[clamp(22px,3.5vw,60px)] max-w-[min(260px,62%)] text-end [animation:nsFlicker_2.6s_ease-out_.4s_both] sm:max-w-[min(260px,46%)]">
           <span className="font-script text-[clamp(24px,2.6vw,38px)] leading-[1.15] text-champagne-3 [text-shadow:0_0_6px_rgba(255,214,175,.95),0_0_22px_rgba(255,190,150,.75),0_0_48px_rgba(255,170,130,.45)]">
             {t('neon')}
           </span>
