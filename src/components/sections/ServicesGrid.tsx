@@ -28,17 +28,29 @@ export function ServicesGrid({ category, categories, services }: ServicesGridPro
   const active = categories.some((c) => c.slug === category) ? category : undefined;
 
   /**
-   * Unfiltered, the grid previews the first few of each category rather than all 55 lines.
+   * Unfiltered, the grid previews one of each category rather than all 55 lines.
    *
    * The design's grid held 22 cards, two to four per category. The real tariff has 55, and
    * rendering every one turned a browsable gallery into a wall roughly two and a half times
-   * the approved height, pushing the bridal section far below the fold. Nothing is hidden:
-   * a category chip opens that category in full, and the complete tariff is the next section.
+   * the approved height, pushing the bridal section far below the fold.
    *
-   * This is a presentation choice, not a data one — no price or service is edited or omitted
-   * from the catalogue itself.
+   * Three per category was too many and two was still too many. Measured at 1024px: twenty-four
+   * cards ran 2 033px and sixteen ran 1 658px — 2.6 and 2.2 screens of nothing but preview, long
+   * on every width except a wide desktop, and worse on a tablet where the grid resolves to two
+   * columns.
+   *
+   * One per category is eight cards, which is what the section's own heading promises — "huit
+   * univers" — and it lands near 1.4 screens at every width. A homepage preview exists to show
+   * what the salon does and roughly what it costs, not to be the tariff. Each card anchors the
+   * price point for its world; a chip opens that world in full; the link names the real 55.
+   *
+   * To widen it again, this constant is the only thing to change.
+   *
+   * Nothing is hidden: a category chip opens that category in full, the complete tariff is the
+   * next section, and the link under the grid names the real total. This is a presentation
+   * choice, not a data one — no price or service is edited or omitted from the catalogue.
    */
-  const PREVIEW_PER_CATEGORY = 3;
+  const PREVIEW_PER_CATEGORY = 1;
 
   const visible = active
     ? services.filter((s) => s.categorySlug === active)
@@ -78,7 +90,7 @@ export function ServicesGrid({ category, categories, services }: ServicesGridPro
         </div>
 
           {/*
-            A price list on a phone, a card grid from `sm` up.
+            A price list on a phone and a tablet, a card grid from `md` up.
 
             The card is right on a wide screen and wrong on a narrow one. At 375px the track
             `minmax(min(100%,286px),1fr)` can only ever resolve to a single column, so twenty-four
@@ -87,31 +99,35 @@ export function ServicesGrid({ category, categories, services }: ServicesGridPro
             to know what a brushing costs, and was being asked to scroll past twenty-three other
             answers to find it.
 
-            Below `sm` each one is now a row: name on the left, price and duration on the right,
+            Below `md` each one is now a row: name on the left, price and duration on the right,
             around 76px tall. The same information, roughly a quarter of the travel, and it reads
-            the way a salon's printed tariff reads. From `sm` the original card returns untouched.
+            the way a salon's printed tariff reads. From `md` the original card returns untouched.
+            
+            The breakpoint is `md`, not `sm`, because 640–768px was the worst case of the three:
+            wide enough for the grid to resolve to two columns of full-height cards, narrow enough
+            that two columns meant eight rows of them. A tablet was scrolling further than a phone.
           */}
         {visible.length === 0 ? (
           <EmptyState />
         ) : (
-          <div className="mt-8 grid gap-2 sm:gap-4 sm:[grid-template-columns:repeat(auto-fill,minmax(min(100%,286px),1fr))]">
+          <div className="mt-8 grid gap-2 md:gap-4 md:[grid-template-columns:repeat(auto-fill,minmax(min(100%,286px),1fr))]">
             {visible.map((service) => {
               const categoryName = categories.find((c) => c.slug === service.categorySlug)?.name;
               return (
                 <article
                   key={service.slug}
-                  className="flex items-center gap-4 rounded-[16px] border border-rose-soft/30 bg-white p-4 transition-colors duration-200 hover:border-rose-deep/45 sm:flex-col sm:items-stretch sm:gap-3 sm:rounded-[22px] sm:p-5"
+                  className="flex items-center gap-4 rounded-[16px] border border-rose-soft/30 bg-white p-4 transition-colors duration-200 hover:border-rose-deep/45 md:flex-col md:items-stretch md:gap-3 md:rounded-[22px] md:p-5"
                 >
-                  <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-none sm:gap-3">
+                  <div className="flex min-w-0 flex-1 flex-col gap-1 md:flex-none md:gap-3">
                     {/*
                       The category is redundant on mobile — the filter pills above already say
                       which one is showing — and it is the line that made each row three tall.
                     */}
-                    <p className="hidden text-[10px] uppercase tracking-[.22em] text-taupe sm:block">
+                    <p className="hidden text-[10px] uppercase tracking-[.22em] text-taupe md:block">
                       {categoryName}
                     </p>
 
-                    <h3 className="font-display text-[17px] font-light leading-tight text-charcoal sm:text-[21px]">
+                    <h3 className="font-display text-[17px] font-light leading-tight text-charcoal md:text-[21px]">
                       <Link
                         href={`/services/${service.slug}`}
                         className="text-charcoal transition-colors hover:text-rose-deep"
@@ -127,9 +143,9 @@ export function ServicesGrid({ category, categories, services }: ServicesGridPro
                     ) : null}
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-3 sm:mt-auto sm:items-end sm:justify-between sm:border-t sm:border-line sm:pt-3.5">
-                    <div className="flex flex-col items-end sm:items-start">
-                      <span className="text-[16px] text-rose-deep sm:text-[17px]">{price(service.price)}</span>
+                  <div className="flex shrink-0 items-center gap-3 md:mt-auto md:items-end md:justify-between md:border-t md:border-line md:pt-3.5">
+                    <div className="flex flex-col items-end md:items-start">
+                      <span className="text-[16px] text-rose-deep md:text-[17px]">{price(service.price)}</span>
                       {/*
                         `taupe-2`, not `muted`, and that is an accessibility fix rather than a
                         restyle. `--muted` (#C7BAB3) on white is 1.89:1 — far under the 4.5:1 AA
@@ -143,14 +159,14 @@ export function ServicesGrid({ category, categories, services }: ServicesGridPro
                         `--taupe-2` (#7A6E68) is 4.93:1 and the nearest token in the same warm
                         grey family, so the hierarchy the design intended survives.
                       */}
-                      <span className="whitespace-nowrap text-[11px] text-taupe-2 sm:text-[12px]">{duration(service.duration)}</span>
+                      <span className="whitespace-nowrap text-[11px] text-taupe-2 md:text-[12px]">{duration(service.duration)}</span>
                     </div>
                     <BookButton
                       label={t('book')}
                       serviceSlug={service.slug}
                       variant="quiet"
                       className="shrink-0 pb-0.5"
-                      labelClassName="hidden sm:inline"
+                      labelClassName="hidden md:inline"
                     />
                   </div>
                 </article>
