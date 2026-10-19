@@ -15,6 +15,7 @@ import { ArrowRight } from './icons';
  */
 export function StickyCta() {
   const t = useTranslations('sticky');
+  const tn = useTranslations('nav');
   const { open, state } = useBooking();
   const [visible, setVisible] = useState(false);
 
@@ -45,7 +46,20 @@ export function StickyCta() {
         tabIndex={visible ? 0 : -1}
         className="group inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-rose-deep px-7 py-3.5 text-[14px] text-white shadow-[0_10px_30px_-8px_rgba(46,42,40,.45)] transition-colors hover:bg-rose-dark"
       >
-        {t('book')}
+        {/*
+          The short label on a phone, the full one from `sm`.
+          
+          "Réserver mon rendez-vous" renders a 233px pill, and centred on a 375px screen it
+          reaches x=304 — one pixel into the WhatsApp float at x=303. Two tap targets touching,
+          so a thumb aiming at the end of the booking button opened WhatsApp instead. Arabic hid
+          it: "احجزي موعدك" is 70px narrower and cleared the float by 34px.
+          
+          Shortening the label fixes it at the source and keeps both controls on the bottom line.
+          A floating bar is not where a six-word sentence belongs anyway — the icon-sized version
+          reads faster and leaves the float somewhere to live.
+        */}
+        <span className="sm:hidden">{tn('book')}</span>
+        <span className="hidden sm:inline">{t('book')}</span>
         <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5 rtl:-scale-x-100" />
       </button>
     </div>
