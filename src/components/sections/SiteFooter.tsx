@@ -91,7 +91,7 @@ export function SiteFooter() {
         */}
         <Link
           href="/confidentialite"
-          className="text-[12px] text-muted-2 underline-offset-4 transition-colors hover:text-blush hover:underline"
+          className="inline-flex min-h-11 items-center text-[12px] text-muted-2 underline-offset-4 transition-colors hover:text-blush hover:underline sm:min-h-0"
         >
           {nav('privacy')}
         </Link>

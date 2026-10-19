@@ -41,10 +41,19 @@ export function BookButton({
       aria-label={label}
       className={cn(
         'group inline-flex cursor-pointer items-center justify-center gap-2 rounded-full transition-colors duration-200',
+        /*
+          `min-h-11` on the two filled variants, because padding alone kept missing the floor.
+          
+          `py-3` at 14px renders 43px — one pixel short — and the header overrides the padding to
+          `px-5 py-2`, which renders 37px. That is the most-tapped control on the site sitting
+          seven pixels under the minimum on the device nearly every client uses. A height floor
+          holds regardless of what padding a caller passes; `quiet` is left alone, since it is an
+          inline text control inside rows that already give it room.
+        */
         variant === 'solid' &&
-          'bg-rose-deep px-6 py-3 text-[14px] text-white hover:bg-rose-dark',
+          'min-h-11 bg-rose-deep px-6 py-3 text-[14px] text-white hover:bg-rose-dark',
         variant === 'ghost' &&
-          'border border-rose-soft/55 px-6 py-3 text-[14px] text-ink-2 hover:border-rose-deep hover:text-rose-deep',
+          'min-h-11 border border-rose-soft/55 px-6 py-3 text-[14px] text-ink-2 hover:border-rose-deep hover:text-rose-deep',
         variant === 'quiet' && 'text-[13px] text-rose-deep hover:text-rose-dark',
         className,
       )}
