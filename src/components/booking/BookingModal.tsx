@@ -135,7 +135,7 @@ export function BookingModal() {
         </div>
 
         {/* ── Body ────────────────────────────────────────────────────────────────── */}
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+        <div data-booking-scroll className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
           {/* The server's refusal, said in the brand's voice and pointing at the fix. */}
           {state.error ? (
             <p
