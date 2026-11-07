@@ -162,10 +162,12 @@ missing environment variable.
 
 ### 5. Move the functions to Paris
 
-**Settings → Functions → Function Region → Paris (cdg1)**, then **redeploy** — the region applies
-to the next deployment, not the current one.
+**Already done, in the repository:** `vercel.json` pins `"regions": ["cdg1"]`, which overrides the
+dashboard's Function Region on every deploy. Nothing to click — but if `x-vercel-id` on a dynamic
+route ever reads `…::iad1::…` again, that file is the first thing to check.
 
-This is the step most likely to be skipped and least likely to be noticed, because the site still
+It used to be a dashboard step, and it was skipped: the first production deploys rendered in
+Washington. This is the step most likely to be skipped and least likely to be noticed, because the site still
 works without it, only slower. Supabase is in Paris. The default is Washington. Leaving it puts
 the Atlantic between every page render and the database, twice, on an app whose whole performance
 budget was written for Algerian 4G.
